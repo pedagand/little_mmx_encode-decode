@@ -108,7 +108,11 @@ Inductive correspondance_etiquette : Type :=
 
     Inductive correspondance_etiquette_table : Type :=
     | correspondance_nil : correspondance_etiquette_table
-    | correspondance_cons : etiquette -> correspondance_etiquette -> correspondance_etiquette_table.
+    | correspondance_cons : correspondance_etiquette -> correspondance_etiquette_table -> correspondance_etiquette_table.
+
+    Inductive correspondance_operande_table : Type :=
+    | correspondance_op_nil : correspondance_operande_table
+    | correspondance_op_cons : correspondance_operande -> correspondance_operande_table -> correspondance_operande_table.
 
 
     (* TODO :: function which take a decimal value and return the vector of bites corrsponding to it's binary representation *)
@@ -118,10 +122,50 @@ Inductive correspondance_etiquette : Type :=
                                                 (Bcons true 5
                                                        (Bcons true 4
                                                               (Bcons true 3 (Bcons true 2 (Bcons true 1 (Bcons true 0 Bnil)))))))).
+
+    Definition my_instr_binary := binary_instr (opc create_a_vector) (reg_binary create_a_vector) (reg_binary create_a_vector)
+                                               (reg_binary create_a_vector).
     
     Definition ADD_correspondance :=  opcode_to_etiquette (opc create_a_vector) ADD.
+    Definition AND_correspondance :=  opcode_to_etiquette (opc create_a_vector) AND.
+    Check ADD_correspondance.
+    Definition correspondance_table := correspondance_cons (ADD_correspondance) correspondance_nil.
 
-    (* faire une fonction qui convertie les decimaux en string d'éxa (tricks /16) *)
 
+    (* Fonctions de comparaisons *)
 
+    Definition etiquettes_equals (e1 e2 : etiquette) : bool :=
+      match (e1,e2) with
+        | (ADD,ADD) => true
+        | (AND,AND) => true
+        | _ => false
+      end.
+                                    
+
+    (* Fonctions de décodage *)
+    
+    (* Premiere fonction afin de décoder une étiquette *)
+    Fixpoint etiquette_to_binary (t : correspondance_etiquette_table) (etiq : etiquette) : (option opcode) :=
+      match t with
+        | correspondance_nil => None
+        | correspondance_cons elem suite => match elem with
+                                              | opcode_to_etiquette o e => if etiquettes_equals etiq e
+                                                                           then Some o
+                                                                           else etiquette_to_binary suite etiq
+                                            end
+      end.
+
+    
+    Fixpoint instruction_to_binary (t_etiquette : correspondance_etiquette_table)
+             (t_opcode : correspondance_operande_table) (i : instruction) : binary_instruction :=
+      my_instr_binary.
+    match etiquette_to_binary t_etiquette (* get_etquette i *) with
+      | None => None
+      | Some res => None (* La suite de la fonction *).
+    end.
+    (* dans la suite de la fonction il faut matcher les différentes cases et retouner *)
+    
+    (* TODO :: faire une fonction qui convertie les decimaux en string d'éxa (tricks /16) *)
+
+    
     
