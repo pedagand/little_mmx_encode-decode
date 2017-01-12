@@ -11,6 +11,7 @@ Open Scope list_scope.
 
 (* datatypes for the instructions *)
 
+(* XXX: Use english everywhere *)
 Inductive etiquette : Type :=
 | ADD : etiquette
 | AND : etiquette.
@@ -35,6 +36,8 @@ Inductive instruction : Type :=
 
 (* some definition to make boolean vector manipulation easyer *)
 
+(* XXX: do not use Vectors (they are broken in Coq). Just use lists of
+   boolean, without size indexing *)
 Definition Bnil := @Vector.nil bool.
 
 Definition Bcons := @Vector.cons bool.
@@ -42,7 +45,8 @@ Definition Bcons := @Vector.cons bool.
 
 (* datatypes for the binary instructions *)
 
-
+(* XXX: binary instructions should just be lists of booleans, no
+  need/reason to have more structure than that *)
 
 Inductive opcode : Type :=
 | opc : @Vector.t bool 8 -> opcode.
@@ -60,6 +64,9 @@ Inductive binary_instruction : Type :=
 Example my_instr := instr ADD (reg (general_reg 10)) (reg (general_reg 11)) (reg (general_reg 10)).
 
 Check my_instr.
+
+(* XXX: if you are to write getters, then probably that you wanted to
+   define a [Record] instead *)
 
 Definition get_etiquette (i : instruction) : etiquette :=
   match i with
@@ -93,6 +100,9 @@ Check test_request.
 (* pour l'instant je ne fais pas encore les fonctions de parsing je fais comme si le parsing m'avais déja remplis mon 
 data type *)
 
+(* XXX: yes, we won't do parsing for now: we assume that piece of
+   software gives us a list of [instruction] *)
+
 (* Idée pour la suite, à l'aide de fichier on crée tout un tas d'éléments de type correspondance
 Inductive correspondance_etiquette : Type := 
 | binary_to_instruction : binary -> etiquette -> correspondance_etiquette
@@ -100,11 +110,17 @@ Inductive correspondance_etiquette : Type :=
      Cela permettrait donc aux fonctions de prendre une liste de ces correspondances qui seraient crée au démarage du
      programme afin que la maintenabilité du programme soit plus aisée (parceque sinon ça serait un gros switch ?)*) 
 
+(* XXX: this is just a pair [opcode * etiquette] *)
 Inductive correspondance_etiquette : Type :=
 | opcode_to_etiquette : opcode -> etiquette -> correspondance_etiquette.
 
 Inductive correspondance_operande : Type :=
 | operande_to_operande_binary : operande -> operande_binary -> correspondance_operande.
+\
+(* XXX: this is just an association list, of type [list (opcode *
+   etiquette)]. But I recommend using [MSet]
+   [https://coq.inria.fr/library/Coq.MSets.MSets.html] instead. This
+   library is hard to import, let me know if you need help. *)
 
 Inductive correspondance_etiquette_table : Type :=
 | correspondance_nil : correspondance_etiquette_table
@@ -134,6 +150,8 @@ Definition correspondance_table := correspondance_cons (ADD_correspondance) corr
 
 (* Fonctions de comparaisons *)
 
+(* XXX: Check [Scheme Equality for ident1] in [https://coq.inria.fr/refman/Reference-Manual015.html] *)
+
 Definition etiquettes_equals (e1 e2 : etiquette) : bool :=
   match (e1,e2) with
   | (ADD,ADD) => true
@@ -145,6 +163,9 @@ Definition etiquettes_equals (e1 e2 : etiquette) : bool :=
 (* Fonctions de décodage *)
 
 (* Premiere fonction afin de décoder une étiquette *)
+
+(* XXX: use the operations (in the standard library) related to [MSet] *)
+
 Fixpoint etiquette_to_binary (t : correspondance_etiquette_table) (etiq : etiquette) : (option opcode) :=
   match t with
   | correspondance_nil => None
@@ -165,6 +186,12 @@ match etiquette_to_binary t_etiquette (* get_etquette i *) with
 end.
 (* dans la suite de la fonction il faut matcher les différentes cases et retouner *)
 
+(* XXX: you also need to take a list of instructions and convert them
+   to a list of booleans, and conversely from lists of booleans to
+   instructions (when possible) *)
+
 (* TODO :: faire une fonction qui convertie les decimaux en string d'éxa (tricks /16) *)
 
+
+(* XXX: what are the theorems? *)
 
