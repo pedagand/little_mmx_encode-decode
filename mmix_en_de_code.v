@@ -36,8 +36,9 @@ Module mmix_en_de_code.
   (* some definition to make boolean vector manipulation easyer *)
   
   Definition Bnil := @Vector.nil bool.
-
+  
   Definition Bcons := @Vector.cons bool.
+
   
   (* datatypes for the binary instructions *)
 
@@ -49,7 +50,9 @@ Module mmix_en_de_code.
   Inductive operande_binary : Type :=
   | reg_binary : @Vector.t bool 8 -> operande_binary.
 
-
+  Inductive binary_instruction : Type :=
+  | binary_instr : opcode -> operande_binary -> operande_binary -> operande_binary -> binary_instruction.
+  
 
 
   (* fonctions pour manipuler les instructions avec tests *)
@@ -98,16 +101,27 @@ Inductive correspondance_etiquette : Type :=
      programme afin que la maintenabilité du programme soit plus aisée (parceque sinon ça serait un gros switch ?)*) 
 
     Inductive correspondance_etiquette : Type :=
-    | opcode_to_etiquette : opcode -> etiquette -> correspondance_etiquette
-    | etiquette_to_opcode : etiquette -> opcode -> correspondance_etiquette.
+    | opcode_to_etiquette : opcode -> etiquette -> correspondance_etiquette.
     
     Inductive correspondance_operande : Type :=
-    | operande_to_operande_binary : operande -> operande_binary -> correspondance_operande
-    | operande_binary_to_operande : operande_binary -> operande -> correspondance_operande.
+    | operande_to_operande_binary : operande -> operande_binary -> correspondance_operande.
 
     Inductive correspondance_etiquette_table : Type :=
     | correspondance_nil : correspondance_etiquette_table
     | correspondance_cons : etiquette -> correspondance_etiquette -> correspondance_etiquette_table.
 
+
+    (* TODO :: function which take a decimal value and return the vector of bites corrsponding to it's binary representation *)
     
+    Definition create_a_vector := (Bcons true 7
+                                         (Bcons true 6
+                                                (Bcons true 5
+                                                       (Bcons true 4
+                                                              (Bcons true 3 (Bcons true 2 (Bcons true 1 (Bcons true 0 Bnil)))))))).
+    
+    Definition ADD_correspondance :=  opcode_to_etiquette (opc create_a_vector) ADD.
+
+    (* faire une fonction qui convertie les decimaux en string d'éxa (tricks /16) *)
+
+
     
