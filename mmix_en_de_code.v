@@ -57,7 +57,7 @@ Inductive binary_instruction : Type :=
 
 (* fonctions pour manipuler les instructions avec tests *)
 
-Definition my_instr := instr ADD (reg (general_reg 10)) (reg (general_reg 11)) (reg (general_reg 10)).
+Example my_instr := instr ADD (reg (general_reg 10)) (reg (general_reg 11)) (reg (general_reg 10)).
 
 Check my_instr.
 
