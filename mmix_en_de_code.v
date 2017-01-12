@@ -7,10 +7,9 @@ Require Import Ascii.
 Require String.
 Open Scope string_scope.
 Open Scope list_scope.
-Module mmix_en_de_code.
+
 
   (* datatypes for the instructions *)
-   
   Inductive etiquette : Type :=
 | ADD : etiquette
 | AND : etiquette.
