@@ -1,20 +1,32 @@
 Require Export Bool Sumbool.
 Require Import Minus.
 Require Import Arith.
+Require Import Notations Logic Datatypes.
 Require Import Ascii.
 Require String.
 Open Scope string_scope.
 Open Scope list_scope.
 Require Import List.
 Import ListNotations.
+Require Import Notations Logic Datatypes.
+Local Open Scope nat_scope.
 
 
 (* datatypes for the instructions *)
 
-(* XXX: Use english everywhere *)
+(* The boolean use here allow us to know if it is the code with argument z as an immediate or not 
+Instructions which have only one representation don't need a bool argument *)
+Inductive tag_with_immediate : Type :=
+| ADD : tag_with_immediate
+| AND : tag_with_immediate.
+
+Inductive tag_without_immediate : Type :=
+| JUMP : tag_without_immediate.
+
 Inductive tag : Type :=
-| ADD : tag
-| AND : tag.
+| tag_i : tag_with_immediate -> tag
+| tag_no_i : tag_without_immediate -> tag.
+  
 
 (* there is 256 register and 32 special register *)
 (* i only give two special register to test but i will not give the exhaustive list (at least for the moment) *)
@@ -29,13 +41,11 @@ Inductive register : Type :=
 Inductive operande : Type :=
 | immediate : nat -> operande
 | reg : register -> operande
-| vide : operande.
+| empty : operande.
 
 
 Record instruction :=
   instr { firstField : tag; secondField : operande ; thirdField : operande ; fourthField : operande }.
-
-
 
 
 (* datatypes for the binary instructions *)
@@ -47,16 +57,16 @@ Inductive opcode : Type :=
 | opc : list bool -> opcode.
 
 Inductive operande_binary : Type :=
-| reg_binary : list bool -> operande_binary.
+| op_binary : list bool -> operande_binary.
 
-Inductive binary_instruction : Type :=
-| binary_instr : opcode -> operande_binary -> operande_binary -> operande_binary -> binary_instruction.
+Record binary_instruction :=
+ binary_instr { op : opcode ; firstOperande : operande_binary ;secondOperande:operande_binary;firdOperande : operande_binary }.
 
 
 
 (* Exemples d'utilisation des structures de données *)
 
-Example my_instr := instr ADD (reg (general_reg 10)) (reg (general_reg 11)) (reg (general_reg 10)).
+Example my_instr := instr (tag_i ADD) (reg (general_reg 10)) (reg (general_reg 11)) (reg (general_reg 10)).
 
 Check my_instr.
 
@@ -79,7 +89,7 @@ Inductive correspondance_tag : Type :=
 (* XXX: this is just a pair [opcode * tag] *)
 Inductive correspondance : Type :=
 | opcode_to_tag : (opcode*tag) -> correspondance
-| operande_to_operande_binary : (operande * operande_binary) -> correspondance.
+| operande_to_operande_binary : (operande_binary * operande) -> correspondance.
 
 
 (* XXX: this is just an association list, of type [list (opcode *
@@ -87,22 +97,20 @@ Inductive correspondance : Type :=
    [https://coq.inria.fr/library/Coq.MSets.MSets.html] instead. This
    library is hard to import, let me know if you need help. *)
 
-Inductive correspondance_table : Type :=
-| c_table : list correspondance -> correspondance_table.
-
 (* TODO :: function which take a decimal value and return the vector of bites corrsponding to it's binary representation *)
 
 Definition create_a_list := [true;true;true;true;true;true;true;true].
 Definition create_a_list_bis := true :: true :: true :: true :: true :: true :: true :: true :: [].
 
 
-Definition my_instr_binary := binary_instr (opc create_a_list) (reg_binary create_a_list) (reg_binary create_a_list)
-                                           (reg_binary create_a_list).
+Definition my_instr_binary := binary_instr (opc create_a_list) (op_binary create_a_list) (op_binary create_a_list)
+                                           (op_binary create_a_list).
 
-Definition ADD_correspondance :=  opcode_to_tag ((opc create_a_list),ADD).
-Definition AND_correspondance :=  opcode_to_tag ((opc create_a_list),AND).
+Definition ADD_correspondance :=  opcode_to_tag ((opc create_a_list),(tag_i ADD)).
+Definition AND_correspondance :=  opcode_to_tag ((opc create_a_list),(tag_i AND)).
 Check ADD_correspondance.
-Definition correspondance_table_example := c_table (ADD_correspondance :: AND_correspondance :: []).
+Definition correspondance_table_example := ADD_correspondance :: AND_correspondance :: [].
+Check correspondance_table_example.
 
 
 (* Fonctions de comparaisons *)
@@ -111,9 +119,15 @@ Definition correspondance_table_example := c_table (ADD_correspondance :: AND_co
 
 Definition tags_equals (e1 e2 : tag) : bool :=
   match (e1,e2) with
-  | (ADD,ADD) => true
-  | (AND,AND) => true
-  | _ => false
+    | (tag_i t1, tag_i t2) => match (t1,t2) with
+                                   | (ADD,ADD) => true
+                                   | (AND,AND) => true
+                                   | _ => false
+                                 end
+    | (tag_no_i t1, tag_no_i t2) => match (t1,t2) with
+                                      | (JUMP,JUMP) => true
+                                    end
+    | _ => false
   end.
 
 
@@ -122,24 +136,106 @@ Definition tags_equals (e1 e2 : tag) : bool :=
 (* XXX: use the operations (in the standard library) related to [MSet] *)
 
 
-(* TODO :: need to change eveything and i need to try to make some little function to manipulate theese structures *)
-Fixpoint tag_to_binary (t : correspondance_table) (etiq : tag) : (option opcode) :=
+
+(* To find the opCode of one tag in a correspondance list *)
+
+Fixpoint find_tag_list (t : list correspondance) (etiq : tag) : (option opcode) :=
   match t with
-    | c_table elem => match elem with
-                                     | opcode_to_tag o e => if tags_equals etiq e
-                                                                 then Some o
-                                                                 else tag_to_binary suite etiq
-                                     end
+    | [] => None
+    | elem :: suite => match elem with
+                         | opcode_to_tag (op,t) => if tags_equals t etiq
+                                                   then Some op
+                                                   else find_tag_list suite etiq 
+                         | operande_to_operande_binary _ => find_tag_list suite etiq
+                       end
+  end.
+
+(* TODO :: need to make the real function *)
+Fixpoint operande_equals (op1 op2 : operande) : bool :=
+  true.
+
+(* Almot the same as find_tag_list but for the operande *)
+Fixpoint find_operande_list (t : list correspondance) (op : operande) : (option operande_binary) :=
+  match t with
+    | [] => None
+    | elem :: suite => match elem with
+                         | opcode_to_tag _ => find_operande_list suite op
+                         | operande_to_operande_binary (op_b,o) => if operande_equals op o
+                                                                   then Some op_b
+                                                                   else find_operande_list suite op
+                       end
+  end.
+
+(* je n'arrive pas a résoudre le bug d'importation des naturels donc je met les fonctions a la main... *)
+Fixpoint divmod x y q u :=
+  match x with
+    | 0 => (q,u)
+    | S x' => match u with
+                | 0 => divmod x' y (S q) y
+                | S u' => divmod x' y q u'
+              end
+  end.
+
+Definition div x y :=
+  match y with
+    | 0 => y
+    | S y' => fst (divmod x y' 0 y')
+  end.
+
+Definition modulo x y :=
+  match y with
+    | 0 => y
+    | S y' => y' - snd (divmod x y' 0 y')
+  end.
+
+Infix "/" := div : nat_scope.
+Infix "mod" := modulo (at level 40, no associativity) : nat_scope.
+
+
+(* natural number to list bool wich is it's binary representation *)
+Fixpoint nat_to_binary (n : nat) : list bool :=
+  if beq_nat n 0
+  then []
+  else (beq_nat (n mod 2) 1) :: nat_to_binary (n / 2).
+
+
+
+(* This part is needed to compute a list of bool into a *)
+Inductive bin : Type :=
+  | zero : bin
+  | Doub : bin -> bin
+  | DoubPlsOne : bin -> bin.
+
+Fixpoint increment (b : bin) : bin :=
+  match b with
+    | zero => DoubPlsOne zero
+    | Doub b' => DoubPlsOne b'
+    | DoubPlsOne b' => Doub (increment b')
+  end.
+
+Fixpoint convert (b : bin) : nat :=
+  match b with
+    | zero => 0
+    | Doub b' => 2 * convert (b')
+    | DoubPlsOne b' => (2 * convert (b')) + 1
   end.
 
 
+(* Function to convert an immediate operande to it's binary representation *)
+(* after make a little function to translate operande *)
+(* To translate an operande to it's binary representation Note: We don't need an equivalent function for the tag because 
+if the tag isn't in the list then it mean that it have no translation *)
+Fixpoint operande_to_binary (t : list correspondance) (op : operande) : (option operande_binary) :=
+  match op with
+    | immediate n => None
+    | _ => None
+  end.
+
 Fixpoint instruction_to_binary (t_tag : correspondance_tag_table)
          (t_opcode : correspondance_operande_table) (i : instruction) : binary_instruction :=
-  my_instr_binary.
-match tag_to_binary t_tag (* get_etquette i *) with
-| None => None
-| Some res => None (* La suite de la fonction *).
-end.
+  
+
+  
 (* dans la suite de la fonction il faut matcher les différentes cases et retouner *)
 
 (* XXX: you also need to take a list of instructions and convert them
