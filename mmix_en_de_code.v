@@ -130,15 +130,19 @@ Definition tags_equals (e1 e2 : tag) : bool :=
     | _ => false
   end.
 
-
+Fixpoint list_bool_equal (l1 l2 : list bool) : bool :=
+  match (l1,l2) with 
+  | ([],[]) => true
+  | ([],_) => false
+  | (_,[]) => false
+  | ((elem1 :: suite1),(elem2 :: suite2)) => (eqb elem1 elem2) && (list_bool_equal suite1 suite2)  
+  end.
 (* Fonctions de décodage *)
 (* Premiere fonction afin de décoder une étiquette *)
 (* XXX: use the operations (in the standard library) related to [MSet] *)
 
 
-
 (* To find the opCode of one tag in a correspondance list *)
-
 Fixpoint find_tag_list (t : list correspondance) (etiq : tag) : (option opcode) :=
   match t with
     | [] => None
@@ -149,6 +153,18 @@ Fixpoint find_tag_list (t : list correspondance) (etiq : tag) : (option opcode) 
                          | operande_to_operande_binary _ => find_tag_list suite etiq
                        end
   end.
+(* Same function as find_tag_list but in the opposite way to find a tag with the correspondance list *)
+Fixpoint find_opcode_list (t : list correspondance) (o : opcode) : (option tag) :=
+  match (t,o) with
+  | ([],_) => None
+  | ((elem :: suite),(opc opb)) => match elem with
+                     | opcode_to_tag (opc(op),t) => if list_bool_equal opb op 
+                                                    then Some t
+                                                    else find_opcode_list suite o
+                     | operande_to_operande_binary _ => find_opcode_list suite o
+                                 end
+  end.
+
 
 (* TODO :: need to make the real function *)
 Fixpoint operande_equals (op1 op2 : operande) : bool :=
@@ -166,6 +182,16 @@ Fixpoint find_operande_list (t : list correspondance) (op : operande) : (option 
                        end
   end.
 
+Fixpoint find_operande_binary_list (t : list correspondance) (op : operande_binary) : (option operande) :=
+  match (t,op) with 
+  | ([],_) => None
+  | ((elem :: suite),(op_binary op_b)) => match elem with 
+                     | opcode_to_tag _ => find_operande_binary_list suite op
+                     | operande_to_operande_binary (op_binary(op_b2),o) => if list_bool_equal op_b op_b2
+                                                                           then Some o
+                                                                           else find_operande_binary_list suite op
+                                          end
+  end.
 
 (* This part is needed to compute a list of bool into a natural number*)
 Inductive bin : Type :=
@@ -259,12 +285,14 @@ Proof.
 (* after make a little function to translate operande *)
 (* To translate an operande to it's binary representation Note: We don't need an equivalent function for the tag because 
 if the tag isn't in the list then it mean that it have no translation *)
-Fixpoint operande_to_binary (t : list correspondance) (op : operande) : (option operande_binary) :=
+Fixpoint operande_to_binary (t : list correspondance) (op : operande) : operande_binary :=
   match op with
-    | immediate n => Some (op_binary (nat_to_binary n))
-    | reg n => None (* ici il va falloir faire avec la table de correspondance TODO :: reflechir si ça vaut vraiment la peine *)
-    | empty => None 
+    | immediate n => op_binary (nat_to_binary n)
+    | reg n => op_binary [false] (* ici il va falloir faire avec la table de correspondance TODO :: reflechir si ça vaut vraiment la peine *)
+    | empty => op_binary [false] 
   end.
+
+
 
 (* Record binary_instruction :=
  binary_instr { op : opcode ; firstOperande : operande_binary ;secondOperande:operande_binary;firdOperande : operande_binary }. *)
@@ -273,12 +301,15 @@ Fixpoint instruction_to_binary (table : list correspondance) (i : instruction) :
   match i with
     | instr t op1 op2 op3 => let res := find_tag_list table t in                             
                              match res with
-                               | Some t => binary_instr { res ;(operande_to_binary op1);(operande_to_binary op2)
-                                                          ;(operande_to_binary op3) }
+                               | Some t => Some(binary_instr t (operande_to_binary table op1) 
+                                                        (operande_to_binary table op2) (operande_to_binary table op3))
                                | None => None
                              end
   end.
   
+(* Fixpoint binary_to_instruction (table : list correspondance) (i : binary_instruction) : option instruction :=
+  match i with 
+  | binary_instr opc op1 op2 op3 => let res := *)
   
 
   
