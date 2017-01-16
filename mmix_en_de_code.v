@@ -266,8 +266,19 @@ Fixpoint operande_to_binary (t : list correspondance) (op : operande) : (option 
     | empty => None 
   end.
 
-Fixpoint instruction_to_binary (t_tag : correspondance_tag_table)
-         (t_opcode : correspondance_operande_table) (i : instruction) : binary_instruction :=
+(* Record binary_instruction :=
+ binary_instr { op : opcode ; firstOperande : operande_binary ;secondOperande:operande_binary;firdOperande : operande_binary }. *)
+(* find_tag_list table instruction *)
+Fixpoint instruction_to_binary (table : list correspondance) (i : instruction) : option binary_instruction :=
+  match i with
+    | instr t op1 op2 op3 => let res := find_tag_list table t in                             
+                             match res with
+                               | Some t => binary_instr { res ;(operande_to_binary op1);(operande_to_binary op2)
+                                                          ;(operande_to_binary op3) }
+                               | None => None
+                             end
+  end.
+  
   
 
   
