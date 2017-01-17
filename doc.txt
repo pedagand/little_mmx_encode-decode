@@ -1,0 +1,35 @@
+(* return true if the two tags given in args are equals *)
+Definition tags_equals (e1 e2 : tag) : bool :=
+
+(* Same ase tags_equals but for the boolean list *)
+Fixpoint list_bool_equal (l1 l2 : list bool) : bool :=
+
+(* Given a correspondance list, try to find a tag in this list to return the corresponding opcode *)
+Fixpoint find_tag_list (t : list correspondance) (etiq : tag) : (option opcode) :=
+
+(* Same as find_tag_list but given an opcode, return the corresponding tag (this is the symetric function) *)
+Fixpoint find_opcode_list (t : list correspondance) (o : opcode) : (option tag) :=
+
+
+(* TODO :: finish this function *)
+(* Return true if the operande op1 and op2 are equals *)
+Fixpoint operande_equals (op1 op2 : operande) : bool :=
+
+(* Same as find_tag_list but take an operande as argument and try to return the corresponding operande_binary *)
+Fixpoint find_operande_list (t : list correspondance) (op : operande) : (option operande_binary) :=
+
+(* symetric function of find_operande list *)
+Fixpoint find_operande_binary_list (t : list correspondance) (op : operande_binary) : (option operande) :=
+
+
+
+(* there are some implentations functions but they are itentionaly hided (go to the binary.v file to see the implementations
+details *)
+(* on the main file we only use these two functions *)
+Definition binary_to_nat (l : list bool) : nat :=
+Definition nat_to_binary (n : nat) : list bool :=
+
+
+
+
+
