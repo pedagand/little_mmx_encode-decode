@@ -28,7 +28,7 @@ Inductive tag_without_immediate : Type :=
 Inductive tag : Type :=
 | tag_i : tag_with_immediate -> tag
 | tag_no_i : tag_without_immediate -> tag.
-  
+
 
 (* there is 256 register and 32 special register *)
 (* i only give two special register to test but i will not give the exhaustive list (at least for the moment) *)
@@ -226,29 +226,53 @@ Compute nat_to_binary 4.
 (* after make a little function to translate operande *)
 (* To translate an operande to it's binary representation Note: We don't need an equivalent function for the tag because 
 if the tag isn't in the list then it mean that it have no translation *)
-Fixpoint operande_to_binary (t : list correspondance) (op : operande) : operande_binary :=
+Definition operande_to_binary (t : list correspondance) (op : operande) : option operande_binary :=
   match op with
-    | immediate n => op_binary (nat_to_binary n)
-    | reg n => match find_operande_list t op with
-                 | Some(res) => res
-                 | None => op_binary [false] (* TODO :: here it's not good i think i need to continue using the option monad *)
-               end
-    | empty => op_binary [false] 
+    | immediate n => Some(op_binary (nat_to_binary n))
+    | reg n => find_operande_list t op 
+    | empty => None
   end.
 
-
+(* this function should be call only when you know that the binary_operand is not an immediate *)
+(* You can know theese stuff because of the opcode that you get before *) 
+Definition binary_operande_to_bool_list (op_b : operande_binary) : nat := 
+  match op_b with
+    | op_binary l => binary_to_nat l
+  end.
 
 (* Record binary_instruction :=
  binary_instr { op : opcode ; firstOperande : operande_binary ;secondOperande:operande_binary;firdOperande : operande_binary }. *)
 (* find_tag_list table instruction *)
+(* TODO :: il faudrat rajouter du error handling lors d'un retour None de la fonction operande_to_binary *)
 Definition instruction_to_binary (table : list correspondance) (i : instruction) : option binary_instruction :=
   match i with
-    | instr t op1 op2 op3 => let res := find_tag_list table t in                             
-                             match res with
-                               | Some t => Some(binary_instr t (operande_to_binary table op1) 
-                                                        (operande_to_binary table op2) (operande_to_binary table op3))
+    | instr t op1 op2 op3 => match find_tag_list table t with
                                | None => None
+                               | Some tag_convert => let op_b1 := match operande_to_binary table op1 with
+                                                       | Some(res) => res | None => op_binary [] end in
+                                        let op_b2 := match operande_to_binary table op2 with
+                                                       | Some(res) => res | None => op_binary [] end in
+                                        let op_b3 := match operande_to_binary table op3 with
+                                                       | Some(res) => res | None => op_binary [] end in
+                                        Some(binary_instr tag_convert op_b1 op_b2 op_b3)
                              end
+  end.
+
+Definition binary_to_instruction (table : list correspondance) (i_b : binary_instruction) : option instruction :=
+  match i_b with
+    | binary_instr o op_b1 op_b2 op_b3 => let translate_op_b1 := match find_operande_binary_list table op_b1 with
+                                                                   | Some res => res | None => empty end in
+                                          let translate_op_b2 := match find_operande_binary_list table op_b2 with
+                                                                   | Some res => res | None => empty end in
+                                          match find_opcode_list table o with
+                                            | Some(tag_i res_tag) => Some(instr (tag_i  res_tag) translate_op_b1 translate_op_b2 
+                                                                                (immediate (binary_operande_to_bool_list op_b3)))
+                                            | Some(tag_no_i res_tag) =>
+                                              let translate_op_b3 := match find_operande_binary_list table op_b2 with
+                                                                       | Some res => res | None => empty end in
+                                              Some(instr (tag_no_i res_tag) translate_op_b1 translate_op_b2 translate_op_b3)
+                                            | None => None
+                                          end
   end.
 
 (* correspondance_table_example to test the function *)

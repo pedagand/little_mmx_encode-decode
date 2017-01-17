@@ -21,6 +21,8 @@ Fixpoint find_operande_list (t : list correspondance) (op : operande) : (option 
 (* symetric function of find_operande list *)
 Fixpoint find_operande_binary_list (t : list correspondance) (op : operande_binary) : (option operande) :=
 
+(* little procedure to make the function less charged *)
+Definition binary_operande_to_bool_list (op_b : operande_binary) : bool_list := 
 
 
 (* there are some implentations functions but they are itentionaly hided (go to the binary.v file to see the implementations
@@ -33,11 +35,14 @@ Definition nat_to_binary (n : nat) : list bool :=
 (* this function take an operande and if it's an immediate, directly give an operande_binary which correspond to
 it's binary representation. If it's a register it will search in the correspondance list which is given in argument
 and for the emtpy case return a list corresponding to the none *)
-Fixpoint operande_to_binary (t : list correspondance) (op : operande) : operande_binary :=
+Definition operande_to_binary (t : list correspondance) (op : operande) : operande_binary :=
 
 
 (* this function take an instruction and a correspondance list and try to return it's binary representation *)
 Definition instruction_to_binary (table : list correspondance) (i : instruction) : option binary_instruction :=
+
+(* symetric function of binary_to_instruction *)
+
 
 
 
