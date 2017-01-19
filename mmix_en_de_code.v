@@ -232,6 +232,7 @@ Fixpoint find_operand_binary_list (t : list correspondance) (op : operand_binary
 
 
 (* Functions to convert list bool which represent binary numbers to nat *)
+
 Definition binary_to_nat (l : list bool) : nat :=
   convert (binaryInv_to_bin (rev l)).
 
@@ -269,17 +270,19 @@ Definition binary_operand_to_bool_list (op_b : operand_binary) : nat :=
 (* find_tag_list table instruction *)
 (* TODO :: il faudrat rajouter du error handling lors d'un retour None de la fonction operand_to_binary *)
 Definition instruction_to_binary (table : list correspondance) (i : instruction) : option binary_instruction :=
-  match i with
-    | mk_instr t op1 op2 op3 => match find_tag_list table t with
-                               | None => None
-                               | Some tag_convert => let op_b1 := match operand_to_binary table op1 with
-                                                       | Some(res) => res | None => op_binary [] end in
-                                        let op_b2 := match operand_to_binary table op2 with
-                                                       | Some(res) => res | None => op_binary [] end in
-                                        let op_b3 := match operand_to_binary table op3 with
-                                                       | Some(res) => res | None => op_binary [] end in
-                                        Some(binary_instr tag_convert op_b1 op_b2 op_b3)
-                             end
+  match find_tag_list table i.(firstField) with
+  | None => None
+  | Some tag_convert => 
+    let op_b1 := match operand_to_binary table i.(secondField) with
+                 | Some(res) => res 
+                 | None => [] end in
+    let op_b2 := match operand_to_binary table i.(thirdField) with
+                 | Some(res) => res
+                 | None => [] end in
+    let op_b3 := match operand_to_binary table i.(fourthField) with
+                 | Some(res) => res
+                 | None =>  [] end in
+    Some(binary_instr tag_convert op_b1 op_b2 op_b3)
   end.
 
 Definition binary_to_instruction (table : list correspondance) (i_b : binary_instruction) : option instruction :=
