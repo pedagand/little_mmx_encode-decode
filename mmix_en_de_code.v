@@ -122,11 +122,11 @@ Definition create_a_list := [true;true;true;true;true;true;true;true].
 Definition create_a_list_bis := true :: true :: true :: true :: true :: true :: true :: true :: [].
 
 
-Definition my_instr_binary := binary_instr (opc create_a_list) (op_binary create_a_list) (op_binary create_a_list)
-                                           (op_binary create_a_list).
+Definition my_instr_binary := binary_instr (create_a_list) (create_a_list) (create_a_list)
+                                           (create_a_list).
 
-Definition ADD_correspondance :=  opcode_to_tag ((opc create_a_list),(tag_i ADD_I)).
-Definition AND_correspondance :=  opcode_to_tag ((opc create_a_list),(tag_i AND_I)).
+Definition ADD_correspondance :=  opcode_to_tag ((create_a_list),(tag_i ADD_I)).
+Definition AND_correspondance :=  opcode_to_tag ((create_a_list),(tag_i AND_I)).
 Check ADD_correspondance.
 Definition correspondance_table_example := ADD_correspondance :: AND_correspondance :: [].
 Check correspondance_table_example.
@@ -181,8 +181,8 @@ Fixpoint find_tag_list (t : list correspondance) (etiq : tag) : (option opcode) 
 Fixpoint find_opcode_list (t : list correspondance) (o : opcode) : (option tag) :=
   match (t,o) with
   | ([],_) => None
-  | ((elem :: suite),(opc opb)) => match elem with
-                     | opcode_to_tag (opc(op),t) => if list_bool_equal opb op 
+  | ((elem :: suite),(opb)) => match elem with
+                     | opcode_to_tag ((op),t) => if list_bool_equal opb op 
                                                     then Some t
                                                     else find_opcode_list suite o
                      | operand_to_operand_binary _ => find_opcode_list suite o
@@ -221,9 +221,9 @@ Fixpoint find_operand_list (t : list correspondance) (op : operand) : (option op
 Fixpoint find_operand_binary_list (t : list correspondance) (op : operand_binary) : (option operand) :=
   match (t,op) with 
   | ([],_) => None
-  | ((elem :: suite),(op_binary op_b)) => match elem with 
+  | ((elem :: suite),( op_b)) => match elem with 
                      | opcode_to_tag _ => find_operand_binary_list suite op
-                     | operand_to_operand_binary (op_binary(op_b2),o) => if list_bool_equal op_b op_b2
+                     | operand_to_operand_binary ((op_b2),o) => if list_bool_equal op_b op_b2
                                                                            then Some o
                                                                            else find_operand_binary_list suite op
                                           end
@@ -252,7 +252,7 @@ Compute nat_to_binary 4.
 if the tag isn't in the list then it mean that it have no translation *)
 Definition operand_to_binary (t : list correspondance) (op : operand) : option operand_binary :=
   match op with
-    | immediate n => Some(op_binary (nat_to_binary n))
+    | immediate n => Some((nat_to_binary n))
     | reg n => find_operand_list t op 
     | empty => None
   end.
@@ -261,7 +261,7 @@ Definition operand_to_binary (t : list correspondance) (op : operand) : option o
 (* You can know theese stuff because of the opcode that you get before *) 
 Definition binary_operand_to_bool_list (op_b : operand_binary) : nat := 
   match op_b with
-    | op_binary l => binary_to_nat l
+    | l => binary_to_nat l
   end.
 
 (* Record binary_instruction :=
