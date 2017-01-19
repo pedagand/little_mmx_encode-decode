@@ -47,7 +47,10 @@ Inductive operand : Type :=
 
 
 Record instruction :=
-  instr { firstField : tag; secondField : operand ; thirdField : operand ; fourthField : operand }.
+  mk_instr { firstField : tag; 
+             secondField : operand ; 
+             thirdField : operand ; 
+             fourthField : operand }.
 
 
 (* datatypes for the binary instructions *)
@@ -68,7 +71,7 @@ Record binary_instruction :=
 
 (* Exemples d'utilisation des structures de données *)
 
-Example my_instr := instr (tag_i ADD_I) (reg (general_reg 10)) (reg (general_reg 11)) (reg (general_reg 10)).
+Example my_instr := mk_instr (tag_i ADD_I) (reg (general_reg 10)) (reg (general_reg 11)) (reg (general_reg 10)).
 
 Check my_instr.
 
@@ -246,7 +249,7 @@ Definition binary_operand_to_bool_list (op_b : operand_binary) : nat :=
 (* TODO :: il faudrat rajouter du error handling lors d'un retour None de la fonction operand_to_binary *)
 Definition instruction_to_binary (table : list correspondance) (i : instruction) : option binary_instruction :=
   match i with
-    | instr t op1 op2 op3 => match find_tag_list table t with
+    | mk_instr t op1 op2 op3 => match find_tag_list table t with
                                | None => None
                                | Some tag_convert => let op_b1 := match operand_to_binary table op1 with
                                                        | Some(res) => res | None => op_binary [] end in
@@ -265,19 +268,19 @@ Definition binary_to_instruction (table : list correspondance) (i_b : binary_ins
                                           let translate_op_b2 := match find_operand_binary_list table op_b2 with
                                                                    | Some res => res | None => empty end in
                                           match find_opcode_list table o with
-                                            | Some(tag_i res_tag) => Some(instr (tag_i  res_tag) translate_op_b1 translate_op_b2 
+                                            | Some(tag_i res_tag) => Some(mk_instr (tag_i  res_tag) translate_op_b1 translate_op_b2 
                                                                                 (immediate (binary_operand_to_bool_list op_b3)))
                                             | Some(tag_no_i res_tag) =>
                                               let translate_op_b3 := match find_operand_binary_list table op_b2 with
                                                                        | Some res => res | None => empty end in
-                                              Some(instr (tag_no_i res_tag) translate_op_b1 translate_op_b2 translate_op_b3)
+                                              Some(mk_instr (tag_no_i res_tag) translate_op_b1 translate_op_b2 translate_op_b3)
                                             | None => None
                                           end
   end.
 
 (* correspondance_table_example to test the function *)
 (* Example my_instr := instr (tag_i ADD_I) (reg (general_reg 10)) (reg (general_reg 11)) (reg (general_reg 10)). *)
-Example my_instr2 := instr (tag_i ADD_I) (immediate 4) (immediate 7) (immediate 8).
+Example my_instr2 := mk_instr (tag_i ADD_I) (immediate 4) (immediate 7) (immediate 8).
 Compute instruction_to_binary correspondance_table_example my_instr2.
 
   
