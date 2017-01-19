@@ -71,7 +71,10 @@ Record binary_instruction :=
 
 (* Exemples d'utilisation des structures de données *)
 
-Example my_instr := mk_instr (tag_i ADD_I) (reg (general_reg 10)) (reg (general_reg 11)) (reg (general_reg 10)).
+Example my_instr := mk_instr (tag_i ADD_I)
+                             (reg (general_reg 10))
+                             (reg (general_reg 11))
+                             (reg (general_reg 10)).
 
 Check my_instr.
 
