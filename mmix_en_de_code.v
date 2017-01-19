@@ -10,6 +10,7 @@ Require Import List.
 Import ListNotations.
 Require Import Notations Logic Datatypes.
 Local Open Scope nat_scope.
+Require Export MSetInterface OrdersFacts OrdersLists.
 (* to use this module you have to compile the binary.v file "coqc binary.v "*)
 
 (* XXX: use [coq_makefile] with a [_CoqProject] as described here
@@ -20,15 +21,14 @@ Require Import binary.
 
 (* datatypes for the instructions *)
 
-(* The boolean use here allow us to know if it is the code with argument z as an immediate or not 
-Instructions which have only one representation don't need a bool argument *)
 Inductive tag_with_immediate : Type :=
 | ADD_I : tag_with_immediate
 | AND_I : tag_with_immediate.
 
 Inductive tag_without_immediate : Type :=
 (* XXX: isn't there an [AND] version without immediate? *)
-| ADD : tag_without_immediate.
+| ADD : tag_without_immediate
+| AND : tag_without_immediate.
 
 
 Inductive tag : Type :=
@@ -54,10 +54,11 @@ Inductive operand : Type :=
 
 Record instruction :=
   (* XXX: [firstField], [secondField], [thirdField] and [fourthField]?? Are you kidding me?*)
-  mk_instr { firstField : tag; 
-             secondField : operand ; 
-             thirdField : operand ; 
-             fourthField : operand }.
+  (* ANSWER : it was just for the name or the type representation ? :p *)
+  mk_instr { instr_opcode : tag; 
+             instr_operande1 : operand ; 
+             instr_operande2 : operand ; 
+             instr_operande3 : operand }.
 
 
 (* datatypes for the binary instructions *)
@@ -65,24 +66,28 @@ Record instruction :=
 (* XXX: binary instructions should just be lists of booleans, no
   need/reason to have more structure than that *)
 
+(* REMOVE : later 
 Definition opcode := list bool.
 
 Definition operand_binary := list bool.
 
 Record binary_instruction :=
- binary_instr { opco : opcode ; firstOperand : operand_binary ;secondOperand:operand_binary;firdOperand : operand_binary }.
+ binary_instr { opco : opcode ; firstOperand : operand_binary ;secondOperand:operand_binary;firdOperand : operand_binary }. *)
+
+Definition binary_instruction := list bool.
 
 (* XXX: [binary_instruction] should be defined as:
 
 [[ Definition binary_instruction := list bool.  ]]
 
 (which basically means that the definitions [opcode], [operand_binary]
-and [binary_instruction] are useless, as per my older comment above).
+and [binary_instruction] are useless, as per my older comment above). *)
 
-*)
+(* ANSWER : i agree that this is not required but it is easyer to use because now we have in the function that manipulates 
+the binary_instruction to cut the list into 8 bits list ect ... *)
 
 (* XXX: English please! *)
-(* Exemples d'utilisation des structures de données *)
+(* Some examples to test a little bit the functions *)
 
 Example my_instr := mk_instr (tag_i ADD_I)
                              (reg (general_reg 10))
@@ -91,7 +96,7 @@ Example my_instr := mk_instr (tag_i ADD_I)
 
 Check my_instr.
 
-Example first_field_instr := my_instr.(firstField).
+Example first_field_instr := my_instr.(instr_opcode).
 Check first_field_instr.
 
 (* pour l'instant je ne fais pas encore les fonctions de parsing je fais comme si le parsing m'avais déja remplis mon 
@@ -108,9 +113,11 @@ Inductive correspondance_tag : Type :=
      programme afin que la maintenabilité du programme soit plus aisée (parceque sinon ça serait un gros switch ?)*) 
 
 (* XXX: this is just a pair [opcode * tag] *)
+
+ (* REMOVE 
 Inductive correspondance : Type :=
 | opcode_to_tag : (opcode*tag) -> correspondance
-| operand_to_operand_binary : (operand_binary * operand) -> correspondance.
+| operand_to_operand_binary : (operand_binary * operand) -> correspondance. *)
 
 
 (* XXX: this is just an association list, of type [list (opcode *
@@ -118,7 +125,12 @@ Inductive correspondance : Type :=
    [https://coq.inria.fr/library/Coq.MSets.MSets.html] instead. This
    library is hard to import, let me know if you need help. *)
 
-Definition create_a_list := [true;true;true;true;true;true;true;true].
+(* TODO :: here i have to define an association list of type (tag * list bool) 
+ and i think that i will have to do another one for the registers *)
+
+
+
+(* Definition create_a_list := [true;true;true;true;true;true;true;true].
 Definition create_a_list_bis := true :: true :: true :: true :: true :: true :: true :: true :: [].
 
 
@@ -129,12 +141,15 @@ Definition ADD_correspondance :=  opcode_to_tag ((create_a_list),(tag_i ADD_I)).
 Definition AND_correspondance :=  opcode_to_tag ((create_a_list),(tag_i AND_I)).
 Check ADD_correspondance.
 Definition correspondance_table_example := ADD_correspondance :: AND_correspondance :: [].
-Check correspondance_table_example.
+Check correspondance_table_example. *)
 
 
 (* Fonctions de comparaisons *)
 
 (* XXX: Check [Scheme Equality for ident1] in [https://coq.inria.fr/refman/Reference-Manual015.html] *)
+
+Scheme tag_scheme := Induction for tag Sort Set.
+Check tag_scheme.
 
 Definition tags_equals (e1 e2 : tag) : bool :=
   match (e1,e2) with
@@ -145,6 +160,8 @@ Definition tags_equals (e1 e2 : tag) : bool :=
                                  end
     | (tag_no_i t1, tag_no_i t2) => match (t1,t2) with
                                       | (ADD,ADD) => true
+                                      | (AND,AND) => true
+                                      | _ => false
                                     end
     | _ => false
   end.
