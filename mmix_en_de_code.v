@@ -11,6 +11,10 @@ Import ListNotations.
 Require Import Notations Logic Datatypes.
 Local Open Scope nat_scope.
 (* to use this module you have to compile the binary.v file "coqc binary.v "*)
+
+(* XXX: use [coq_makefile] with a [_CoqProject] as described here
+[https://coq.inria.fr/refman/Reference-Manual017.html#Makefile] *)
+
 Require Import binary.
 
 
@@ -23,7 +27,9 @@ Inductive tag_with_immediate : Type :=
 | AND_I : tag_with_immediate.
 
 Inductive tag_without_immediate : Type :=
+(* XXX: isn't there an [AND] version without immediate? *)
 | ADD : tag_without_immediate.
+
 
 Inductive tag : Type :=
 | tag_i : tag_with_immediate -> tag
@@ -47,6 +53,7 @@ Inductive operand : Type :=
 
 
 Record instruction :=
+  (* XXX: [firstField], [secondField], [thirdField] and [fourthField]?? Are you kidding me?*)
   mk_instr { firstField : tag; 
              secondField : operand ; 
              thirdField : operand ; 
@@ -58,17 +65,23 @@ Record instruction :=
 (* XXX: binary instructions should just be lists of booleans, no
   need/reason to have more structure than that *)
 
-Inductive opcode : Type :=
-| opc : list bool -> opcode.
+Definition opcode := list bool.
 
-Inductive operand_binary : Type :=
-| op_binary : list bool -> operand_binary.
+Definition operand_binary := list bool.
 
 Record binary_instruction :=
  binary_instr { opco : opcode ; firstOperand : operand_binary ;secondOperand:operand_binary;firdOperand : operand_binary }.
 
+(* XXX: [binary_instruction] should be defined as:
 
+[[ Definition binary_instruction := list bool.  ]]
 
+(which basically means that the definitions [opcode], [operand_binary]
+and [binary_instruction] are useless, as per my older comment above).
+
+*)
+
+(* XXX: English please! *)
 (* Exemples d'utilisation des structures de données *)
 
 Example my_instr := mk_instr (tag_i ADD_I)
@@ -147,6 +160,11 @@ Fixpoint list_bool_equal (l1 l2 : list bool) : bool :=
 (* Premiere fonction afin de décoder une étiquette *)
 (* XXX: use the operations (in the standard library) related to [MSet] *)
 
+(* XXX: these [find_*] functions are all a big waste of electrons:
+there is a single [find] function that lookups up in an association
+list / [MSet] which would do the job generically and could then be
+instantiated to each individual case.  Fix this code before doing any
+proof or you will prove the same facts over and over again. *)
 
 (* To find the opCode of one tag in a correspondance list *)
 Fixpoint find_tag_list (t : list correspondance) (etiq : tag) : (option opcode) :=
@@ -265,6 +283,7 @@ Definition instruction_to_binary (table : list correspondance) (i : instruction)
   end.
 
 Definition binary_to_instruction (table : list correspondance) (i_b : binary_instruction) : option instruction :=
+  (* XXX: fix formatting! *)
   match i_b with
     | binary_instr o op_b1 op_b2 op_b3 => let translate_op_b1 := match find_operand_binary_list table op_b1 with
                                                                    | Some res => res | None => empty end in

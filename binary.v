@@ -2,6 +2,12 @@ Open Scope list_scope.
 Require Import List.
 Import ListNotations.
 
+(* XXX: all of this (and more) is already defined in the Coq stdlib: 
+[https://coq.inria.fr/library/Coq.PArith.BinPos.html] 
+
+ To get it, you need to [[Require Import ZArith.]] *)
+
+
 Inductive bin : Type :=
   | zero : bin
   | Doub : bin -> bin
