@@ -160,7 +160,13 @@ Definition update_tag (p: nat * (list bool)) (m: map_nat_bool) :=
   M.add (fst p) (snd p) m.
 
 (* function that allow you to decode an opcode to a binaryinstruction *)
-Definition opcode_to_binary
+Definition opcode_to_binary (t : tag) (m : map_nat_bool) : option(list bool) :=
+  match t with
+    | tag_i n _ => find_tag n m
+    | tag_no_i n _ => find_tag n m
+  end.
+
+
 
 
 
