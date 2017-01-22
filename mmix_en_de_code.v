@@ -10,19 +10,24 @@ Require Import List.
 Import ListNotations.
 Require Import Notations Logic Datatypes.
 Local Open Scope nat_scope.
-Require Export MSetInterface OrdersFacts OrdersLists.
+Require Import MSets.
+Require Import MSets.MSetList.
+Require Import Coq.FSets.FMapList Coq.Structures.OrderedTypeEx.
 (* to use this module you have to compile the binary.v file "coqc binary.v "*)
+
+(* Check mem. *)
 
 (* XXX: use [coq_makefile] with a [_CoqProject] as described here
 [https://coq.inria.fr/refman/Reference-Manual017.html#Makefile] *)
 
-Require Import binary.
+(* TODO :: use the already implemented version of this *)
+(* Require Import binary. *)
 
 
 (* datatypes for the instructions *)
-
+(* now i just put a nat here because it's hard to make an association list with something else than a nat now *)
 Inductive tag_with_immediate : Type :=
-| ADD_I : tag_with_immediate
+| ADD_I : tag_with_immediate 
 | AND_I : tag_with_immediate.
 
 Inductive tag_without_immediate : Type :=
@@ -32,8 +37,8 @@ Inductive tag_without_immediate : Type :=
 
 
 Inductive tag : Type :=
-| tag_i : tag_with_immediate -> tag
-| tag_no_i : tag_without_immediate -> tag.
+| tag_i : nat -> tag_with_immediate -> tag
+| tag_no_i : nat -> tag_without_immediate -> tag.
 
 
 (* there is 256 register and 32 special register *)
@@ -66,30 +71,11 @@ Record instruction :=
 (* XXX: binary instructions should just be lists of booleans, no
   need/reason to have more structure than that *)
 
-(* REMOVE : later 
-Definition opcode := list bool.
-
-Definition operand_binary := list bool.
-
-Record binary_instruction :=
- binary_instr { opco : opcode ; firstOperand : operand_binary ;secondOperand:operand_binary;firdOperand : operand_binary }. *)
-
 Definition binary_instruction := list bool.
 
-(* XXX: [binary_instruction] should be defined as:
-
-[[ Definition binary_instruction := list bool.  ]]
-
-(which basically means that the definitions [opcode], [operand_binary]
-and [binary_instruction] are useless, as per my older comment above). *)
-
-(* ANSWER : i agree that this is not required but it is easyer to use because now we have in the function that manipulates 
-the binary_instruction to cut the list into 8 bits list ect ... *)
-
-(* XXX: English please! *)
 (* Some examples to test a little bit the functions *)
 
-Example my_instr := mk_instr (tag_i ADD_I)
+Example my_instr := mk_instr (tag_i 10 ADD_I)
                              (reg (general_reg 10))
                              (reg (general_reg 11))
                              (reg (general_reg 10)).
@@ -99,29 +85,9 @@ Check my_instr.
 Example first_field_instr := my_instr.(instr_opcode).
 Check first_field_instr.
 
-(* pour l'instant je ne fais pas encore les fonctions de parsing je fais comme si le parsing m'avais déja remplis mon 
-data type *)
 
-(* XXX: yes, we won't do parsing for now: we assume that piece of
-   software gives us a list of [instruction] *)
-
-(* Idée pour la suite, à l'aide de fichier on crée tout un tas d'éléments de type correspondance
-Inductive correspondance_tag : Type := 
-| binary_to_instruction : binary -> tag -> correspondance_tag
-| instruction_to_binary : tag -> binary -> correspondance_tag 
-     Cela permettrait donc aux fonctions de prendre une liste de ces correspondances qui seraient crée au démarage du
-     programme afin que la maintenabilité du programme soit plus aisée (parceque sinon ça serait un gros switch ?)*) 
-
-(* XXX: this is just a pair [opcode * tag] *)
-
- (* REMOVE 
-Inductive correspondance : Type :=
-| opcode_to_tag : (opcode*tag) -> correspondance
-| operand_to_operand_binary : (operand_binary * operand) -> correspondance. *)
-
-
-(* XXX: this is just an association list, of type [list (opcode *
-   tag)]. But I recommend using [MSet]
+(* XXX: this is just an association list, of type [list (tag *
+   list bool)]. But I recommend using [MSet]
    [https://coq.inria.fr/library/Coq.MSets.MSets.html] instead. This
    library is hard to import, let me know if you need help. *)
 
@@ -130,8 +96,8 @@ Inductive correspondance : Type :=
 
 
 
-(* Definition create_a_list := [true;true;true;true;true;true;true;true].
-Definition create_a_list_bis := true :: true :: true :: true :: true :: true :: true :: true :: [].
+Definition create_a_list := [true;true;true;true;true;true;true;true].
+(* Definition create_a_list_bis := true :: true :: true :: true :: true :: true :: true :: true :: [].
 
 
 Definition my_instr_binary := binary_instr (create_a_list) (create_a_list) (create_a_list)
@@ -148,30 +114,26 @@ Check correspondance_table_example. *)
 
 (* XXX: Check [Scheme Equality for ident1] in [https://coq.inria.fr/refman/Reference-Manual015.html] *)
 
+
+
 Scheme tag_scheme := Induction for tag Sort Set.
 Check tag_scheme.
 
-Definition tags_equals (e1 e2 : tag) : bool :=
-  match (e1,e2) with
-    | (tag_i t1, tag_i t2) => match (t1,t2) with
-                                   | (ADD_I,ADD_I) => true
-                                   | (AND_I,AND_I) => true
-                                   | _ => false
-                                 end
-    | (tag_no_i t1, tag_no_i t2) => match (t1,t2) with
-                                      | (ADD,ADD) => true
-                                      | (AND,AND) => true
-                                      | _ => false
-                                    end
-    | _ => false
-  end.
+Scheme Equality for tag.
 
-Fixpoint list_bool_equal (l1 l2 : list bool) : bool :=
+Check tag_with_immediate_beq.
+Check tag_without_immediate_beq.
+Check tag_beq.
+Check tag_eq_dec.
+
+Print tag_beq.
+
+Fixpoint list_bool_beq (l1 l2 : list bool) : bool :=
   match (l1,l2) with 
   | ([],[]) => true
   | ([],_) => false
   | (_,[]) => false
-  | ((elem1 :: suite1),(elem2 :: suite2)) => (eqb elem1 elem2) && (list_bool_equal suite1 suite2)  
+  | ((elem1 :: suite1),(elem2 :: suite2)) => (eqb elem1 elem2) && (list_bool_beq suite1 suite2)  
   end.
 (* Fonctions de décodage *)
 (* Premiere fonction afin de décoder une étiquette *)
@@ -184,44 +146,23 @@ instantiated to each individual case.  Fix this code before doing any
 proof or you will prove the same facts over and over again. *)
 
 (* To find the opCode of one tag in a correspondance list *)
-Fixpoint find_tag_list (t : list correspondance) (etiq : tag) : (option opcode) :=
-  match t with
-    | [] => None
-    | elem :: suite => match elem with
-                         | opcode_to_tag (op,t) => if tags_equals t etiq
-                                                   then Some op
-                                                   else find_tag_list suite etiq 
-                         | operand_to_operand_binary _ => find_tag_list suite etiq
-                       end
-  end.
-(* Same function as find_tag_list but in the opposite way to find a tag with the correspondance list *)
-Fixpoint find_opcode_list (t : list correspondance) (o : opcode) : (option tag) :=
-  match (t,o) with
-  | ([],_) => None
-  | ((elem :: suite),(opb)) => match elem with
-                     | opcode_to_tag ((op),t) => if list_bool_equal opb op 
-                                                    then Some t
-                                                    else find_opcode_list suite o
-                     | operand_to_operand_binary _ => find_opcode_list suite o
-                                 end
-  end.
+Scheme Equality for operand.
+Print operand_beq.
 
-(* TODO :: need to do this with things that pierre tolds *)
-Fixpoint operand_equals (op1 op2 : operand) : bool :=
-  match (op1,op2) with
-    | (immediate n1, immediate n2) => beq_nat n1 n2
-    | (reg r1, reg r2) => match (r1,r2) with
-                                      | (general_reg n1,general_reg n2) => beq_nat n1 n2
-                                      | (special_reg r1, special_reg r2) => match (r1,r2) with
-                                                                              | (rB,rB) => true
-                                                                              | (rD,rD) => true
-                                                                              | _ => false
-                                                                            end
-                                      | _ => false
-                                    end
-    | (empty,empty) => true
-    | _ => false
-  end.
+(* this allow to create some association list from a nat to a boolean list *)
+Module Import M := FMapList.Make(Nat_as_OT).
+
+Definition map_nat_bool: Type := M.t (list bool).
+
+Definition find_tag k (m: map_nat_bool) := M.find k m.
+Check find_tag.
+Definition update_tag (p: nat * (list bool)) (m: map_nat_bool) :=
+  M.add (fst p) (snd p) m.
+
+(* function that allow you to decode an opcode to a binaryinstruction *)
+Definition opcode_to_binary
+
+
 
 (* Almot the same as find_tag_list but for the operand *)
 Fixpoint find_operand_list (t : list correspondance) (op : operand) : (option operand_binary) :=
@@ -341,6 +282,7 @@ Compute instruction_to_binary correspondance_table_example my_instr2.
 
 
 (* XXX: what are the theorems? *)
+
 
 
 
