@@ -14,19 +14,22 @@ Require Import MSets.
 Require Import MSets.MSetList.
 Require Import Coq.FSets.FMapList Coq.Structures.OrderedTypeEx.
 Require Import NArith.
-(* to use this module you have to compile the binary.v file "coqc binary.v "*)
-
-(* Check mem. *)
 
 (* XXX: use [coq_makefile] with a [_CoqProject] as described here
 [https://coq.inria.fr/refman/Reference-Manual017.html#Makefile] *)
 
-(* TODO :: use the already implemented version of this *)
-(* Require Import binary. *)
-
 
 (* datatypes for the instructions *)
 (* now i just put a nat here because it's hard to make an association list with something else than a nat now *)
+
+(* XXX: this is a *TERRIBLE* idea! Either your slap an order on
+[tag_with_immediate] and define the FMap over [tag_with_immediate], or
+you implement a function of type [tag_with_immediate -> nat] and
+convert the [tag_with_immediate] to [nat] before looking up an FMap
+over nat. But you don't duplicate the encoding with a
+[tag_with_immediate] *and* a [nat] in the description of the
+instruction set! *)
+
 Inductive tag_with_immediate : Type :=
 | ADD_I : tag_with_immediate 
 | AND_I : tag_with_immediate.
@@ -38,8 +41,8 @@ Inductive tag_without_immediate : Type :=
 
 
 Inductive tag : Type :=
-| tag_i : nat -> tag_with_immediate -> tag
-| tag_no_i : nat -> tag_without_immediate -> tag.
+| tag_i : (* XXX: this must go! *) nat -> (* XXX: end *) tag_with_immediate -> tag
+| tag_no_i : (* XXX: this must go! *) nat -> (* XXX: end *) tag_without_immediate -> tag.
 
 
 (* there is 256 register and 32 special register *)
@@ -59,8 +62,6 @@ Inductive operand : Type :=
 
 
 Record instruction :=
-  (* XXX: [firstField], [secondField], [thirdField] and [fourthField]?? Are you kidding me?*)
-  (* ANSWER : it was just for the name or the type representation ? :p *)
   mk_instr { instr_opcode : tag; 
              instr_operande1 : operand ; 
              instr_operande2 : operand ; 
@@ -68,9 +69,6 @@ Record instruction :=
 
 
 (* datatypes for the binary instructions *)
-
-(* XXX: binary instructions should just be lists of booleans, no
-  need/reason to have more structure than that *)
 
 Definition binary_instruction := list bool.
 
@@ -87,10 +85,6 @@ Example first_field_instr := my_instr.(instr_opcode).
 Check first_field_instr.
 
 
-(* XXX: this is just an association list, of type [list (tag *
-   list bool)]. But I recommend using [MSet]
-   [https://coq.inria.fr/library/Coq.MSets.MSets.html] instead. This
-   library is hard to import, let me know if you need help. *)
 
 (* TODO :: here i have to define an association list of type (tag * list bool) 
  and i think that i will have to do another one for the registers *)
@@ -113,9 +107,6 @@ Check correspondance_table_example. *)
 
 (* Fonctions de comparaisons *)
 
-(* XXX: Check [Scheme Equality for ident1] in [https://coq.inria.fr/refman/Reference-Manual015.html] *)
-
-
 
 Scheme tag_scheme := Induction for tag Sort Set.
 Check tag_scheme.
@@ -129,6 +120,9 @@ Check tag_eq_dec.
 
 Print tag_beq.
 
+(* XXX: you should obtain [list_bool_beq] from [list_eq_dec]
+([https://coq.inria.fr/library/Coq.Lists.List.html#list_eq_dec]) *)
+
 Fixpoint list_bool_beq (l1 l2 : list bool) : bool :=
   match (l1,l2) with 
   | ([],[]) => true
@@ -138,13 +132,8 @@ Fixpoint list_bool_beq (l1 l2 : list bool) : bool :=
   end.
 (* Fonctions de décodage *)
 (* Premiere fonction afin de décoder une étiquette *)
-(* XXX: use the operations (in the standard library) related to [MSet] *)
 
-(* XXX: these [find_*] functions are all a big waste of electrons:
-there is a single [find] function that lookups up in an association
-list / [MSet] which would do the job generically and could then be
-instantiated to each individual case.  Fix this code before doing any
-proof or you will prove the same facts over and over again. *)
+
 
 (* To find the opCode of one tag in a correspondance list *)
 Scheme Equality for operand.
