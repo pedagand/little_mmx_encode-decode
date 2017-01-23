@@ -40,8 +40,8 @@ Inductive tag_without_immediate : Type :=
 
 
 Inductive tag : Type :=
-| tag_i : (* XXX: this must go! *) nat -> (* XXX: end *) tag_with_immediate -> tag
-| tag_no_i : (* XXX: this must go! *) nat -> (* XXX: end *) tag_without_immediate -> tag.
+| tag_i : tag_with_immediate -> tag
+| tag_no_i : tag_without_immediate -> tag.
 
 
 (* there is 256 register and 32 special register *)
@@ -73,7 +73,7 @@ Definition binary_instruction := list bool.
 
 (* Some examples to test a little bit the functions *)
 
-Example my_instr := mk_instr (tag_i 10 ADD_I)
+Example my_instr := mk_instr (tag_i ADD_I)
                              (reg (general_reg 10))
                              (reg (general_reg 11))
                              (reg (general_reg 10)).
@@ -132,7 +132,7 @@ Fixpoint list_bool_beq (l1 l2 : list bool) : bool :=
 
 Definition lBoolTest1 := true :: true :: false :: false :: [].
 Definition lBoolTest2 := true :: false :: false :: false :: [].
-Check beq_list 10 10.
+
           
 (* Fonctions de décodage *)
 (* Premiere fonction afin de décoder une étiquette *)
@@ -153,12 +153,21 @@ Check find_tag.
 Definition update_tag (p: nat * (list bool)) (m: map_nat_bool) :=
   M.add (fst p) (snd p) m.
 
-(* function that allow you to decode an opcode to a binaryinstruction *)
-Definition opcode_to_binary (t : tag) (m : map_nat_bool) : option(list bool) :=
+(* REMARK :: ugly function but use for now because i don't wan't to waste so many time to define tag as an ordered type *)
+Definition tag_to_nat (t : tag) : nat :=
   match t with
-    | tag_i n _ => find_tag n m
-    | tag_no_i n _ => find_tag n m
+    | tag_i t' => match t' with
+                    | ADD_I => 2
+                    | AND_I => 1
+                  end
+    | tag_no_i t' => match t' with
+                       | AND => 3
+                       | ADD => 4
+                     end
   end.
+(* function that allow you to decode an opcode to a binaryinstruction *)                    
+Definition opcode_to_binary (t : tag) (m : map_nat_bool) : option(list bool) :=
+  find_tag (tag_to_nat t) m.
 
 
 (* DELETE :: some tests to know more about boulean with NArith. *)
@@ -181,7 +190,6 @@ Fixpoint list_bool_to_positive (l : list bool) : option positive :=
     | _ => None
   end.
 
-(* Lemma noname1 : forall (p : positive), *)
                   
 Theorem list_bool_positive_equal : forall (l : list bool) (p : positive),
                                      list_bool_to_positive l = Some p -> positive_to_list_bool p = l.
@@ -190,9 +198,7 @@ Proof. Admitted.
 Theorem positive_list_bool_equal : forall (p : positive),
                                      list_bool_to_positive (positive_to_list_bool p) = Some p.
 Proof.
-  intros p. induction p.
-  -
-
+  Admitted.
 Definition binary_to_list_bool (b : N) : list bool :=
   match b with
     | N0 => []
