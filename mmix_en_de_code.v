@@ -13,6 +13,7 @@ Local Open Scope nat_scope.
 Require Import MSets.
 Require Import MSets.MSetList.
 Require Import Coq.FSets.FMapList Coq.Structures.OrderedTypeEx.
+Require Import NArith.
 (* to use this module you have to compile the binary.v file "coqc binary.v "*)
 
 (* Check mem. *)
@@ -167,42 +168,93 @@ Definition opcode_to_binary (t : tag) (m : map_nat_bool) : option(list bool) :=
   end.
 
 
+(* DELETE :: some tests to know more about boulean with NArith. *)
+Check N.of_nat 10.
 
-
-
-(* Almot the same as find_tag_list but for the operand *)
-Fixpoint find_operand_list (t : list correspondance) (op : operand) : (option operand_binary) :=
-  match t with
-    | [] => None
-    | elem :: suite => match elem with
-                         | opcode_to_tag _ => find_operand_list suite op
-                         | operand_to_operand_binary (op_b,o) => if operand_equals op o
-                                                                   then Some op_b
-                                                                   else find_operand_list suite op
-                       end
+(* Example bin *)
+Fixpoint positive_to_list_bool (p : positive) : list bool :=
+  match p with
+    | xI p' => true :: positive_to_list_bool p'
+    | xO p' => false :: positive_to_list_bool p'
+    | xH => true :: []
+  end.
+Fixpoint list_bool_to_positive (l : list bool) : option positive :=
+  match l with
+    | [true] => Some xH
+    | x :: l' => match list_bool_to_positive l' with
+                   | Some(x') => if x then Some (xI x') else Some (xO x')
+                   | None => None
+                 end
+    | _ => None
   end.
 
-Fixpoint find_operand_binary_list (t : list correspondance) (op : operand_binary) : (option operand) :=
-  match (t,op) with 
-  | ([],_) => None
-  | ((elem :: suite),( op_b)) => match elem with 
-                     | opcode_to_tag _ => find_operand_binary_list suite op
-                     | operand_to_operand_binary ((op_b2),o) => if list_bool_equal op_b op_b2
-                                                                           then Some o
-                                                                           else find_operand_binary_list suite op
-                                          end
+(* Lemma noname1 : forall (p : positive), *)
+                  
+Theorem list_bool_positive_equal : forall (l : list bool) (p : positive),
+                                     list_bool_to_positive l = Some p -> positive_to_list_bool p = l.
+Proof. Admitted.
+
+Theorem positive_list_bool_equal : forall (p : positive),
+                                     list_bool_to_positive (positive_to_list_bool p) = Some p.
+Proof.
+  intros p. induction p.
+  -
+
+Definition binary_to_list_bool (b : N) : list bool :=
+  match b with
+    | N0 => []
+    | Npos p => rev (positive_to_list_bool p)
   end.
 
-
-
-(* Functions to convert list bool which represent binary numbers to nat *)
+           
+Definition list_bool_to_binary (l : list bool) : N :=
+  match l with
+    | [] => N0
+    | x :: l' => match list_bool_to_positive l with
+                   | Some x' => Npos x'
+                   | None => N0
+                 end
+  end.
 
 Definition binary_to_nat (l : list bool) : nat :=
-  convert (binaryInv_to_bin (rev l)).
-
+  N.to_nat (list_bool_to_binary (rev l)).
 
 Definition nat_to_binary (n : nat) : list bool :=
-  bin_to_binary (convert_inv n).
+  binary_to_list_bool (N.of_nat n).
+
+Definition binary_list_test := [true ; false ; true].
+Compute nat_to_binary 6.
+Compute binary_to_nat binary_list_test.
+
+(* binary_to_nat *)
+Lemma binary_to_nat_destruct : forall l,
+                                 N.to_nat (list_bool_to_binary (rev l)) = binary_to_nat l.
+Proof.
+  intros l. reflexivity. Qed.
+
+
+  
+    Theorem binary_nat_equiv : forall (l : list bool),
+                             nat_to_binary (binary_to_nat l) = l.
+Proof. Admitted.
+
+
+
+  
+Theorem nat_binary_equiv : forall (x : nat),
+                             binary_to_nat (nat_to_binary x) = x.
+Proof.
+  Admitted.
+
+
+     
+(* Functions to convert list bool which represent binary numbers to nat *)
+(* REMEMBER :: compute is the key word to calculate a value *)
+
+
+
+
+
 
 Compute binary_to_nat [false].
 Compute nat_to_binary 4.
@@ -211,15 +263,13 @@ Compute nat_to_binary 4.
 
 
 
-(* Function to convert an immediate operand to it's binary representation *)
-(* after make a little function to translate operand *)
-(* To translate an operand to it's binary representation Note: We don't need an equivalent function for the tag because 
-if the tag isn't in the list then it mean that it have no translation *)
-Definition operand_to_binary (t : list correspondance) (op : operand) : option operand_binary :=
+(* REMARK :: i don't need an association table for binary anymore *)
+Definition operand_to_binary (op : operand) : list bool :=
   match op with
-    | immediate n => Some((nat_to_binary n))
-    | reg n => find_operand_list t op 
-    | empty => None
+    | immediate n => nat_to_binary n
+    | reg n =>  match n with
+                  | 
+    | empty => []
   end.
 
 (* this function should be call only when you know that the binary_operand is not an immediate *)
