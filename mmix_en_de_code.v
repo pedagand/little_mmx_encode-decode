@@ -35,7 +35,6 @@ Inductive tag_with_immediate : Type :=
 | AND_I : tag_with_immediate.
 
 Inductive tag_without_immediate : Type :=
-(* XXX: isn't there an [AND] version without immediate? *)
 | ADD : tag_without_immediate
 | AND : tag_without_immediate.
 
@@ -130,6 +129,11 @@ Fixpoint list_bool_beq (l1 l2 : list bool) : bool :=
   | (_,[]) => false
   | ((elem1 :: suite1),(elem2 :: suite2)) => (eqb elem1 elem2) && (list_bool_beq suite1 suite2)  
   end.
+
+Definition lBoolTest1 := true :: true :: false :: false :: [].
+Definition lBoolTest2 := true :: false :: false :: false :: [].
+Check beq_list 10 10.
+          
 (* Fonctions de décodage *)
 (* Premiere fonction afin de décoder une étiquette *)
 
