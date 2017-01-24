@@ -140,54 +140,6 @@ Compute list_bool_beq lBoolTest1 lBoolTest2.
 (* Fonctions de décodage *)
 (* Premiere fonction afin de décoder une étiquette *)
 
-
-
-(* To find the opCode of one tag in a correspondance list *)
-Scheme Equality for operand.
-Print operand_beq.
-
-(* this allow to create some association list from a nat to a boolean list *)
-Module Import M := FMapList.Make(Nat_as_OT).
-
-Definition map_nat_bool: Type := M.t (list bool).
-
-Definition find_tag k (m: map_nat_bool) := M.find k m.
-Check find_tag.
-Definition update_tag (p: nat * (list bool)) (m: map_nat_bool) :=
-  M.add (fst p) (snd p) m.
-
-(* REMARK :: ugly function but use for now because i don't wan't to waste so many time to define tag as an ordered type *)
-Definition tag_to_nat (t : tag) : nat :=
-  match t with
-    | tag_i t' => match t' with
-                    | ADD_I => 34
-                    | AND_I => 33
-                  end
-    | tag_no_i t' => match t' with
-                       | AND => 35
-                       | ADD => 36
-                     end
-  end.
-Definition nat_to_tag (n : nat) : option tag :=
-  match n with
-    | 33 => Some(tag_i AND_I)
-    | 34 => Some(tag_i ADD_I)
-    | 35 => Some(tag_no_i AND)
-    | 36 => Some(tag_no_i ADD)
-    | _ => None
-  end.
-
-Theorem nat_to_tag_equal : forall (n : nat) (x : tag),
-                             nat_to_tag n = Some x -> tag_to_nat x = n.
-Proof. Admitted.
-(* function that allow you to decode an opcode to a binaryinstruction *)                    
-Definition opcode_to_binary (t : tag) (m : map_nat_bool) : option(list bool) :=
-  find_tag (tag_to_nat t) m.
-
-
-(* DELETE :: some tests to know more about boulean with NArith. *)
-Check N.of_nat 10.
-
 (* Example bin *)
 Fixpoint positive_to_list_bool (p : positive) : list bool :=
   match p with
@@ -235,6 +187,57 @@ Definition binary_to_nat (l : list bool) : nat :=
 
 Definition nat_to_binary (n : nat) : list bool :=
   binary_to_list_bool (N.of_nat n).
+
+(* To find the opCode of one tag in a correspondance list *)
+Scheme Equality for operand.
+Print operand_beq.
+
+(* this allow to create some association list from a nat to a boolean list *)
+Module Import M := FMapList.Make(Nat_as_OT).
+
+Definition map_nat_bool: Type := M.t (list bool).
+
+Definition find_tag k (m: map_nat_bool) := M.find k m.
+Check find_tag.
+Definition update_tag (p: nat * (list bool)) (m: map_nat_bool) :=
+  M.add (fst p) (snd p) m.
+
+(* REMARK :: ugly function but use for now because i don't wan't to waste so many time to define tag as an ordered type *)
+Definition tag_to_nat (t : tag) : nat :=
+  match t with
+    | tag_i t' => match t' with
+                    | ADD_I => 34
+                    | AND_I => 33
+                  end
+    | tag_no_i t' => match t' with
+                       | AND => 35
+                       | ADD => 36
+                     end
+  end.
+Definition nat_to_tag (n : nat) : option tag :=
+  match n with
+    | 33 => Some(tag_i AND_I)
+    | 34 => Some(tag_i ADD_I)
+    | 35 => Some(tag_no_i AND)
+    | 36 => Some(tag_no_i ADD)
+    | _ => None
+  end.
+
+Theorem nat_to_tag_equal : forall (n : nat) (x : tag),
+                             nat_to_tag n = Some x -> tag_to_nat x = n.
+Proof. Admitted.
+(* function that allow you to decode an opcode to a binaryinstruction *)                    
+Definition tag_to_binary (t : tag) (m : map_nat_bool) : option(list bool) :=
+  find_tag (tag_to_nat t) m.
+
+
+
+(* DELETE :: some tests to know more about boulean with NArith. *)
+Check N.of_nat 10.
+
+Definition binary_to_tag (l : list bool) : option tag :=
+  nat_to_tag(binary_to_nat l).
+
 
 Definition binary_list_test := [true ; false ; true].
 Compute nat_to_binary 6.
@@ -318,6 +321,9 @@ Definition binary_to_operand (l : list bool) (is_immediate : bool) : option oper
  binary_instr { op : opcode ; firstOperand : operand_binary ;secondOperand:operand_binary;firdOperand : operand_binary }. *)
 (* find_tag_list table instruction *)
 (* TODO :: il faudrat rajouter du error handling lors d'un retour None de la fonction operand_to_binary *)
+Definition instruction_to_binary (table : map_nat_bool) (i : instruction) : binary_instruction :=
+  
+
 Definition instruction_to_binary (table : list correspondance) (i : instruction) : option binary_instruction :=
   match find_tag_list table i.(firstField) with
   | None => None

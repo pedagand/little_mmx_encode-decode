@@ -40,7 +40,7 @@ Fixpoint convert_inv (n : nat) : bin :=
       end
   end.
 
-Compute convert_inv 4.
+Compute convert_inv 5.
 
 Fixpoint add_bool_end_list (l : list bool) (b : bool) : list bool :=
   match l with
