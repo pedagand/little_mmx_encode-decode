@@ -298,18 +298,21 @@ Definition operand_to_binary (op : operand) : list bool :=
     | empty => []
   end.
 Definition binary_to_register (l : list bool) : option register :=
-  match nat_to_special_reg (binary_to_nat l) with
-    | Some x => Some x 
-    | None =>
-
-                 (* TODO :: for the next functio i will need a boolean to notify if the operand can be an immediate *)
+  let n := binary_to_nat l in
+  match nat_to_special_reg n with
+    | Some x => Some (special_reg x)
+    | None => Some (general_reg n)
+  end.
+Definition binary_to_operand (l : list bool) (is_immediate : bool) : option operand :=
+  if is_immediate
+  then Some(immediate (binary_to_nat l))
+  else match binary_to_register l with
+         | Some x => Some(reg x)
+         | None => None
+       end.
 
 (* this function should be call only when you know that the binary_operand is not an immediate *)
 (* You can know theese stuff because of the opcode that you get before *) 
-Definition binary_operand_to_bool_list (op_b : operand_binary) : nat := 
-  match op_b with
-    | l => binary_to_nat l
-  end.
 
 (* Record binary_instruction :=
  binary_instr { op : opcode ; firstOperand : operand_binary ;secondOperand:operand_binary;firdOperand : operand_binary }. *)
