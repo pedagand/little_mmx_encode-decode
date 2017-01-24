@@ -121,18 +121,21 @@ Print tag_beq.
 
 (* XXX: you should obtain [list_bool_beq] from [list_eq_dec]
 ([https://coq.inria.fr/library/Coq.Lists.List.html#list_eq_dec]) *)
-
-Fixpoint list_bool_beq (l1 l2 : list bool) : bool :=
+(* Fixpoint list_bool_beq (l1 l2 : list bool) : bool :=
   match (l1,l2) with 
   | ([],[]) => true
   | ([],_) => false
   | (_,[]) => false
   | ((elem1 :: suite1),(elem2 :: suite2)) => (eqb elem1 elem2) && (list_bool_beq suite1 suite2)  
-  end.
+  end. *)
+Scheme Equality for list.
+Check list_beq.
+Definition list_bool_beq (l1 l2 : list bool) : bool := list_beq bool eqb l1 l2.
 
 Definition lBoolTest1 := true :: true :: false :: false :: [].
-Definition lBoolTest2 := true :: false :: false :: false :: [].
+Definition lBoolTest2 := true :: true :: false :: false :: [].
 
+Compute list_bool_beq lBoolTest1 lBoolTest2.
           
 (* Fonctions de décodage *)
 (* Premiere fonction afin de décoder une étiquette *)
@@ -157,14 +160,26 @@ Definition update_tag (p: nat * (list bool)) (m: map_nat_bool) :=
 Definition tag_to_nat (t : tag) : nat :=
   match t with
     | tag_i t' => match t' with
-                    | ADD_I => 2
-                    | AND_I => 1
+                    | ADD_I => 34
+                    | AND_I => 33
                   end
     | tag_no_i t' => match t' with
-                       | AND => 3
-                       | ADD => 4
+                       | AND => 35
+                       | ADD => 36
                      end
   end.
+Definition nat_to_tag (n : nat) : option tag :=
+  match n with
+    | 33 => Some(tag_i AND_I)
+    | 34 => Some(tag_i ADD_I)
+    | 35 => Some(tag_no_i AND)
+    | 36 => Some(tag_no_i ADD)
+    | _ => None
+  end.
+
+Theorem nat_to_tag_equal : forall (n : nat) (x : tag),
+                             nat_to_tag n = Some x -> tag_to_nat x = n.
+Proof. Admitted.
 (* function that allow you to decode an opcode to a binaryinstruction *)                    
 Definition opcode_to_binary (t : tag) (m : map_nat_bool) : option(list bool) :=
   find_tag (tag_to_nat t) m.
@@ -193,7 +208,7 @@ Fixpoint list_bool_to_positive (l : list bool) : option positive :=
                   
 Theorem list_bool_positive_equal : forall (l : list bool) (p : positive),
                                      list_bool_to_positive l = Some p -> positive_to_list_bool p = l.
-Proof. Admitted.
+Proof. intros l p. compute.
 
 Theorem positive_list_bool_equal : forall (p : positive),
                                      list_bool_to_positive (positive_to_list_bool p) = Some p.
@@ -260,16 +275,34 @@ Compute nat_to_binary 4.
 
 
 
-
-
+(* These are function that are not very relevant but for this it's ok *)
+Definition special_reg_to_nat (sp : special_register) : nat :=
+  match sp with
+    | rB => 1
+    | rD => 2
+  end.
+Definition nat_to_special_reg (n : nat) : option special_register :=
+  match n with
+    | 1 => Some rB
+    | 2 => Some rD
+    | _ => None
+  end.
 (* REMARK :: i don't need an association table for binary anymore *)
 Definition operand_to_binary (op : operand) : list bool :=
   match op with
     | immediate n => nat_to_binary n
-    | reg n =>  match n with
-                  | 
+    | reg r =>  match r with
+                  | general_reg n => nat_to_binary n
+                  | special_reg sp => nat_to_binary (special_reg_to_nat sp)
+                end
     | empty => []
   end.
+Definition binary_to_register (l : list bool) : option register :=
+  match nat_to_special_reg (binary_to_nat l) with
+    | Some x => Some x 
+    | None =>
+
+                 (* TODO :: for the next functio i will need a boolean to notify if the operand can be an immediate *)
 
 (* this function should be call only when you know that the binary_operand is not an immediate *)
 (* You can know theese stuff because of the opcode that you get before *) 
