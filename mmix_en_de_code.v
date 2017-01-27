@@ -15,6 +15,52 @@ Require Import MSets.MSetList.
 Require Import Coq.FSets.FMapList Coq.Structures.OrderedTypeEx.
 Require Import NArith.
 
+(* XXX: experiment *)
+
+Fixpoint pos_to_list_acc (p: positive)(acc: list bool): list bool :=
+  match p with
+  | xH => true :: acc
+  | xO p => pos_to_list_acc p (false :: acc)
+  | xI p => pos_to_list_acc p (true :: acc)
+  end.
+
+Definition pos_to_list (p: positive): list bool := pos_to_list_acc p [].
+
+Definition N_to_list (n: N): list bool := 
+  match n with
+  | N0 => []
+  | Npos p => pos_to_list p
+  end.
+
+Set Printing All.
+Compute (5)%positive.
+Unset Printing All.
+Compute (pos_to_list 5).
+
+Fixpoint list_to_pos_acc (l: list bool)(acc: positive): positive :=
+  match l with
+  | [] => acc
+  | true :: l => list_to_pos_acc l (xI acc)
+  | false :: l => list_to_pos_acc l (xO acc)
+  end.
+
+Fixpoint list_to_pos (l: list bool): N := 
+  match l with
+  | [] => N0
+  | true :: l => Npos (list_to_pos_acc l xH)
+  | false :: l => list_to_pos l
+  end.
+
+(* https://coq.inria.fr/library/Coq.Strings.Ascii.html *)
+
+Lemma list_to_pos_acc_inv: forall p l m acc,
+    pos_to_list p = m ++ l -> pos_to_list m  = acc -> list_to_pos_acc l acc = p.
+Proof.
+induction p; unfold pos_to_list.
+apply IHp.
+
+Compute (list_to_pos (pos_to_list 5)).
+
 (* XXX: use [coq_makefile] with a [_CoqProject] as described here
 [https://coq.inria.fr/refman/Reference-Manual017.html#Makefile] *)
 
