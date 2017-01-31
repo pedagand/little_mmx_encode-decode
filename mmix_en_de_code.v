@@ -7,6 +7,7 @@ Require String.
 Open Scope string_scope.
 Open Scope list_scope.
 Require Import List.
+Require Import Zdiv.
 Import ListNotations.
 Require Import Notations Logic Datatypes.
 Local Open Scope nat_scope.
@@ -44,19 +45,78 @@ Fixpoint list_to_pos_acc (l: list bool)(acc: positive): positive :=
   | false :: l => list_to_pos_acc l (xO acc)
   end.
 
-Fixpoint list_to_pos (l: list bool): N := 
+(* Definition list_to_pos (l : list bool) : positive := list_to_pos_acc l xH. *)
+
+
+Fixpoint list_to_N (l: list bool): N := 
   match l with
   | [] => N0
   | true :: l => Npos (list_to_pos_acc l xH)
-  | false :: l => list_to_pos l
+  | false :: l => list_to_N l
   end.
 
 (* https://coq.inria.fr/library/Coq.Strings.Ascii.html *)
+(* way 1 *)
+Theorem list_to_pos_acc_inv1 : forall (b : N) (l : list bool),
+                                 N_to_list b = l -> list_to_N l = b.
+Proof. intros b l h.
+       -
+
+
+(* way 2 *)
+Lemma helpL1 : forall (l : list bool),
+                 (l ++ [true]) ++ [true] = l ++ [true; true].
+Proof. intros l. induction l.
+       -simpl. reflexivity.
+       -simpl. rewrite -> IHl. reflexivity.
+Qed.
+
+(* start of the yves try *)
+(* list to nat *)
+Fixpoint ltn (l : list bool) :=
+  match l with true::tl => 1 + 2 * ltn tl | false ::tl => 2 * ltn tl | _ => 0 end.
+About Fix.
+
+(* nat to list *)
+Fixpoint div2' (n : nat) :=
+  match n with
+    | O => O
+    | S p => S (div2' (pred p))
+  end.
+Search nat.
+Fixpoint ntl (n : nat) :=
+  match n with
+    | 0 => nil
+    | n =>  (ntl (Nat.div2 n)) ++ (eqb_nat (n mod 2) (1))
+  end.
+
+
+
+Definition ntl (x : nat) :=
+  Fix
+
+    (* end of yves try *)
+Lemma helpT1 : forall (p : positive),
+                 pos_to_list_acc p [true] = (pos_to_list_acc p []) ++ [true].
+Proof. intros p. induction p.
+       (* pos_to_list_acc p [true; true] = pos_to_list_acc p [true] ++ [true] *)       
+       (*   pos_to_list_acc p [true; true] = (pos_to_list_acc p [] ++ [true]) ++ [true] *)
+       -simpl. rewrite -> IHp. rewrite -> helpL1.
+
+Theorem list_to_pos_acc_inv2 : forall (b : N),
+                              list_to_N(N_to_list b) = b.
+Proof. intros b.
+       induction b.
+       -simpl. reflexivity.
+       -unfold N_to_list. unfold pos_to_list. induction p.
+        +simpl.
+       
 
 Lemma list_to_pos_acc_inv: forall p l m acc,
-    pos_to_list p = m ++ l -> pos_to_list m  = acc -> list_to_pos_acc l acc = p.
+    pos_to_list p = m ++ l -> list_to_pos_acc l acc = p.
 Proof.
-induction p; unfold pos_to_list.
+
+ induction p.
 apply IHp.
 
 Compute (list_to_pos (pos_to_list 5)).
