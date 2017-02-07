@@ -16,125 +16,125 @@ Require Import MSets.MSetList.
 Require Import Coq.FSets.FMapList Coq.Structures.OrderedTypeEx.
 Require Import NArith.
 
-(* XXX: experiment *)
-
-Fixpoint pos_to_list_acc (p: positive)(acc: list bool): list bool :=
-  match p with
-  | xH => true :: acc
-  | xO p => pos_to_list_acc p (false :: acc)
-  | xI p => pos_to_list_acc p (true :: acc)
-  end.
-
-Definition pos_to_list (p: positive): list bool := pos_to_list_acc p [].
-
-Definition N_to_list (n: N): list bool := 
-  match n with
-  | N0 => []
-  | Npos p => pos_to_list p
-  end.
-
-Set Printing All.
-Compute (5)%positive.
-Unset Printing All.
-Compute (pos_to_list 5).
-
-Fixpoint list_to_pos_acc (l: list bool)(acc: positive): positive :=
-  match l with
-  | [] => acc
-  | true :: l => list_to_pos_acc l (xI acc)
-  | false :: l => list_to_pos_acc l (xO acc)
-  end.
-
-(* Definition list_to_pos (l : list bool) : positive := list_to_pos_acc l xH. *)
 
 
-Fixpoint list_to_N (l: list bool): N := 
-  match l with
-  | [] => N0
-  | true :: l => Npos (list_to_pos_acc l xH)
-  | false :: l => list_to_N l
-  end.
+(* Fixpoint pos_to_list_acc (p: positive)(acc: list bool): list bool := *)
+(*   match p with *)
+(*   | xH => true :: acc *)
+(*   | xO p => pos_to_list_acc p (false :: acc) *)
+(*   | xI p => pos_to_list_acc p (true :: acc) *)
+(*   end. *)
 
-(* https://coq.inria.fr/library/Coq.Strings.Ascii.html *)
-(* way 1 *)
-Theorem list_to_pos_acc_inv1 : forall (b : N) (l : list bool),
-                                 N_to_list b = l -> list_to_N l = b.
-Proof. intros b l h.
-       -
+(* Definition pos_to_list (p: positive): list bool := pos_to_list_acc p []. *)
 
+(* Definition N_to_list (n: N): list bool := *)
+(*   match n with *)
+(*   | N0 => [] *)
+(*   | Npos p => pos_to_list p *)
+(*   end. *)
 
-(* way 2 *)
-Lemma helpL1 : forall (l : list bool),
-                 (l ++ [true]) ++ [true] = l ++ [true; true].
-Proof. intros l. induction l.
-       -simpl. reflexivity.
-       -simpl. rewrite -> IHl. reflexivity.
-Qed.
+(* Set Printing All. *)
+(* Compute (5)%positive. *)
+(* Unset Printing All. *)
+(* Compute (pos_to_list 5). *)
 
-(* start of the yves try *)
-(* list to nat *)
-Fixpoint ltn (l : list bool) :=
-  match l with true::tl => 1 + 2 * ltn tl | false ::tl => 2 * ltn tl | _ => 0 end.
-About Fix.
+(* Fixpoint list_to_pos_acc (l: list bool)(acc: positive): positive := *)
+(*   match l with *)
+(*   | [] => acc *)
+(*   | true :: l => list_to_pos_acc l (xI acc) *)
+(*   | false :: l => list_to_pos_acc l (xO acc) *)
+(*   end. *)
 
-(* nat to list *)
-Fixpoint div2' (n : nat) :=
-  match n with
-    | O => O
-    | S p => S (div2' (pred p))
-  end.
-Search nat.
-Fixpoint ntl (n : nat) :=
-  match n with
-    | 0 => nil
-    | n =>  (ntl (Nat.div2 n)) ++ (eqb_nat (n mod 2) (1))
-  end.
+(* (* Definition list_to_pos (l : list bool) : positive := list_to_pos_acc l xH. *) *)
 
 
+(* Fixpoint list_to_N (l: list bool): N := *)
+(*   match l with *)
+(*   | [] => N0 *)
+(*   | true :: l => Npos (list_to_pos_acc l xH) *)
+(*   | false :: l => list_to_N l *)
+(*   end. *)
 
-Definition ntl (x : nat) :=
-  Fix
+(* (* https://coq.inria.fr/library/Coq.Strings.Ascii.html *) *)
+(* (* way 1 *) *)
+(* Theorem list_to_pos_acc_inv1 : forall (b : N) (l : list bool), *)
+(*                                  N_to_list b = l -> list_to_N l = b. *)
+(* Proof. intros b l h. *)
+(*        - *)
 
-    (* end of yves try *)
-Lemma helpT1 : forall (p : positive),
-                 pos_to_list_acc p [true] = (pos_to_list_acc p []) ++ [true].
-Proof. intros p. induction p.
-       (* pos_to_list_acc p [true; true] = pos_to_list_acc p [true] ++ [true] *)       
-       (*   pos_to_list_acc p [true; true] = (pos_to_list_acc p [] ++ [true]) ++ [true] *)
-       -simpl. rewrite -> IHp. rewrite -> helpL1.
 
-Theorem list_to_pos_acc_inv2 : forall (b : N),
-                              list_to_N(N_to_list b) = b.
-Proof. intros b.
-       induction b.
-       -simpl. reflexivity.
-       -unfold N_to_list. unfold pos_to_list. induction p.
-        +simpl.
+(* (* way 2 *) *)
+(* Lemma helpL1 : forall (l : list bool), *)
+(*                  (l ++ [true]) ++ [true] = l ++ [true; true]. *)
+(* Proof. intros l. induction l. *)
+(*        -simpl. reflexivity. *)
+(*        -simpl. rewrite -> IHl. reflexivity. *)
+(* Qed. *)
+
+(* (* start of the yves try *) *)
+(* (* list to nat *) *)
+(* Fixpoint ltn (l : list bool) := *)
+(*   match l with true::tl => 1 + 2 * ltn tl | false ::tl => 2 * ltn tl | _ => 0 end. *)
+(* About Fix. *)
+
+(* (* nat to list *) *)
+(* Fixpoint div2' (n : nat) := *)
+(*   match n with *)
+(*     | O => O *)
+(*     | S p => S (div2' (pred p)) *)
+(*   end. *)
+(* Search nat. *)
+(* Fixpoint ntl (n : nat) := *)
+(*   match n with *)
+(*     | 0 => nil *)
+(*     | n =>  (ntl (Nat.div2 n)) ++ (eqb_nat (n mod 2) (1)) *)
+(*   end. *)
+
+
+
+(* Definition ntl (x : nat) := *)
+(*   Fix *)
+
+(*     (* end of yves try *) *)
+(* Lemma helpT1 : forall (p : positive), *)
+(*                  pos_to_list_acc p [true] = (pos_to_list_acc p []) ++ [true]. *)
+(* Proof. intros p. induction p. *)
+(*        (* pos_to_list_acc p [true; true] = pos_to_list_acc p [true] ++ [true] *) *)
+(*        (*   pos_to_list_acc p [true; true] = (pos_to_list_acc p [] ++ [true]) ++ [true] *) *)
+(*        -simpl. rewrite -> IHp. rewrite -> helpL1. *)
+
+(* Theorem list_to_pos_acc_inv2 : forall (b : N), *)
+(*                               list_to_N(N_to_list b) = b. *)
+(* Proof. intros b. *)
+(*        induction b. *)
+(*        -simpl. reflexivity. *)
+(*        -unfold N_to_list. unfold pos_to_list. induction p. *)
+(*         +simpl. *)
        
 
-Lemma list_to_pos_acc_inv: forall p l m acc,
-    pos_to_list p = m ++ l -> list_to_pos_acc l acc = p.
-Proof.
+(* Lemma list_to_pos_acc_inv: forall p l m acc, *)
+(*     pos_to_list p = m ++ l -> list_to_pos_acc l acc = p. *)
+(* Proof. *)
 
- induction p.
-apply IHp.
+(*  induction p. *)
+(* apply IHp. *)
 
-Compute (list_to_pos (pos_to_list 5)).
+(* Compute (list_to_pos (pos_to_list 5)). *)
 
-(* XXX: use [coq_makefile] with a [_CoqProject] as described here
-[https://coq.inria.fr/refman/Reference-Manual017.html#Makefile] *)
+(* (* XXX: use [coq_makefile] with a [_CoqProject] as described here *)
+(* [https://coq.inria.fr/refman/Reference-Manual017.html#Makefile] *) *)
 
 
-(* datatypes for the instructions *)
-(* now i just put a nat here because it's hard to make an association list with something else than a nat now *)
+(* (* datatypes for the instructions *) *)
+(* (* now i just put a nat here because it's hard to make an association list with something else than a nat now *) *)
 
-(* XXX: this is a *TERRIBLE* idea! Either your slap an order on
-[tag_with_immediate] and define the FMap over [tag_with_immediate], or
-you implement a function of type [tag_with_immediate -> nat] and
-convert the [tag_with_immediate] to [nat] before looking up an FMap
-over nat. But you don't duplicate the encoding with a
-[tag_with_immediate] *and* a [nat] in the description of the
-instruction set! *)
+(* (* XXX: this is a *TERRIBLE* idea! Either your slap an order on *)
+(* [tag_with_immediate] and define the FMap over [tag_with_immediate], or *)
+(* you implement a function of type [tag_with_immediate -> nat] and *)
+(* convert the [tag_with_immediate] to [nat] before looking up an FMap *)
+(* over nat. But you don't duplicate the encoding with a *)
+(* [tag_with_immediate] *and* a [nat] in the description of the *)
+(* instruction set! *) *)
 
 Inductive tag_with_immediate : Type :=
 | ADD_I : tag_with_immediate 
@@ -186,8 +186,8 @@ Example my_instr := mk_instr (tag_i ADD_I)
 
 Check my_instr.
 
-Example first_field_instr := my_instr.(instr_opcode).
-Check first_field_instr.
+
+
 
 
 

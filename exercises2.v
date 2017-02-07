@@ -1,39 +1,5 @@
 Require Import Arith List Recdef.
 
-Lemma ex1 : forall x : nat, forall A B : Prop,
-   A /\ B -> A \/ 3 * x = x + x + x.
-Proof.
-intros x a b ab.
-destruct ab as [h1 h2].
-left.
-exact h1.
-Qed.
-
-Lemma ex2 : forall A B : Prop, A \/ B -> B \/ A.
-Proof.
-intros a b ab; destruct ab as [ha | hb].
-  right; assumption.
-left; assumption.
-Qed.
-
-Lemma ex3 : forall A B : Prop, A -> (A -> B) -> A /\ B.
-Proof.
-intros A B.
-intros ha h_a_implies_b.
-split.
-  exact ha.
-apply h_a_implies_b.
-exact ha.
-Qed.
-
-Lemma ex4 : exists x: nat, (True /\ 2 * x + 2 = 10).
-Proof.
-exists 4.
-split.
-  trivial.
-  reflexivity.
-Qed.
-
 Fixpoint ltn (l : list bool) : nat :=
   match l with 
     nil => 0 
