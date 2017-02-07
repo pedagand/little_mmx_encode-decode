@@ -1,7 +1,38 @@
-Require Import Bool List NArith.
+Require Import Bool List Arith Nat.
 Import ListNotations.
 
-(* functions from positive to list bool and in the opsite way *)
+
+Fixpoint bit_n_rec (l : list bool) : nat :=
+  match l with
+    | [] => 0
+    | a :: tl => (if a then 1 else 0) + (2 * bit_n_rec tl)
+  end.
+
+Definition bit_n (l : list bool) : nat :=
+  bit_n_rec (rev l).
+
+Definition testing_liste := [true;true;false].
+Compute bit_n testing_liste.
+
+(* this function take n as the length of the outside vector (it can fail if the lenght given is not enought to store the 
+boolean *)
+Search "beq".
+Compute ltb 0 0.
+Check beq_nat.
+Compute div 4 2.
+Fixpoint n_bit (n : nat) (k : nat) : option (list bool) :=
+  match n with
+    | 0 => if ltb k 1 then Some [] else None
+    | S n' => match n_bit n' (div k 2) with
+                | None => None
+                | Some l => Some ((beq_nat (modulo k n) 1) :: l)
+              end
+  end.
+
+Compute n_bit 30 3.
+  
+
+(* old version (* functions from positive to list bool and in the opsite way *)
 Fixpoint pos_to_list_acc (p: positive)(acc: list bool): list bool :=
   match p with
   | xH => true :: acc
@@ -56,4 +87,4 @@ Unset Printing All.
 Compute (pos_to_list 5).
 Compute nat_to_list_bool 4.
 Definition my_test_list := true :: false :: true :: false :: [].
-Compute list_bool_to_nat my_test_list.
+Compute list_bool_to_nat my_test_list. *)

@@ -1,10 +1,15 @@
 Require Import Arith List Recdef.
-
-Fixpoint ltn (l : list bool) : nat :=
+Import ListNotations.
+Fixpoint ltn_rec (l : list bool) : nat :=
   match l with 
     nil => 0 
-  | a::tl => (if a then 1 else 0) + 2 * ltn tl
+  | a::tl => (if a then 1 else 0) + 2 * ltn_rec tl
   end.
+
+Definition ltn (l : list bool) := ltn_rec (rev l).
+
+Definition testing_liste := [true;true;true].
+Compute ltn testing_liste.
 
 Function ntl (n : nat) {wf lt} :=
   match n with
