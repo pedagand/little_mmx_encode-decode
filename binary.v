@@ -20,14 +20,18 @@ Search "beq".
 Compute ltb 0 0.
 Check beq_nat.
 Compute div 4 2.
+Check beq_nat.
 Fixpoint n_bit_rec (n : nat) (k : nat) : option (list bool) :=
-  match n with
-    | 0 => if ltb k 1 then Some [] else None
-    | S n' => match n_bit_rec n' (div k 2) with
-                | None => None
-                | Some l => Some ((beq_nat (modulo k 2) 1) :: l)
-              end
-  end.
+  if beq_nat k 0 then Some []
+  else 
+    match n with
+      | 0 => if ltb k 1 then Some [] else None
+      | S n' => match n_bit_rec n' (div k 2) with
+                  | None => None
+                  | Some l => Some ((beq_nat (modulo k 2) 1) :: l)
+                end
+    end.
+
 
 Definition n_bit (n : nat) (k : nat) : option (list bool) :=
   match n_bit_rec n k with
@@ -35,64 +39,86 @@ Definition n_bit (n : nat) (k : nat) : option (list bool) :=
     | Some x => Some(List.rev x)
   end.
 
-Lemma some_stuff_eq : forall (t : Type), forall (x y : t),
-                        x = y -> Some x = Some y.
-Proof.
-  intros t x y H.
-  rewrite H.
-  reflexivity.
-Qed.
-Lemma some_stuff_eq_other : forall (t : Type), forall (x y : t),
-                              Some x = Some y -> x = y.
+Compute n_bit 10 7.
+Compute bit_n [].
+
+
+Check 2 >= 3.
+Compute 3 <= 2.
+
+Theorem bit_n_bit : forall (l : list bool) (n : nat),
+                      n >= length l -> (n_bit n (bit_n l)) = Some l.
 Proof. Admitted.
-
-Example test_n_bit1 : forall (x : list bool), n_bit 6 10 = Some x -> bit_n x = 10.
-Proof.
-  intros x.
-  intros H.
-  compute in H.
-  assert(x =  [false; false; true;false; true; false]).
-  {
-    assert(Some x = Some [false; false; true;false; true; false] -> x = [false; false; true;false; true; false]).
-    {
-      intros H'. apply some_stuff_eq_other. rewrite H'. reflexivity.
-    }
-    rewrite H0. reflexivity.
-    rewrite H. reflexivity.
-  }
-  rewrite H0. compute. reflexivity.
-Qed.
   
-
 Theorem n_bit_n : forall (l : list bool) (n k : nat),
                     n_bit n k = Some l -> bit_n l = k.
 Proof.
-  intros l. 
-  induction l.
+  assert (I : forall (l : list bool) (n k : nat), n_bit n k = Some l -> bit_n l = k).
   {
-    assert (i0 : forall (n k : nat), n_bit n k = Some [] -> bit_n [] = k).
-    {
-      destruct k.
-      -reflexivity.
-      -assert (j0 : n_bit n (S k) = Some [] -> bit_n [] = S k).
+    intros l n k.
+    induction l.
+    assert (I_1 : n_bit n k = Some [] -> bit_n [] = k).
+     {
+       induction k.
+       -intros. compute. reflexivity.
+       -assert (I_1_1 : n_bit n (S k) = Some [] -> False).
+        {          
+          destruct (n_bit n (S k)).
+          -admit.
+          -discriminate.
+        }
+        intros H.
+        compute.
+        assert (I_1_2 : ((bit_n [] = S k) -> False)).
+        {
+          compute.
+          apply Nat.neq_0_succ.
+        }
+        apply False_ind.
+        apply I_1_1.
+        rewrite H.
+        reflexivity.        
+     }
+    -exact I_1.
+    -assert (I_2 : n_bit n k = Some (a :: l) -> bit_n (a :: l) = k).
+     {
+       destruct a.
+       assert(I_2_1 : n_bit n k = Some (true :: l) -> bit_n (true :: l) = k).
        {
-         induction k.
-         -intros H.
-          induction n.
-          +compute in H. discriminate.
-          +rewrite <- H in IHn.
-           apply IHn.
-           assert(l0 : n_bit n 1 <> n_bit (S n) 1).
-           {
-             induction n.
-             -compute. intros. discriminate.
-             -rewrite H. 
-           }
+         assert (I_2_1_1 : bit_n (true :: l) = k -> bit_n l = 
+       }
+         
+       
+     }
+    exact I_2.
+  }
+  exact I.
+  (* intros l.  *)
+  (* induction l. *)
+  (* { *)
+  (*   assert (i0 : forall (n k : nat), n_bit n k = Some [] -> bit_n [] = k). *)
+  (*   { *)
+  (*     destruct k. *)
+  (*     -reflexivity. *)
+  (*     -assert (j0 : n_bit n (S k) = Some [] -> bit_n [] = S k). *)
+  (*      { *)
+  (*        induction k. *)
+  (*        -intros H. *)
+  (*         induction n. *)
+  (*         +compute in H. discriminate. *)
+  (*         +rewrite <- H in IHn. *)
+  (*          apply IHn. *)
+  (*          assert(l0 : n_bit n 1 <> n_bit (S n) 1). *)
+  (*          { *)
+  (*            induction n. *)
+  (*            -compute. intros. discriminate. *)
+  (*            -rewrite H.  *)
+  (*          } *)
            
 
-       }
-    }    
-
+  (*      } *)
+  (*   }     *)
+    
 
 
       
@@ -171,3 +197,36 @@ Compute (pos_to_list 5).
 Compute nat_to_list_bool 4.
 Definition my_test_list := true :: false :: true :: false :: [].
 Compute list_bool_to_nat my_test_list. *)
+
+
+
+
+
+  (* test that can bu usefull *)
+  
+Lemma some_stuff_eq : forall (t : Type), forall (x y : t),
+                        x = y -> Some x = Some y.
+Proof.
+  intros t x y H.
+  rewrite H.
+  reflexivity.
+Qed.
+Lemma some_stuff_eq_other : forall (t : Type), forall (x y : t),
+                              Some x = Some y -> x = y.
+Proof. Admitted.
+Example test_n_bit1 : forall (x : list bool), n_bit 6 10 = Some x -> bit_n x = 10.
+Proof.
+  intros x.
+  intros H.
+  compute in H.
+  assert(x =  [false; false; true;false; true; false]).
+  {
+    assert(Some x = Some [false; false; true;false; true; false] -> x = [false; false; true;false; true; false]).
+    {
+      intros H'. apply some_stuff_eq_other. rewrite H'. reflexivity.
+    }
+    rewrite H0. reflexivity.
+    rewrite H. reflexivity.
+  }
+  rewrite H0. compute. reflexivity.
+Qed.
