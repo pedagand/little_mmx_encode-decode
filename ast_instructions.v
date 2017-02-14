@@ -14,6 +14,10 @@ Inductive tag :=
 | tag_i : tag_immediate -> tag
 | unknow : tag.
 
+Scheme Equality for tag.
+Check tag_beq.
+
+
 (* maybe it's not usefull to distinguish the special register than the 
 other because the specification says that you have different numbers for them *)
 

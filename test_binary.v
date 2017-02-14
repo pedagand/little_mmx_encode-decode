@@ -25,10 +25,12 @@ Fixpoint n_bit (n : nat) (k : nat) : option (list bool) :=
                 end
     end.
 
+Definition testListe'' := [true;false; false ; false].
 Compute n_bit 32 6.
 Compute bit_n (match (n_bit 32 6) with Some x => x | None => [true] end).
 Compute bit_n (match (n_bit 12 55) with Some x => x | None => [true] end).
 Compute bit_n (match (n_bit 12 0) with Some x => x | None => [true] end).
+Compute n_bit 4 (bit_n testListe'').
 Compute bit_n [true;true;false].
 
 
@@ -37,6 +39,28 @@ Function true_in_list (l : list bool) : bool :=
     | [] => false
     | h :: tl => if h then true else true_in_list tl
   end.
+
+Theorem bit_n_bit : forall (l : list bool) (n : nat),
+                      n = length l -> (n_bit n (bit_n l)) = Some l.
+Proof.
+  assert (I : forall (l : list bool) (n : nat), n = length l -> n_bit n (bit_n l) = Some l).
+  {
+    induction l.
+    -simpl.
+     intros n H.
+     rewrite H.
+     reflexivity.
+    -intros n H.
+     simpl.
+     destruct a.
+     +simpl.
+     
+     
+     
+     
+  }
+
+
 
 Theorem n_bit_n : forall  (l : list bool) (n k : nat),
                     n_bit n k = Some l -> bit_n l = k.
