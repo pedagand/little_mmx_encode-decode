@@ -170,8 +170,19 @@ Proof.
            induction n'.
            -simpl. Search (Nat.odd 0).
             rewrite Nat.odd_0. reflexivity.
-           -Search (2 * S _).
-           admit.
+           -simpl.
+            Search (_ + 0).
+            rewrite <- plus_n_O.
+            Search (_ + _ = _ + _).
+            rewrite <- plus_Snm_nSm.
+            Search (S _ + _).
+            rewrite plus_Sn_m.
+            Search (Nat.odd (S (S _))).
+            rewrite Nat.odd_succ_succ.
+            simpl in IHn'.
+            rewrite <- plus_n_O in IHn'.
+            rewrite IHn'.
+            reflexivity.            
          }
          rewrite I_2_2_1.
          reflexivity.
