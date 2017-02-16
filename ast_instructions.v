@@ -9,10 +9,10 @@ Inductive tag_immediate :=
 | ADD_I : tag_immediate
 | AND_I : tag_immediate.
 
+
 Inductive tag :=
 | tag_n : tag_normal -> tag
-| tag_i : tag_immediate -> tag
-| unknow : tag.
+| tag_i : tag_immediate -> tag.
 
 Scheme Equality for tag.
 Check tag_beq.
