@@ -7,14 +7,6 @@ Fixpoint bit_n (l : list bool) : nat :=
     | a :: tl => 2 * bit_n tl + Nat.b2n a
   end.
 
-Definition testList := [ true ; false ; true ].
-Compute bit_n testList.
-
-Definition bit_n_vrai (l : list bool) :=
-  bit_n (rev l).
-
-Definition testList' := [ true ; false ; false ].
-Compute bit_n_vrai testList'.
 
 Fixpoint n_bit (n : nat) (k : nat) : option (list bool) :=
     match n with
@@ -28,15 +20,7 @@ Fixpoint n_bit (n : nat) (k : nat) : option (list bool) :=
                 end
     end.
 
-Definition testListe'' := [true;false; false ; false].
-Compute n_bit 32 6.
-Compute bit_n (match (n_bit 32 6) with Some x => x | None => [true] end).
-Compute bit_n (match (n_bit 12 55) with Some x => x | None => [true] end).
-Compute bit_n (match (n_bit 12 0) with Some x => x | None => [true] end).
-Compute n_bit 4 (bit_n testListe'').
-Compute bit_n [true;true;false].
-
-
+(* first proof that we need on binary representation *)
 Theorem n_bit_n : forall (l : list bool) (n k : nat),
                     n_bit n k = Some l -> bit_n l = k.
 Proof.
@@ -77,15 +61,8 @@ Proof.
   assumption.
 Qed.
 
-Check nil.
 
-Lemma trivialStuf : forall (n : nat), 2 * n = n + n.
-Proof.
-  intros n. simpl. Search (_ + 0 = _). rewrite Nat.add_0_r. reflexivity.
-Qed.
-
-
-
+(* second proof *)
 Theorem bit_n_bit : forall (l : list bool) (n : nat),
                       n = length l -> (n_bit n (bit_n l)) = Some l.
 Proof.
@@ -162,7 +139,11 @@ Proof.
         rewrite H.
         simpl.
         Search (2 * _ = _).
-        rewrite <- trivialStuf.
+        assert (I_2_2_0 : forall (n' : nat), 2 * n' = n' + n').
+        {
+          intros n'. simpl. rewrite <- plus_n_O. reflexivity.
+        }
+        rewrite <- mul_2_add.
         rewrite div2_double.
         rewrite IHl.
         -assert (I_2_2_1 : forall (n' : nat), Nat.odd (2 * n') = false).
