@@ -82,22 +82,42 @@ Qed.
 Theorem look_down_up_encdec : forall (n : nat) (t : tag),
                                 lookdown n encdec = Some t -> lookup t encdec = Some n.
 Proof.
-  assert (I : forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n).
+ (*  assert (I : forall (t : tag) (n : nat), lookdown n encdec = Some t -> lookup t encdec = Some n).
   {
-    intros n t.
-    destruct (lookdown n encdec).
-    {destruct t0.
-     -destruct t0.
-      +intros H.
-       simpl in H.
-       inversion H.
+
        
-    } 
-  }
+     
+  }*)
+  
+Admitted.
 
 
 
+(* functions to encode decode instructions *)
+(* TODO :: here is that the good reasoning about empty *)
+Definition operand_to_bin (o : operand) : option (list bool) :=
+  match o with
+    | immediate k => n_bit 8 k
+    | reg k => n_bit 8 k
+    | empty => n_bit 8 0
+  end.
 
+Definition encode (i : instruction) : binary_instruction :=
+  match lookup i.instr_opcode with
+    | some k => match n_bit 8 k with
+                  | some code => match operand_to_bin i.instr_operande1 with
+                                   | some o1 => match operand_to_bin i.instr_operande2 with
+                                                  | some o2 => match operand_to_bin i.instr_operande3 with
+                                                                 | some o3 => concat code (concat o1 (concat o2 o3)) 
+                                                                 | none => none
+                                                               end
+                                                  | none => none
+                                                end
+                                   | none => none
+                                 end
+                  | none => none
+                end
+    | none => None
+  end.
 
-
-    
+                
