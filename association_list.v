@@ -1,135 +1,180 @@
-Require Import List.
+Require Import List Nat. 
 Import ListNotations.
-Require Import MSets.
-Require Import MSetList.
+Require Import ast_instructions.
 
-(* you need to have the two list of the same length ect...*)
+Check (1,2).
+Check pair nat nat.
+Definition tag_opcode_assoc :=
+  list (tag * nat).
 
-
-Print OrderedTypeWithLeibniz.
-
-(* Module OWL. *)
-(*   Definition t := nat. *)
-(*   Definition eq := @eq t. *)
-(*   Instance eq_equiv : Equivalence eq. *)
-(*   Definition lt := lt. *)
-(*   Instance lt_strorder : StrictOrder lt. *)
-(*   Instance lt_compat : Proper (eq ==> eq ==> iff) lt. *)
-(*   Proof. *)
-(*     now unfold eq; split; subst. *)
-(*   Qed. *)
-(*   SearchPattern (nat -> nat -> comparison). *)
-(*   Definition compare := Compare_dec.nat_compare. *)
-(*   SearchAbout CompSpec. *)
-(*   (*So, nothing here on nat*) *)
-(*   Lemma compare_spec : forall x y, CompSpec eq lt x y (compare x y). *)
-(*   Proof. *)
-(*     SearchPattern (forall x y, Compare_dec.nat_compare x y = _ -> _). *)
-(*     intros; case_eq (compare x y); constructor. *)
-(*     now apply Compare_dec.nat_compare_eq. *)
-(*     now apply Compare_dec.nat_compare_Lt_lt. *)
-(*     now apply Compare_dec.nat_compare_Gt_gt. *)
-(*   Qed. *)
-(*   SearchPattern (forall (a b:nat), {a=b}+{a<>b}). *)
-(*   Definition eq_dec := Peano_dec.eq_nat_dec. *)
-(*   Definition eq_leibniz a b (H:eq a b) := H. *)
-(* End OWL. *)
-
-(* Module NatSet := MakeWithLeibniz OWL. *)
-
-(* Inductive exemple := *)
-(* | A : exemple *)
-(* | B : NatSet.t -> exemple *)
-(* | C : NatSet.t -> bool -> exemple. *)
-
-(* Definition eq_dec : forall (a b:exemple), {a=b}+{a<>b}. *)
-(*   intros; decide equality. *)
-(*   destruct (NatSet.eq_dec t t0). *)
-(*   now left; apply NatSet.eq_leibniz. *)
-(*   right; intro; apply n; clear n; subst. *)
-(*   reflexivity. *)
-(*   apply bool_dec. *)
-(*   destruct (NatSet.eq_dec t t0). *)
-(*   now left; apply NatSet.eq_leibniz. *)
-(*   right; intro; apply n; clear n; subst. *)
-(*   reflexivity. *)
-(* Defined. *)
+Scheme Equality for list.
+Check list_beq.
 
 
-Definition assocList (A B : Type) := list (A * B).
 
-Inductive listb := nilb : listb | consb: bool -> listb -> listb.
-Scheme Equality for listb.
-Print listb_beq.
-Fixpoint combine {A B} (l1 : list A) (l2 : list B) : option (assocList A B) :=
-  match (l1,l2) with
-    | ([],[]) => Some []
-    | ((elem :: suite),(elem2 :: suite2)) => match combine suite suite2 with
-                                            | Some(l) => Some((elem,elem2) :: l)
-                                            | None => None
-                                          end
-    | _ => None
+
+
+
+(* actually this is a good name for this function :p *)
+Fixpoint lookup (t : tag) (l : tag_opcode_assoc) : option nat :=
+  match l with
+    | [] => None
+    | (t',n) :: tl => if tag_beq t t'
+                      then Some n
+                      else lookup t tl
+  end.
+(* actually this is a good name for this function :p *)
+Fixpoint lookdown (n : nat) (l : tag_opcode_assoc) : option tag :=
+  match l with
+    | [] => None
+    | (t,n') :: tl => if  eqb n n'
+                      then Some t
+                      else lookdown n tl
   end.
 
+(* this table is an association list of type tag_opcode_assoc with every associations that can be made in our langage *)
+Definition encdec : tag_opcode_assoc := [(tag_n(ADD),0);(tag_n(AND),1);(tag_i(ADD_I),2);(tag_i(AND_I),3)].
+
+Theorem lookup_encdec : forall (t : tag), exists n,
+                          lookup t encdec = Some n.
+Proof.
+  destruct t.
+  -destruct t.
+   +simpl. exists 0. reflexivity.
+   +simpl. exists 1. reflexivity.
+  -destruct t.
+   +simpl. exists 2. reflexivity.
+   +simpl. exists 3. reflexivity.
+Qed.
 
 
-Require Export FMapAVL.
-Require Export Coq.Structures.OrderedTypeEx.
+(* TODO : i know that i can refoctor this proof but at the first try i didn't succeed so will try later *)
+Theorem look_up_down_encdec : forall (n : nat) (t : tag),
+                                lookup t encdec = Some n -> lookdown n encdec = Some t.
+Proof.
+  assert (I : forall (n : nat) (t : tag), lookup t encdec = Some n -> lookdown n encdec = Some t).
+  {
+    destruct t.
+    -destruct t.
+     +intros H.
+      simpl in H.
+      inversion H.
+      reflexivity.
+     +intros H.
+      simpl in H.
+      inversion H.
+      reflexivity.
+    -destruct t.
+     +intros H.
+      simpl in H.
+      inversion H.
+      reflexivity.
+     +intros H.
+      simpl in H.
+      inversion H.
+      reflexivity.
+  }
+  exact I.
+Qed.
+   
+(* uglyest proof in the world *)
+Theorem look_down_up_encdec : forall (n : nat) (t : tag),
+                                lookdown n encdec = Some t -> lookup t encdec = Some n.
+Proof.
+  induction n.
+  -intros t H.
+   simpl in H.
+   inversion H.
+   reflexivity.
+  -{induction n.
+    -intros t H.
+     simpl in H.
+     inversion H.
+     reflexivity.
+    -{induction n.
+      -intros t H.
+       simpl in H.
+       inversion H.
+       reflexivity.
+      -{induction n.
+      -intros t H.
+       simpl in H.
+       inversion H.
+       reflexivity.
+      -assert(help : forall (n' : nat), lookdown (S (S (S (S n')))) encdec = None).
+       {
+         induction n'.
+         -reflexivity.
+         -reflexivity.
+       }
+       intros t H.       
+       rewrite help in H.
+       discriminate.
+       }
+     }
+   }
+Qed.
 
-Module M := FMapAVL.Make(Nat_as_OT).
 
-Definition map_nat_nat: Type := M.t nat.
-Check map_nat_nat.
-Definition find k (m: map_nat_nat) := M.find k m.
-Check M.add.
-Definition update (p: nat * nat) (m: map_nat_nat) :=
-  M.add (fst p) (snd p) m.
+(* (* if i wan't it's very easy to proof with forall t exists n but this theorem is better and actually it's true *) *)
+(* Theorem look_down_up_encdec : forall (n : nat) (t : tag), *)
+(*                                 lookdown n encdec = Some t -> lookup t encdec = Some n. *)
+(* Proof. *)
+(*   assert (I : forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n). *)
+(*   { *)
+(*     induction n. *)
+(*     -intros t H. *)
+(*      simpl in H. *)
+(*      discriminate. *)
+(*     - *)
+      
+
+    
+(*     induction encdec as [|t' tl IHencdec].     *)
+(*     -assert (I_1 : forall (t : tag) (n : nat), lookdown n [] = Some t -> lookup t [] = Some n). *)
+(*      { *)
+(*        simpl. *)
+(*        intros t n H. *)
+(*        discriminate. *)
+(*      } *)
+(*      exact I_1. *)
+(*     -assert (I_2 : forall (t : tag) (n : nat), lookdown n (t' :: tl) = Some t -> lookup t (t' :: tl) = Some n). *)
+(*      { *)
+       
 
 
 
 
-
-Inductive tag_with_immediate : Type :=
-| ADD_I : tag_with_immediate
-| AND_I : tag_with_immediate.
-
-Inductive tag_without_immediate : Type :=
-(* XXX: isn't there an [AND] version without immediate? *)
-| ADD : tag_without_immediate
-| AND : tag_without_immediate.
-
-
-Inductive tag : Type :=
-| tag_i : nat -> tag_with_immediate -> tag
-| tag_no_i : nat -> tag_without_immediate -> tag.
- 
-Scheme Equality for tag.
-Print tag_beq.
-Module M' := FMapAVL.Make(Nat_as_OT).
-Print FMapAVL.Make.
-Definition map_tag_list_bool: Type := M.t tag.
-
-Definition findT k (m: map_nat_nat) := M.find k m.
-Check findT.
-
-Require Import Coq.FSets.FMapList Coq.Structures.OrderedTypeEx.
-
-Module Import M'' := FMapList.Make(Nat_as_OT).
-
-Definition map_nat_bool: Type := M''.t (list bool).
-
-Definition find_tag k (m: map_nat_bool) := M''.find k m.
-Check find_tag.
-Definition update_tag (p: nat * (list bool)) (m: map_nat_bool) :=
-  M''.add (fst p) (snd p) m.
-
-(*Notation "k |-> v" := (pair k v) (at level 60).
-Notation "[ ]" := (M.empty nat).
-Notation "[ p1 , .. , pn ]" := (update p1 .. (update pn (M.empty nat)) .. ). *)
-Definition listBoolTest := true :: false :: true :: [].
-Definition testMap := update_tag (pair 10 listBoolTest) (update_tag (pair 5 listBoolTest) (M''.empty (list bool))).
-Example find_test : find 10 testMap = Some(listBoolTest).
-Proof. reflexivity. Qed.
-Example find_test2 : find 9 testMap = None.
-Proof. reflexivity. Qed.
+       
+(*        intros t0 n. *)
+(*        destruct a. *)
+(*        -unfold lookdown. *)
+(*         destruct (n =? n0). *)
+(*         +intro H. *)
+(*          inversion H. *)
+(*          rewrite <- H1. *)
+(*          assert (I_2_1 : forall (t' : tag) (n' : nat) (tl : list (tag * nat)), lookup t' ((t', n') :: tl) = Some n'). *)
+(*          { *)
+(*            intros t' n' tl. *)
+(*            unfold lookup. *)
+(*            assert (I_2_1_1 : forall (t'' : tag), tag_beq t'' t'' = true). *)
+(*            { *)
+(*              destruct t''. *)
+(*              -destruct t2. *)
+(*               +reflexivity. *)
+(*               +reflexivity. *)
+(*              -destruct t2. *)
+(*               +reflexivity. *)
+(*               +reflexivity.                 *)
+(*            } *)
+(*            rewrite I_2_1_1. *)
+(*            reflexivity. *)
+(*          } *)
+(*          rewrite <- IHt. *)
+(*      } *)
+        
+     
+(*   } *)
+  
+(* Admitted. *)
 
