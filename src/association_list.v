@@ -48,35 +48,54 @@ Proof.
 Qed.
 
 
+Require Import Bool.
+
+Print tag.
+
+Definition forall_tag_n (p : tag_normal -> bool): bool :=
+  andb (p ADD) (p AND).
+
+Definition forall_tag_i (p : tag_immediate -> bool): bool.
+Admitted.
+
+Definition forall_tag (p : tag -> bool): bool :=
+  andb (forall_tag_n (fun x => p (tag_n x)))
+       (forall_tag_i (fun x => p (tag_i x))).
+
+Lemma forall_tagP: forall (P : tag -> Prop)(p : tag -> bool),
+    (forall t, reflect (P t) (p t)) ->
+    reflect (forall t, P t) (forall_tag p).
+Admitted.
+
+Definition forall_bounded : nat -> (nat -> bool) -> bool.
+Admitted.
+
+Lemma forall_finP: forall (P : nat -> Prop)(p : nat -> bool) k,
+    (forall t, reflect (P t) (p t)) ->
+    reflect (forall n, n < k -> P n) (forall_bounded k p).
+Admitted.
+
+Definition imply (a b : bool): bool := if a then b else true.
+
+Lemma implyP: forall A B a b, reflect A a -> reflect B b -> reflect (A -> B) (imply a b).
+Admitted.
+
+(* Lemma eq_natP: forall a b: nat, reflect (a = b) (eqdec a b). *)
+
+(* Lemma eq_optionP: forall A a b: option A, (eq : A -> A -> bool) ->  reflect (a = b) (eqdec eq a b). *)
+
 (* TODO : i know that i can refoctor this proof but at the first try i didn't succeed so will try later *)
 Theorem look_up_down_encdec : forall (n : nat) (t : tag),
                                 lookup t encdec = Some n -> lookdown n encdec = Some t.
 Proof.
-  assert (I : forall (n : nat) (t : tag), lookup t encdec = Some n -> lookdown n encdec = Some t).
-  {
-    destruct t.
-    -destruct t.
-     +intros H.
-      simpl in H.
-      inversion H.
-      reflexivity.
-     +intros H.
-      simpl in H.
-      inversion H.
-      reflexivity.
-    -destruct t.
-     +intros H.
-      simpl in H.
-      inversion H.
-      reflexivity.
-     +intros H.
-      simpl in H.
-      inversion H.
-      reflexivity.
-  }
-  exact I.
+intros.
+repeat match goal with
+       | t : tag |- _ => destruct t
+       | t : tag_normal |- _ => destruct t
+       | t : tag_immediate |- _ => destruct t
+       end; inversion H; auto.
 Qed.
-   
+
 (* uglyest proof in the world *)
 Theorem look_down_up_encdec : forall (n : nat) (t : tag),
                                 lookdown n encdec = Some t -> lookup t encdec = Some n.
@@ -107,7 +126,7 @@ Proof.
          -reflexivity.
          -reflexivity.
        }
-       intros t H.       
+       intros t H.
        rewrite help in H.
        discriminate.
        }
