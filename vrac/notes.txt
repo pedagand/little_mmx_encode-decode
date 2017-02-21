@@ -1,0 +1,26 @@
+Gros problème pour prouver que encode(decode) équivalents.
+En effet on a pas la garantie que à chaque instruction correspond une entrée
+dans la liste d'association. C'est très problématique...
+
+
+Pour la semaine prochaine 21 fevrier :=
+il faut hardcoder une liste (tag * nat) avec l'ensemble des trucs présents ce qui permettra de faire une preuve que pour
+tout tag il existe un nat qui sort avec la fonction lookup
+lookup (t : tag) (l : list (tag * nat) option nat :=
+lookdown (n : tag) (l : list (tag * nat) option tag := (celle ci n'aura pas la même propriété)
+mais grace a ça on devrait etre en mesure de pouvoir prouver le fait que chercher un tag puis chercher ce num
+ça fonctionne
+
+
+J'avais cette definition la pour les tag mais enfaite le unknow va etre moins
+benefique que prevus étant donné que lors des preuves on n'échoura jamais
+et cela sera plus dur de montrer que c'est un tag unknow que un truc None
+(enfin je verrais plus tard lors de la realisation de la preuve)
+
+Inductive tag :=
+| tag_n : tag_normal -> tag
+| tag_i : tag_immediate -> tag
+| unknow : tag.
+
+
+

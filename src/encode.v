@@ -6,6 +6,8 @@ Import ListNotations.
 
 
 
+
+
 (* functions to encode decode instructions *)
 (* TODO :: here is that the good reasoning about empty *)
 Definition operand_to_bin (o : operand) : option (list bool) :=
