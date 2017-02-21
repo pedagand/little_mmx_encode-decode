@@ -1,6 +1,6 @@
 Require Import List Nat. 
 Import ListNotations.
-Require Import ast_instructions.
+Require Import Mmx.ast_instructions.
 
 Check (1,2).
 Check pair nat nat.

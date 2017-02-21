@@ -1,10 +1,8 @@
 Require Import Bool List Arith Nat.
-Require Import ast_instructions.
-Require Import binary.
 Import ListNotations.
 
-
-
+Require Import Mmx.ast_instructions.
+Require Import Mmx.binary.
 
 
 
@@ -16,7 +14,9 @@ Definition operand_to_bin (o : operand) : option (list bool) :=
     | reg k => n_bit 8 k
     | empty => n_bit 8 0
   end.
-                
+
+
+(*
 (* TODO :: here i know that i can always get a binary_instruction but some function don't allow me to 
 return a binary_instruction without encapsulate it into an option type *)
 Definition encode_bis (i : instruction) : option binary_instruction :=
@@ -40,7 +40,4 @@ Definition encode_bis (i : instruction) : option binary_instruction :=
       end
   end.
 
-
-
-
-                
+*)
