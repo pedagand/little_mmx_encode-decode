@@ -153,8 +153,14 @@ Qed.
     
 SearchAbout leb.
 (* the first nat is the maximum we wan't to have in this bounded nat interval *)
-Definition forall_bounded : nat -> (nat -> bool) -> bool.
-  Admitted.
+Fixpoint forall_bounded (n : nat) (f : nat -> bool) : bool :=
+  match n with
+  | 0 => f 0
+  | S n => f (S n) && forall_bounded n f
+  end.
+
+Check forall_bounded.
+Check lol.
 
 Lemma forall_finP: forall (P : nat -> Prop)(p : nat -> bool) k,
     (forall t, reflect (P t) (p t)) ->
