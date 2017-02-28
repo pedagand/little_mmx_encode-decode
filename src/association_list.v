@@ -75,96 +75,6 @@ Qed.
 
 
 
-(* Lemma forall_tabP_cheat : forall (P : tag -> Prop) (p : tag -> bool) (t : tag), *)
-(*     reflect (P t) (p t) -> reflect (P t) (forall_tag p). *)
-(* Proof. *)
-(*   intros P p t. *)
-(*   intros H. *)
-(*   Search reflect. *)
-(*   apply reflect_iff in H. *)
-(*   apply iff_reflect. *)
-(*   rewrite H. *)
-(*   apply iff_to_and. *)
-(*   split. *)
-(*   -intros H1. *)
-(*    unfold forall_tag. *)
-(*    admit. *)
-(*   -inversion H. intros. *)
-(*    rewrite <- H2. *)
-(*    assert (help1 : forall (p' : tag -> bool) (t' : tag), p' t' = forall_tag p'). *)
-(*    { *)
-(*      (* here it's like brute force proof *) *)
-(*      intros. *)
-(*      admit. *)
-(*    } *)
-(*    rewrite help1. reflexivity. *)
-(* Admitted. *)
-   
-(*   unfold forall_tag. *)
-  
-(*   assert (xd : P t <-> p t = true -> reflect (P t) (forall_tag p)). *)
-(*   { *)
-(*     intros H. *)
-(*     apply iff_reflect. *)
-(*     apply iff_to_and. *)
-(*     split. *)
-(*     -apply iff_to_and in H. *)
-(*   } *)
-    
-(*   assert (need : P t <-> p t = true -> reflect (P t) (p t)). *)
-(*   { *)
-(*     intros H. *)
-(*     apply iff_reflect. exact H. *)
-    
-(*   } *)
-(*   intros H. *)
-(*   apply need in H. *)
-(*   destruct (p t). *)
-(*   -intros H. inversion H. *)
-   
-   
-(*    apply iff_reflect. *)
-(*    apply iff_to_and. *)
-(*    split. *)
-(*    +admit. *)
-(*    +intros H'. exact H0. *)
-(*   -intros H. inversion H. *)
-(*    apply iff_reflect. *)
-(*    split. *)
-(*    +intros. *)
-(*     auto. *)
-(*    + *)
-(*   assert (I : forall (b : bool), reflect (P t) (p t) = (P t) <-> b = true). *)
-(*   { *)
-(*     apply iff_reflect. *)
-(*   } *)
-(*   apply iff_reflect. *)
-(*   apply iff_to_and. *)
-(*   split. *)
-(*   - *)
-
-
-(* Lemma andLol : reflect True true. *)
-(* Proof. *)
-(*   Check ReflectT False. *)
-(*   exact (ReflectT True I). *)
-(* Qed. *)
-(* (* Lemma andP : forall b1 b2 B1 B2,reflect (B1 /\ B2) (b1 && b2). *) *)
-(* (* Proof. *) *)
-(* (*   intros b1 b2 B1 B2. *) *)
-(* (*   case b1; case b2. *) *)
-(* (*   -simpl. constructor. *) *)
-
-Lemma helpBefore2 : forall (f : tag -> bool), (forall (t: tag), f t = true) -> forall_tag f = true.
-Proof.
-  intros f H.
-  unfold forall_tag.
-  Search (_ && _ = true).
-  apply andb_true_intro.
-  split.
-  -compute. rewrite H. rewrite H. reflexivity.
-  -compute. rewrite H. rewrite H. reflexivity.
-Qed.
 
 Lemma helpBefore1 : forall (f : tag -> bool), forall_tag f = true -> (forall (t: tag), f t = true).
 Proof.  
@@ -180,21 +90,32 @@ Proof.
   destruct H.
   apply andb_prop in H0.
   destruct H0.
-   destruct t.
-   {
-     -destruct t.
-      +rewrite H.
-       reflexivity.
-      +rewrite H1.
-       reflexivity.
-   }
-   {
+  destruct t.
+  {
+    -destruct t.
+     +rewrite H.
+      reflexivity.
+     +rewrite H1.
+      reflexivity.
+  }
+  {
      -destruct t.
       +rewrite H0.
        reflexivity.
       +rewrite H2.
        reflexivity.
    }
+Qed.
+
+Lemma helpBefore2 : forall (f : tag -> bool), (forall (t: tag), f t = true) -> forall_tag f = true.
+Proof.
+  intros f H.
+  unfold forall_tag.
+  Search (_ && _ = true).
+  apply andb_true_intro.
+  split.
+  -compute. rewrite H. rewrite H. reflexivity.
+  -compute. rewrite H. rewrite H. reflexivity.
 Qed.
 
 
