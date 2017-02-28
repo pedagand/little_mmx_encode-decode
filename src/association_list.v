@@ -88,6 +88,17 @@ Qed.
 (*   split. *)
 (*   -intros H1. *)
 (*    unfold forall_tag. *)
+(*    admit. *)
+(*   -inversion H. intros. *)
+(*    rewrite <- H2. *)
+(*    assert (help1 : forall (p' : tag -> bool) (t' : tag), p' t' = forall_tag p'). *)
+(*    { *)
+(*      (* here it's like brute force proof *) *)
+(*      intros. *)
+(*      admit. *)
+(*    } *)
+(*    rewrite help1. reflexivity. *)
+(* Admitted. *)
    
 (*   unfold forall_tag. *)
   
@@ -143,11 +154,92 @@ Qed.
 (* (*   intros b1 b2 B1 B2. *) *)
 (* (*   case b1; case b2. *) *)
 (* (*   -simpl. constructor. *) *)
+
+Lemma helpBefore2 : forall (f : tag -> bool), (forall (t: tag), f t = true) -> forall_tag f = true.
+Proof.
+  intros f H.
+  unfold forall_tag.
+  Search (_ && _ = true).
+  apply andb_true_intro.
+  split.
+  -compute. rewrite H. rewrite H. reflexivity.
+  -compute. rewrite H. rewrite H. reflexivity.
+Qed.
+
+Lemma helpBefore1 : forall (f : tag -> bool), forall_tag f = true -> (forall (t: tag), f t = true).
+Proof.  
+  intros f.
+  unfold forall_tag.
+  intros H.
+  Search (_ && _ = true).
+  apply andb_prop in H.
+  unfold forall_tag_n in H.
+  unfold forall_tag_i in H.
+  destruct H.  
+  apply andb_prop in H.
+  destruct H.
+  apply andb_prop in H0.
+  destruct H0.
+   destruct t.
+   {
+     -destruct t.
+      +rewrite H.
+       reflexivity.
+      +rewrite H1.
+       reflexivity.
+   }
+   {
+     -destruct t.
+      +rewrite H0.
+       reflexivity.
+      +rewrite H2.
+       reflexivity.
+   }
+Qed.
+
+
+Lemma forall_tagP: forall (P : tag -> Prop)(f : tag -> bool),
+    (forall (t : tag), reflect (P t) (f t)) ->
+    reflect (forall t, P t) (forall_tag f).
+Proof.
+  intros P f H.
+  Search reflect.
+  apply iff_reflect.
+  apply iff_to_and.
+  split.
+  -Search forall_tag.
+   intros.
+   rewrite helpBefore2.
+   +reflexivity.
+   +intros t.
+    specialize (H t).
+    Search forall_tag.
+    apply reflect_iff in H.
+    inversion H.
+    specialize (H0 t).
+    apply H1.
+    exact H0.
+    (* this part is ok !!! ;) *)
+  -intros.
+   specialize (H t).
+   rewrite helpBefore1 in H.
+   inversion H.
+   +exact H1.
+   +exact H0.
+Qed.
+
+
   
-(* Lemma forall_tagP: forall (P : tag -> Prop)(p : tag -> bool), *)
-(*     (forall (t : tag), reflect (P t) (p t)) -> *)
-(*     reflect (forall t, P t) (forall_tag p). *)
-(* Proof. *)
+  intros.
+  Search reflect.
+  Check reflect_iff.
+  eapply reflect_iff in H.
+  inversion H.
+  apply iff_reflect.
+  apply iff_to_and.
+  split.
+  -intros.
+   
   
 (*   Search reflect. *)
 (*   intros P p H. (* reflect_iff *) *)
