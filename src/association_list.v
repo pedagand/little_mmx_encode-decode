@@ -150,47 +150,56 @@ Proof.
 Qed.
 
 
-  
+    
+SearchAbout leb.
+(* the first nat is the maximum we wan't to have in this bounded nat interval *)
+Definition forall_bounded : nat -> (nat -> bool) -> bool.
+  Admitted.
+
+Lemma forall_finP: forall (P : nat -> Prop)(p : nat -> bool) k,
+    (forall t, reflect (P t) (p t)) ->
+    reflect (forall n, n < k -> P n) (forall_bounded k p).
+Admitted.
+
+Definition imply (a b : bool): bool := if a then b else true.
+
+Lemma implyP: forall A B a b, reflect A a -> reflect B b -> reflect (A -> B) (imply a b).
+Proof.
   intros.
-  Search reflect.
-  Check reflect_iff.
-  eapply reflect_iff in H.
+  apply reflect_iff in H.
   inversion H.
+  apply reflect_iff in H0.
+  inversion H0.
   apply iff_reflect.
   apply iff_to_and.
-  split.
+  unfold imply.
+  split.  
   -intros.
-   
-  
-(*   Search reflect. *)
-(*   intros P p H. (* reflect_iff *) *)
-(*   Set Printing All. *)
-(*   apply reflect_iff in H. *)
-  
-(*   apply iff_reflect.   *)
-(*   apply iff_to_and. *)
-(*   split. *)
-(*   - *)
-  
+   destruct a.
+   +apply H3.
+    apply H5.
+    apply H2.
+    reflexivity.
+   +reflexivity. 
+  -intros.
+   destruct b.
+   +apply H4.
+    reflexivity.
+   +destruct a.
+    {
+      discriminate.
+    }
+    {
+      apply H4.
+      apply H1.
+      exact H6.
+    }
+Qed.
 
-(* (* the first nat is the maximum we wan't to have in this bounded nat interval *) *)
-(* Definition forall_bounded : nat -> (nat -> bool) -> bool. *)
-(* Admitted. *)
+(* Lemma eq_natP: forall a b: nat, reflect (a = b) (eqdec a b). *)
 
-(* Lemma forall_finP: forall (P : nat -> Prop)(p : nat -> bool) k, *)
-(*     (forall t, reflect (P t) (p t)) -> *)
-(*     reflect (forall n, n < k -> P n) (forall_bounded k p). *)
-(* Admitted. *)
-
-(* Definition imply (a b : bool): bool := if a then b else true. *)
-
-(* Lemma implyP: forall A B a b, reflect A a -> reflect B b -> reflect (A -> B) (imply a b). *)
-(* Admitted. *)
-
-(* (* Lemma eq_natP: forall a b: nat, reflect (a = b) (eqdec a b). *) *)
-
-(* (* Lemma eq_optionP: forall A a b: option A, (eq : A -> A -> bool) ->  reflect (a = b) (eqdec eq a b). *) *)
-
+(* Lemma eq_optionP: forall A a b: option A, (eq : A -> A -> bool) ->  reflect (a = b) (eqdec eq a b). *)
+ 
 (* (* TODO : i know that i can refoctor this proof but at the first try i didn't succeed so will try later *) *)
 (* Theorem look_up_down_encdec : forall (n : nat) (t : tag), *)
 (*                                 lookup t encdec = Some n -> lookdown n encdec = Some t. *)
