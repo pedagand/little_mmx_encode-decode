@@ -161,11 +161,36 @@ Fixpoint forall_bounded (n : nat) (f : nat -> bool) : bool :=
 
 Check forall_bounded.
 
-Lemma forall_finP: forall (P : nat -> Prop)(p : nat -> bool) k,
-    (forall t, reflect (P t) (p t)) ->
-    reflect (forall n, n < k -> P n) (forall_bounded k p).
+Lemma help_forall_findP1 : forall (f : nat -> bool), (forall (n: nat), f n = true) -> forall (k : nat), forall_bounded k f = true.
 Proof.
   intros.
+  induction k.
+  -simpl.
+   apply H.
+  -simpl.
+   rewrite IHk.
+   Search (_ && _ = true).
+   apply andb_true_intro.
+   split.
+   +apply H.
+   +reflexivity.
+Qed.
+            
+  
+  
+
+Lemma forall_finP: forall (P : nat -> Prop)(f : nat -> bool) (k : nat),
+    (forall (n : nat), reflect (P n) (f n)) ->
+    reflect (forall n, n < k -> P n) (forall_bounded k f).
+Proof.
+  intros P f k H.
+  apply iff_reflect.
+  apply iff_to_and.
+  split.
+  -intros.
+   assert ( -> forall_bounded k f = true)
+  
+  
   
 
 Definition imply (a b : bool): bool := if a then b else true.
