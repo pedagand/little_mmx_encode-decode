@@ -1,4 +1,4 @@
-Require Import List Nat. 
+Require Import List Nat Arith. 
 Import ListNotations.
 Require Import Mmx.ast_instructions.
 
@@ -160,35 +160,122 @@ Fixpoint forall_bounded (n : nat) (f : nat -> bool) : bool :=
   end.
 
 Check forall_bounded.
-
-Lemma help_forall_findP1 : forall (f : nat -> bool), (forall (n: nat), f n = true) -> forall (k : nat), forall_bounded k f = true.
+(* (* SAVE THIS *) *)
+(* Lemma help_forall_findP1 : forall (f : nat -> bool), (forall (n: nat), f n = true) -> forall (k : nat), forall_bounded k f = true. *)
+(* Proof. *)
+(*   intros. *)
+(*   induction k. *)
+(*   -simpl. *)
+(*    apply H. *)
+(*   -simpl. *)
+(*    rewrite IHk. *)
+(*    Search (_ && _ = true). *)
+(*    apply andb_true_intro. *)
+(*    split. *)
+(*    +apply H. *)
+(*    +reflexivity. *)
+(* Qed. *)
+Lemma help_forall_findP1 : forall (f : nat -> bool) (k : nat), (forall (n: nat), n <= k -> f n = true) -> forall_bounded k f = true.
 Proof.
   intros.
   induction k.
+  -apply H.
+   reflexivity.
   -simpl.
-   apply H.
-  -simpl.
-   rewrite IHk.
    Search (_ && _ = true).
    apply andb_true_intro.
    split.
    +apply H.
-   +reflexivity.
+    reflexivity.
+   +apply IHk.
+    intros n.
+    specialize (H n).
+    intros.
+    apply H.
+    Search (_ <= S _).
+    apply le_S in H0.
+    exact H0.
 Qed.
-            
-  
-  
+   
+
+
+Lemma help_forall_findP2 :
+  forall (k : nat) (f : nat -> bool), forall_bounded k f = true -> (forall (n: nat), n <= k -> f n = true).
+Proof.
+  induction k.
+  -simpl.
+   intros.
+   Search (_ <= 0).
+   apply le_n_0_eq in H0.
+   rewrite <- H0.
+   exact H.
+  -induction n.
+   +intros.
+    apply IHk.
+    simpl in H.
+    Search (_ && _ = true).
+    apply andb_prop in H.
+    destruct H.
+    exact H1.
+    apply Peano.le_0_n.
+   +apply andb_prop in H. 
+    fold forall_bounded in H.
+    destruct H.
+    intros.
+    change (f (S n) = true) with ((fun n => f (S n)) n = true).
+    apply IHk.
+    {
+      admit.
+    }
+    {
+      Search (S _ <= S _).
+      apply le_S_n in H1.
+      exact H1.
+    }
+Admitted.
+    
+    
+
+    destruct H.
+    apply IHk.
+
+    intros.
+   apply IHk.
+   +admit.
+   +induction n.
+    apply Peano.le_0_n.        
+    Search (S _ <= S _).
+    apply Peano.le_S_n in H0.
+    erewrite <- H0. Admitted.
 
 Lemma forall_finP: forall (P : nat -> Prop)(f : nat -> bool) (k : nat),
     (forall (n : nat), reflect (P n) (f n)) ->
-    reflect (forall n, n < k -> P n) (forall_bounded k f).
+    reflect (forall n, n <= k -> P n) (forall_bounded k f).
 Proof.
   intros P f k H.
   apply iff_reflect.
   apply iff_to_and.
   split.
   -intros.
-   assert ( -> forall_bounded k f = true)
+   Check help_forall_findP1.
+   apply help_forall_findP1.
+   intros.
+   specialize (H n).
+   apply reflect_iff in H.
+   inversion H.
+   apply H2.
+   apply H0.
+   exact H1.
+  -intros.
+   Check help_forall_findP2.
+   eapply help_forall_findP2 in H0.
+   specialize (H n).
+   rewrite H0 in H.
+   inversion H.
+   exact H2.
+   exact H1.
+Qed.
+   
   
   
   
