@@ -236,17 +236,17 @@ Admitted.
     
     
 
-    destruct H.
-    apply IHk.
+   (*  destruct H. *)
+   (*  apply IHk. *)
 
-    intros.
-   apply IHk.
-   +admit.
-   +induction n.
-    apply Peano.le_0_n.        
-    Search (S _ <= S _).
-    apply Peano.le_S_n in H0.
-    erewrite <- H0. Admitted.
+   (*  intros. *)
+   (* apply IHk. *)
+   (* +admit. *)
+   (* +induction n. *)
+   (*  apply Peano.le_0_n.         *)
+   (*  Search (S _ <= S _). *)
+   (*  apply Peano.le_S_n in H0. *)
+   (*  erewrite <- H0. Admitted. *)
 
 Lemma forall_finP: forall (P : nat -> Prop)(f : nat -> bool) (k : nat),
     (forall (n : nat), reflect (P n) (f n)) ->
