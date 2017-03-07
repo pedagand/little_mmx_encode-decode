@@ -196,8 +196,6 @@ Proof.
     apply le_S in H0.
     exact H0.
 Qed.
-   
-
 
 Lemma help_forall_findP2 :
   forall (k : nat) (f : nat -> bool), forall_bounded k f = true -> (forall (n: nat), n <= k -> f n = true).

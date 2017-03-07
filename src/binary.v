@@ -22,6 +22,46 @@ Fixpoint n_bit (n : nat) (k : nat) : option (list bool) :=
                 end
     end.
 
+
+Lemma size_n_bit : forall (n k: nat) (l : list bool),
+    n_bit n k = Some l -> length l = n.
+Proof.
+  induction n.
+  -intros k l.
+   induction k.
+   +intros.
+    inversion H.
+    reflexivity.
+   +simpl.
+    discriminate.
+  -intros k l.
+   simpl.
+   case_eq (n_bit n (Nat.div2 k)).  
+   +intros.
+    inversion H0.
+    assert (help1: forall (l' : list bool) (b : bool), length l' = n -> length(b :: l') = S n).
+    {
+      induction l'.
+      -intros b.
+       simpl.
+       intros.
+       rewrite H1.
+       reflexivity.
+      -intros b.
+       simpl.
+       intros.
+       rewrite H1.
+       reflexivity.
+    }    
+    apply help1.
+    specialize (IHn (Nat.div2 k)).
+    apply IHn.
+    exact H.
+   +intros.
+    discriminate.
+Qed.
+     
+
 (* first proof that we need on binary representation *)
 Theorem n_bit_n : forall (l : list bool) (n k : nat),
                     n_bit n k = Some l -> bit_n l = k.
@@ -177,4 +217,4 @@ Proof.
     exact I_2.
   }
   exact I.
-         Admitted.
+Admitted.
