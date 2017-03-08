@@ -41,7 +41,7 @@ Definition binary_instruction := list bool.
 
 (* some example to test the record structure *)
 Example my_instr := mk_instr (tag_i ADD_I) (reg 10) (reg 11) (reg 12).
-
+b
 Example first_field_instr := my_instr.(instr_opcode).
 
 

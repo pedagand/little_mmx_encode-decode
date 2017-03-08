@@ -24,23 +24,34 @@ Definition bin_to_operand (l : list bool) : operand :=
 
 
 (* HERE i don't make any garantee about the result if the binary_instruction is to small but i will have some lemma to give it *)
-Fixpoint cut_binary_instruction (bi : binary_instruction) (start : nat) (size : nat) : (list bool) :=
-  match bi with
-  | [] => []
-  | h :: tl => if beq_nat start 0
-               then (if beq_nat size 0 then [] else h :: (cut_binary_instruction tl start (size - 1)))
-               else cut_binary_instruction tl (start -1) size
+Fixpoint get_first_n_bit (bi : list bool) (size : nat) : (list bool*list bool) :=
+  match size with
+  | 0 => ([],bi)
+  | S n => match bi with
+           | h :: tl => match get_first_n_bit tl n with
+                        | (l1,l2) => (h :: l1,l2)
+                        end
+           | [] => ([],[])
+           end
   end.
 
 Definition testList := [true ; false ; true ; false ; false ; false ; true ; true ].
-Compute testList.
-Compute cut_binary_instruction testList 5 3.
+Definition testList' := [true ; false ; true].
+Compute get_first_n_bit testList' 3.
+
+
+
 
 Definition M A := option A.
 
 Definition ret {A} (a : A) : M A := Some a.
 
-Definition bind {A B} (ma : M A)(k : A -> M B): M B. Admitted.
+Definition bind {A B} (ma : M A)(k : A -> M B): M B :=
+  match ma with
+  | Some a => k a
+  | None => None
+  end.
+  
 
 Notation "'let!' x ':=' ma 'in' k" := (bind ma k) (at level 30). 
 
