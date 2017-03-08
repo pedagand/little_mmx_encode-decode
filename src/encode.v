@@ -36,15 +36,19 @@ Definition testList := [true ; false ; true ; false ; false ; false ; true ; tru
 Compute testList.
 Compute cut_binary_instruction testList 5 3.
 
-                 
+Definition M A := option A.
+
+Definition ret {A} (a : A) : M A := Some a.
+
+Definition bind {A B} (ma : M A)(k : A -> M B): M B. Admitted.
+
+Notation "'let!' x ':=' ma 'in' k" := (bind ma k) (at level 30). 
 
 (* TODO :: here i know that i can always get a binary_instruction but some function don't allow me to  *)
 (* return a binary_instruction without encapsulate it into an option type *)
 Definition encode (i : instruction) : option binary_instruction :=
-  match i with
-    | mk_instr t op1 op2 op3 =>
-      match lookup t encdec with
-        | Some k => match n_bit 8 k with
+      let! k := lookup i.(instr_opcode) encdec in
+      let! code := n_bit 8 k in
                       | Some code => match operand_to_bin op1 with
                                        | Some o1 => match operand_to_bin op2 with
                                                       | Some o2 => match operand_to_bin op3 with
@@ -112,9 +116,11 @@ Lemma encode_decode : forall (i : instruction) (bi : binary_instruction), encode
 Proof.
   (* why can't i write this ? *)
 (*   assert (I : forall (i : instruction) (bi : binary_instruction), encode i = Some bi ->
-                                                                  lookdown (bit_n (cut_binary_instruction bi 0 8)) = i.instr_opcode). *)
+                                                                  lookdown (bit_n (cut_binary_instruction bi 0 8)) = (i.instr_opcode)). *)
   induction i.
   unfold encode.
+
+  
   
 Admitted.
 

@@ -273,7 +273,8 @@ Proof.
    exact H2.
    exact H1.
 Qed.
-   
+
+
   
   
   
@@ -313,6 +314,80 @@ Proof.
     }
 Qed.
 
+SearchAbout beq_nat.
+
+Definition eq_mtag (t1 t2: option tag): bool :=
+  match t1,t2 with
+  | Some t1', Some t2' => tag_beq t1' t2'
+  | _,_ => false
+  end.
+
+Definition eq_mnat (t1 t2: option nat): bool :=
+  match t1,t2 with
+  | Some n1,Some n2 => beq_nat n1 n2
+  | _,_ => false
+  end.
+
+Definition lookdown_encdecP (t : tag) : bool :=
+  forall_bounded 3 (fun n =>                     
+                      imply (eq_mtag (lookdown n encdec) (Some t))
+                            (eq_mnat (lookup t encdec) (Some n))).
+
+Theorem lookdown_encdec : forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n.
+Proof.
+  intros n.
+  assert (reflect (forall (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n) (forall_tag lookdown_encdecP)).
+  {
+    Search reflect.
+    Check forall_tagP.
+    apply forall_tagP.
+    intros t.
+    apply iff_reflect.
+    apply iff_to_and.
+    split.
+    -induction t.
+    +{
+        induction t.
+        -reflexivity.
+        -reflexivity.        
+      }
+    +{
+        induction t.
+        -reflexivity.
+        -reflexivity.
+      }
+    -admit.
+  }
+
+  assert (H': forall_tag lookdown_encdecP = true) by reflexivity.
+  rewrite H' in H.
+  inversion H. auto.
+Admitted.
+Theorem lookdup_encdec : forall (n : nat) (t : tag), lookup t encdec = Some n -> lookdown n encdec = Some t.
+Proof. Admitted.
+                             (* save of the originial stuff *)
+(* Theorem lookdown_encdec : forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n. *)
+(* Proof. *)
+  
+(*   assert (reflect (forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n) *)
+(*                   lookdown_encdecP). *)
+(*   { *)
+(*     apply iff_reflect. *)
+(*     apply iff_to_and. *)
+(*     split. *)
+(*     -intros. *)
+(*      reflexivity. *)
+(*     -unfold lookdown_encdecP. *)
+(*      Check reflect_iff. *)
+(*      admit. *)
+(*   }   *)
+(*   assert (H': lookdown_encdecP = true) by reflexivity. *)
+(*   rewrite H' in H. *)
+(*   inversion H. auto. *)
+                             (* Qed. *)
+
+
+                             
 (* Lemma eq_natP: forall a b: nat, reflect (a = b) (eqdec a b). *)
 
 (* Lemma eq_optionP: forall A a b: option A, (eq : A -> A -> bool) ->  reflect (a = b) (eqdec eq a b). *)
