@@ -51,6 +51,7 @@ Definition bind {A B} (ma : M A)(k : A -> M B): M B :=
   | Some a => k a
   | None => None
   end.
+Check bind.
   
 
 Notation "'let!' x ':=' ma 'in' k" := (bind ma k) (at level 30). 
@@ -58,39 +59,46 @@ Notation "'let!' x ':=' ma 'in' k" := (bind ma k) (at level 30).
 (* TODO :: here i know that i can always get a binary_instruction but some function don't allow me to  *)
 (* return a binary_instruction without encapsulate it into an option type *)
 Definition encode (i : instruction) : option binary_instruction :=
-      let! k := lookup i.(instr_opcode) encdec in
-      let! code := n_bit 8 k in
-                      | Some code => match operand_to_bin op1 with
-                                       | Some o1 => match operand_to_bin op2 with
-                                                      | Some o2 => match operand_to_bin op3 with
-                                                                     | Some o3 => Some (code ++ o1 ++ o2 ++ o3)
-                                                                     | None => None
-                                                                   end
-                                                      | None => None
-                                                    end
-                                       | None => None
-                                     end
-                      | None => None
-                    end
-        | None => None
-      end
-  end.
+  let! k := lookup i.(instr_opcode) encdec in
+  fun k => let! code := n_bit 8 k in
+           fun code => let! o1 := operand_to_bin i.(instr_operande1) in 
+                       fun o1 => let! o2 := operand_to_bin i.(instr_operande2) in
+                                 fun o2 => let! o3 := operand_to_bin i.(instr_operande3) in
+                                           fun o3 => Some (code ++ o1 ++ o2 ++ o3).
 
 Definition decode (bi : binary_instruction) : option instruction :=
-  match lookdown (bit_n (cut_binary_instruction bi 0 8)) encdec with
-  | Some t =>
-    match t with
-    | tag_n tn => Some (mk_instr t (bin_to_operand (cut_binary_instruction bi 7 8))
-                                 (bin_to_operand (cut_binary_instruction bi 15 8))
-                                 (bin_to_operand (cut_binary_instruction bi 23 8)))
-    | tag_i ti => Some (mk_instr t (bin_to_operand (cut_binary_instruction bi 7 8))
-                                 (bin_to_operand (cut_binary_instruction bi 15 8))
-                                 (immediate (bit_n (cut_binary_instruction bi 23 8))))
-    end
-  | None => None
+  match get_first_n_bit bi 8 with
+  | (li,next) => let! t := lookdown (bit_n li) encdec in
+                 fun t => match get_first_n_bit next 8 with
+                          | (op1,next) => match get_first_n_bit next 8 with
+                                          | (op2,next) => match get_first_n_bit next 8 with
+                                                          | (op3,next) => match t with
+                                                                          | tag_n tn => Some (mk_instr t
+                                                                                                       (bin_to_operand op1)
+                                                                                                       (bin_to_operand op2)
+                                                                                                       (bin_to_operand op3))
+                                                                          | tag_i ti => Some (mk_instr t
+                                                                                                       (bin_to_operand op1)
+                                                                                                       (bin_to_operand op2)
+                                                                                                       (immediate (bit_n op3)))
+                                                                          end
+                                                          end
+                                          end
+                          end
   end.
 
+
+Print my_instr.
+Definition my_instr_encoded_decoded := match encode my_instr with
+                                      | Some lol => decode lol
+                                      | None => None
+                                       end.
+Print my_instr.
+Compute my_instr_encoded_decoded.
+
 Check instruction.
+
+
 
 Lemma encode_size : forall (i : instruction) (bi : binary_instruction), encode i = Some bi -> length bi = 32.
 Proof.
