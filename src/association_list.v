@@ -333,6 +333,11 @@ Definition lookdown_encdecP (t : tag) : bool :=
                       imply (eq_mtag (lookdown n encdec) (Some t))
                             (eq_mnat (lookup t encdec) (Some n))).
 
+Definition lookdown_encdecP' : bool :=
+  forall_bounded 3 (fun n =>                     
+                      forall_tag (fun t => imply (eq_mtag (lookdown n encdec) (Some t))
+                                                 (eq_mnat (lookup t encdec) (Some n)))).
+
 Theorem lookdown_encdec : forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n.
 Proof.
   intros n.
@@ -345,7 +350,8 @@ Proof.
     apply iff_reflect.
     apply iff_to_and.
     split.
-    -induction t.
+    -intros.
+     induction t.
     +{
         induction t.
         -reflexivity.
@@ -357,34 +363,45 @@ Proof.
         -reflexivity.
       }
     -admit.
+     
   }
-
   assert (H': forall_tag lookdown_encdecP = true) by reflexivity.
   rewrite H' in H.
   inversion H. auto.
 Admitted.
-Theorem lookdup_encdec : forall (n : nat) (t : tag), lookup t encdec = Some n -> lookdown n encdec = Some t.
-Proof. Admitted.
+
+
+
                              (* save of the originial stuff *)
-(* Theorem lookdown_encdec : forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n. *)
-(* Proof. *)
-  
-(*   assert (reflect (forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n) *)
-(*                   lookdown_encdecP). *)
-(*   { *)
-(*     apply iff_reflect. *)
-(*     apply iff_to_and. *)
-(*     split. *)
-(*     -intros. *)
-(*      reflexivity. *)
-(*     -unfold lookdown_encdecP. *)
-(*      Check reflect_iff. *)
-(*      admit. *)
-(*   }   *)
-(*   assert (H': lookdown_encdecP = true) by reflexivity. *)
-(*   rewrite H' in H. *)
-(*   inversion H. auto. *)
-                             (* Qed. *)
+Theorem lookdown_encdec' : forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n.
+Proof.  
+  assert (reflect (forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n)
+                  lookdown_encdecP').
+  {
+    apply iff_reflect.
+    apply iff_to_and.
+    split.
+    -intros.
+     reflexivity.
+    -destruct n.
+     +intros.
+      simpl in H0.
+      inversion H0.
+      simpl.
+      reflexivity.            
+     +{
+         (* finir en faisant que des destructs *)
+         admit.         
+       }
+      (* unfold lookdown_encdecP.*)
+     Check reflect_iff.     
+  }
+  assert (H': lookdown_encdecP' = true) by reflexivity.
+  rewrite H' in H.
+  inversion H. auto.
+Admitted.
+
+
 
 
                              
