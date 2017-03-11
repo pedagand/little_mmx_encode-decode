@@ -82,8 +82,19 @@ Definition encode (i : instruction) : option binary_instruction :=
                        fun o1 => let! o2 := operand_to_bin i.(instr_operande2) in
                                  fun o2 =>                                            
                                                let! o3 := operand_to_bin i.(instr_operande3) in                                              
-                                               fun o3 => Some (code ++ o1 ++ o2 ++ o3)
+                                               fun o3 => ret (code ++ o1 ++ o2 ++ o3)
   else None.
+
+Definition encode_mytho (i : instruction) : option binary_instruction :=
+  let! o1 := operand_to_bin i.(instr_operande1) in
+  fun o1 => ret o1.
+
+Lemma test_proof : forall (i : instruction) (bi : binary_instruction), encode_mytho i = Some bi -> length bi = 32.
+Proof.
+  intros.
+  unfold encode_mytho in H.
+  
+  
 
 Definition decode (bi : binary_instruction) : option instruction :=
   match get_first_n_bit bi 8 with
@@ -122,7 +133,12 @@ Theorem encode_decode : forall (i : instruction) (bi : binary_instruction), enco
 Proof.
   assert (I: forall (i : instruction) (bi : binary_instruction), encode i = Some bi -> decode bi = Some i).
   {
-    admit.
+    intros i.
+    induction i.(instr_opcode).
+    -intros bi Hencode.
+     unfold encode in Hencode.
+     
+     apply Hencode in lookdown_encdec'.
   }
 Admitted.
 
