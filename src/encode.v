@@ -56,15 +56,34 @@ Check bind.
 
 Notation "'let!' x ':=' ma 'in' k" := (bind ma k) (at level 30). 
 
+Definition is_op_immediate (t : tag) : bool :=
+  match t with
+  | tag_i _ => true
+  | _ => false
+  end.
+Definition is_immediate (op : operand) : bool :=
+  match op with
+  | immediate _ => true
+  | _ => false
+  end.
+
+Print negb.
+
+Definition is_valide_immediate (t : tag) (op : operand) : bool :=
+  if is_op_immediate t then is_immediate op else negb (is_immediate op).
+
 (* TODO :: here i know that i can always get a binary_instruction but some function don't allow me to  *)
 (* return a binary_instruction without encapsulate it into an option type *)
 Definition encode (i : instruction) : option binary_instruction :=
+  if is_valide_immediate i.(instr_opcode) i.(instr_operande3) then 
   let! k := lookup i.(instr_opcode) encdec in
   fun k => let! code := n_bit 8 k in
            fun code => let! o1 := operand_to_bin i.(instr_operande1) in 
                        fun o1 => let! o2 := operand_to_bin i.(instr_operande2) in
-                                 fun o2 => let! o3 := operand_to_bin i.(instr_operande3) in
-                                           fun o3 => Some (code ++ o1 ++ o2 ++ o3).
+                                 fun o2 =>                                            
+                                               let! o3 := operand_to_bin i.(instr_operande3) in                                              
+                                               fun o3 => Some (code ++ o1 ++ o2 ++ o3)
+  else None.
 
 Definition decode (bi : binary_instruction) : option instruction :=
   match get_first_n_bit bi 8 with
@@ -98,6 +117,14 @@ Compute my_instr_encoded_decoded.
 
 Check instruction.
 
+
+Theorem encode_decode : forall (i : instruction) (bi : binary_instruction), encode i = Some bi -> decode bi = Some i.
+Proof.
+  assert (I: forall (i : instruction) (bi : binary_instruction), encode i = Some bi -> decode bi = Some i).
+  {
+    admit.
+  }
+Admitted.
 
 
 Lemma encode_size : forall (i : instruction) (bi : binary_instruction), encode i = Some bi -> length bi = 32.
