@@ -81,8 +81,7 @@ other because the specification says that you have different numbers for them *)
 (* operand definition *)
 Inductive operand :=
 | immediate : nat -> operand
-| reg : nat -> operand
-| empty : operand.
+| reg : nat -> operand.
  
 
 (* instruction definition *)

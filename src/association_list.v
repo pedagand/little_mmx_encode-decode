@@ -446,8 +446,10 @@ Admitted.
 (* Admitted. *)
 
                              (* save of the originial stuff *)
-Theorem lookdown_encdec' : forall (n : nat) (t : tag), n <= 3 -> lookdown n encdec = Some t -> lookup t encdec = Some n.
-Proof.  
+Theorem lookdown_encdec' : forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n.
+Proof.
+  SearchAbout (_ < _ \/ _).
+  (* Nat.lt_ge_cases" *)
   assert (reflect (forall (n : nat), n <= 3 -> forall
                        (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n)
                   lookdown_encdecP).
@@ -492,30 +494,41 @@ Proof.
        exact H.
     }
     exact H.
-  } 
-    
+  }
+  
   assert (H': lookdown_encdecP = true) by reflexivity.
   rewrite H' in H.
-  inversion H.
-  intros n t H1.
-  apply H0.
-  exact H1.
-Qed.
+  intros n.
+  specialize (Nat.lt_ge_cases 3 n).
+  intros.
+  destruct H0.
+  -assert (lookdown n encdec = Some t -> n <= 3).
+   {
+     destruct n.     
+     -intros.
+      apply Peano.le_0_n.
+     -admit.
+      
+   }   
+   Search (_ <= _ /\ _).
+   inversion H.
+   apply H3.
+   +admit.
+   +admit.
+  -inversion H.
+   apply H2.
+   +exact H0.
+   +exact H1.
+  
+
+  
+  Admitted.
   
   
 
 
   
-  Check lookdown_equiv.
-  specialize (lookdown_equiv n (tag_n ADD)).
-  intros H1.
-  SearchAbout (_ <-> _ -> _).
-  apply iff_and in H1.
-  destruct H1.
-  apply H2.
-  apply H1 in H2.
-  -exact H2.
-  -(* il faut que je prouve n <= 3, je peux le transformer en lookdown n encdec = Some t sauf que le problème après c'est qu'il faudrais
+(* il faut que je prouve n <= 3, je peux le transformer en lookdown n encdec = Some t sauf que le problème après c'est qu'il faudrais
 que j'arrive a extraire de l'information de lookdown_enncdeP *)
 (*     unfold lookdown_encdecP in H'. *)
 (*   induction n. *)
@@ -536,7 +549,6 @@ que j'arrive a extraire de l'information de lookdown_enncdeP *)
 (*   apply H1 in LOL. *)
 (*   exact LOL. *)
 (* Qed. *)
-Admitted.
 
 
 

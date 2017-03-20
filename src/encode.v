@@ -13,51 +13,46 @@ Definition operand_to_bin (o : operand) : option (list bool) :=
   match o with
     | immediate k => n_bit 8 (k mod 256)
     | reg k => n_bit 8 (k mod 256)
-    | empty => n_bit 8 0
   end.
 
 Lemma operand_to_bin_never_fail : forall (o : operand), exists (l : list bool), operand_to_bin o = Some l.
 Proof.
   intros.
-  assert (forall (n : nat), n mod 256 <? 2 ^ 8 = true).
-  {
+  (* assert (forall (n : nat), n mod 256 <? 2 ^ 8 = true). *)
+  (* { *)
     assert (forall (n : nat), n mod 256 < 2 ^ 8).
-  {
-    assert (2 ^ 8 = 256) by reflexivity.
-    rewrite H.
-    (* i need something of the form  "_ mod n < n" *)
-    Check Nat.mod_bound_pos.
-    intros n.
-    apply Nat.mod_bound_pos.
-    Search (0 <= _).
-    apply Peano.le_0_n.
-    Search (0 < S _).
-    apply Nat.lt_0_succ.
-  }
-  SearchAbout (_ < _).
-  intros.
-  specialize (Nat.ltb_spec0 (n mod 256) (2 ^ 8)).
-  intros.
-  apply reflect_iff in H0.
-  rewrite iff_to_and in H0.
-  destruct H0.
-  apply H0.
-  specialize (H n).
-  exact H.
-  }
+    {
+      assert (2 ^ 8 = 256) by reflexivity.
+      rewrite H.
+      (* i need something of the form  "_ mod n < n" *)
+      Check Nat.mod_bound_pos.
+      intros n.
+      apply Nat.mod_bound_pos.
+      Search (0 <= _).
+      apply Peano.le_0_n.
+      Search (0 < S _).
+      apply Nat.lt_0_succ.
+    }
+    (* SearchAbout (_ < _). *)
+    (* intros. *)
+    (* specialize (Nat.ltb_spec0 (n mod 256) (2 ^ 8)). *)
+    (* intros. *)
+    (* apply reflect_iff in H0. *)
+    (* rewrite iff_to_and in H0. *)
+    (* destruct H0. *)
+    (* apply H0. *)
+    (* specialize (H n). *)
+    (* exact H. *)
+  (* }  *)
   destruct o.
   -unfold operand_to_bin.
-   Check n_bit_dont_fail.
    apply n_bit_dont_fail.
-   rewrite H.
-   reflexivity.
+   specialize (H n).
+   exact H.
   -unfold operand_to_bin.
    apply n_bit_dont_fail.
-   rewrite H.
-   reflexivity.
-  -unfold operand_to_bin.
-   apply n_bit_dont_fail.
-   reflexivity.
+   specialize (H n).
+   exact H.
 Qed.
 
 
@@ -66,11 +61,6 @@ Lemma operand_to_bin_size : forall (o : operand) (l : list bool),
     operand_to_bin o = Some l -> length l = 8.
 Proof.
   destruct o.
-  -unfold operand_to_bin.
-   intros l H.
-   apply size_n_bit in H.
-   rewrite H.
-   reflexivity.
   -unfold operand_to_bin.
    intros l H.
    apply size_n_bit in H.
@@ -133,12 +123,14 @@ Lemma bind_rewrite : forall (A B : Type) (ma : M A) (k : A -> M B) (res : B), bi
 Qed.
 
 
-
-
 (* TODO :: to delete but can't find this theorem so proof of it *)
 Lemma commut_equal : forall (A : Type) (a b : A), a = b -> b = a.
 Proof.
   intros. rewrite H. reflexivity. Qed.
+
+
+
+
 
 Notation "'let!' x ':=' ma 'in' k" := (bind ma k) (at level 30). 
 
@@ -171,37 +163,50 @@ Definition encode (i : instruction) : option binary_instruction :=
                                                fun o3 => ret (code ++ o1 ++ o2 ++ o3)
   else None.
 
+Definition encode_mytho (i : instruction) : option tag :=
+  let! bo1 := lookup i.(instr_opcode) encdec in
+  fun bo1 => ret (n_bit 8 bo1).
+
+Definition decode_mytho (bi : binary_instruction) : option instruction :=
+  match get_first_n_bit with
+  | (h,tl) => lookdown h tl
+  | _ => None
+  end.
 
 
+(* this is test purpose *)
+(* Definition encode_mytho (i : instruction) : option binary_instruction := *)
+(*   let! bo1 := operand_to_bin i.(instr_operande1) in *)
+(*   fun bo1 => ret bo1. *)
 
-Definition encode_mytho (i : instruction) : option binary_instruction :=
-  let! o1 := operand_to_bin i.(instr_operande1) in
-  fun o1 => ret o1.
+(* Definition decode_mytho (bi : binary_instruction) : option instruction := *)
+(*   match get_first_n_bit with *)
+(*   | (h,tl) => bit_n h  *)
 
-Print operand_to_bin.
+(* Print operand_to_bin. *)
 
-Lemma test_proof : forall (i : instruction) (l : list bool) (bi : binary_instruction), encode_mytho i = Some bi -> length bi = 8.
-Proof.
-  intros.
-  unfold encode_mytho in H.
-  Check bind_rewrite.
-  specialize bind_rewrite.
-  intros.
-  apply H0 in H.
-  destruct H.
-  destruct H.
-  specialize (ret_rewrite (list bool)).
-  intros.
-  rewrite H2 in H.
-  inversion H.
-  specialize (commut_equal (option (list bool))).
-  intros.
-  apply H3 in H1.
-  Check operand_to_bin_size.
-  apply operand_to_bin_size in H1.  
-  rewrite <- H4.
-  exact H1.
-Qed.
+(* Lemma test_proof : forall (i : instruction) (l : list bool) (bi : binary_instruction), encode_mytho i = Some bi -> length bi = 8. *)
+(* Proof. *)
+(*   intros. *)
+(*   unfold encode_mytho in H. *)
+(*   Check bind_rewrite. *)
+(*   specialize bind_rewrite. *)
+(*   intros. *)
+(*   apply H0 in H. *)
+(*   destruct H. *)
+(*   destruct H. *)
+(*   specialize (ret_rewrite (list bool)). *)
+(*   intros. *)
+(*   rewrite H2 in H. *)
+(*   inversion H. *)
+(*   specialize (commut_equal (option (list bool))). *)
+(*   intros. *)
+(*   apply H3 in H1. *)
+(*   Check operand_to_bin_size. *)
+(*   apply operand_to_bin_size in H1.   *)
+(*   rewrite <- H4. *)
+(*   exact H1. *)
+(* Qed. *)
 
 
 
@@ -217,12 +222,12 @@ Definition decode (bi : binary_instruction) : option instruction :=
                                           | (op2,next) => match get_first_n_bit next 8 with
                                                           | (op3,next) => match t with
                                                                           | tag_n tn => Some (mk_instr t
-                                                                                                       (bin_to_operand op1)
-                                                                                                       (bin_to_operand op2)
-                                                                                                       (bin_to_operand op3))
+                                                                                                       (reg (bit_n op1))
+                                                                                                       (reg (bit_n  op2))
+                                                                                                       (reg (bit_n  op3)))
                                                                           | tag_i ti => Some (mk_instr t
-                                                                                                       (bin_to_operand op1)
-                                                                                                       (bin_to_operand op2)
+                                                                                                       (reg (bit_n op1))
+                                                                                                       (reg (bit_n op2))
                                                                                                        (immediate (bit_n op3)))
                                                                           end
                                                           end
@@ -242,12 +247,21 @@ Compute my_instr_encoded_decoded.
 Check instruction.
 
 
+
+
 Theorem encode_decode : forall (i : instruction) (bi : binary_instruction), encode i = Some bi -> decode bi = Some i.
 Proof.
   assert (I: forall (i : instruction) (bi : binary_instruction), encode i = Some bi -> decode bi = Some i).
   {
-    intros i.
-    induction i.(instr_opcode).
+    destruct i.
+    destruct (instr_opcode).
+    -destruct instr_operande3.
+     +unfold encode.
+      
+    -unfold encode in H.
+     unfold encode in H.
+
+     
     -intros bi Hencode.
      unfold encode in Hencode.
      
