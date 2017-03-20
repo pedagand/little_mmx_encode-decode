@@ -234,18 +234,6 @@ Admitted.
     
     
 
-   (*  destruct H. *)
-   (*  apply IHk. *)
-
-   (*  intros. *)
-   (* apply IHk. *)
-   (* +admit. *)
-   (* +induction n. *)
-   (*  apply Peano.le_0_n.         *)
-   (*  Search (S _ <= S _). *)
-   (*  apply Peano.le_S_n in H0. *)
-   (*  erewrite <- H0. Admitted. *)
-
 Lemma forall_finP: forall (P : nat -> Prop)(f : nat -> bool) (k : nat),
     (forall (n : nat), reflect (P n) (f n)) ->
     reflect (forall n, n <= k -> P n) (forall_bounded k f).
@@ -363,9 +351,40 @@ Definition lookdown_encdecP : bool :=
                                                  (eq_mnat (lookup t encdec) (Some n)))).
 
 Lemma lookdown_n_inf_3 : forall (n : nat) (t : tag), lookdown n encdec = Some t -> n <=3.
-  Admitted.
-Lemma lookdown_encdecP_implies : lookdown_encdecP = true -> forall (n : nat) (t : tag), lookdown n encdec = Some t.
+Proof.
+  destruct n.
+  -intros.
+   Search (0 <= _).
+   apply Peano.le_0_n.
+  -{destruct n.    
+    -intros.      
+     Search (S _ <= S _).
+     apply le_n_S.
+     apply Peano.le_0_n.
+    -{
+        destruct n.
+        -intros.
+         repeat (apply le_n_S).
+         apply Peano.le_0_n.
+        -{
+            destruct n.
+            -intros.
+             repeat (apply le_n_S).
+             apply Peano.le_0_n.
+            -discriminate.
+          }
+      }
+   }
+Qed.
+
+
+
+Lemma lookdown_encdecP_implies : lookdown_encdecP = true -> forall (n : nat) (t : tag), n <= 3 -> lookdown n encdec = Some t.
+Proof.
 Admitted.
+
+Lemma lookdown_equiv : forall (n : nat) (t : tag), n <= 3 <-> lookdown n encdec = Some t.
+  Admitted.
 (*
 Theorem lookdown_encdec : forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n.
 Proof.
@@ -453,19 +472,39 @@ Proof.
   assert (H': lookdown_encdecP = true) by reflexivity.
   rewrite H' in H.
   inversion H.
-  Check lookdown_encdecP_implies.
-  specialize lookdown_encdecP_implies.
-  intros LOL.
-  specialize (LOL H').
   intros n.
   apply H0.
-  Check lookdown_n_inf_3.
-  specialize lookdown_n_inf_3.
-  intros.
-  apply H1 in LOL.
-  
-Admitted.
+  Check lookdown_equiv.
+  specialize (lookdown_equiv n (tag_n ADD)).
+  intros H1.
+  SearchAbout (_ <-> _ -> _).
+  apply iff_and in H1.
+  destruct H1.
+  apply H2.
+  apply H1 in H2.
+  -exact H2.
+  -(* il faut que je prouve n <= 3, je peux le transformer en lookdown n encdec = Some t sauf que le problème après c'est qu'il faudrais
+que j'arrive a extraire de l'information de lookdown_enncdeP *)
+(*     unfold lookdown_encdecP in H'. *)
+(*   induction n. *)
+(*   -reflexivity. *)
+(*   - *)
 
+
+  
+(*   Search (_ <-> _ -> _). *)
+(*   Check lookdown_n_inf_3. *)
+(*   specialize lookdown_n_inf_3. *)
+(*   intros. *)
+(*   specialize (H1 n (tag_n ADD)). *)
+(*   Check lookdown_equiv. *)
+(*   specialize lookdown_equiv. *)
+(*   intros. *)
+
+(*   apply H1 in LOL. *)
+(*   exact LOL. *)
+(* Qed. *)
+Admitted.
 
 
 

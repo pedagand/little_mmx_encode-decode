@@ -22,6 +22,43 @@ Fixpoint n_bit (n : nat) (k : nat) : option (list bool) :=
                 end
     end.
 
+Compute pow 2 8.
+Check leb 2 3.
+
+Lemma n_bit_dont_fail : forall (n k : nat),
+    k < pow 2 n -> exists (l : list bool), n_bit n k = Some l.
+Proof.
+  (* induction n. *)
+  (* -simpl. *)
+  (*  intros. *)
+  (*  Search (_ < 1). *)
+  (*  apply Nat.lt_1_r in H. *)
+  (*  rewrite H. *)
+  (*  exists []. *)
+  (*  reflexivity. *)
+  (* -induction k. *)
+  (*  +simpl. *)
+  (*   intros. *)
+  (*   rewrite <- IHn. *)
+  (*  rewrite <- plus_n_O.       *)
+  induction n.
+  -induction k.
+   +simpl.
+    exists [].
+    reflexivity.
+   +simpl.
+    Search (_ < 0).
+    Search (S _ < S _).
+    exists [].
+    apply lt_S_n in H.
+    Search (_ < 0).
+    apply Nat.nlt_0_r in H.
+    inversion H.    
+  -intros.
+Admitted.   
+
+
+SearchAbout (_ mod _).
 
 Lemma size_n_bit : forall (n k: nat) (l : list bool),
     n_bit n k = Some l -> length l = n.

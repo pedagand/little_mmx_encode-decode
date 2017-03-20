@@ -5,22 +5,103 @@ Require Import Mmx.ast_instructions Mmx.binary Mmx.association_list.
 Require Import Mmx.ast_instructions.
 Require Import Mmx.binary.
 
-
+Check n_bit_dont_fail.
 
 (* functions to encode decode instructions *)
 (* TODO :: here is that the good reasoning about empty *)
 Definition operand_to_bin (o : operand) : option (list bool) :=
   match o with
-    | immediate k => n_bit 8 k
-    | reg k => n_bit 8 k
+    | immediate k => n_bit 8 (k mod 256)
+    | reg k => n_bit 8 (k mod 256)
     | empty => n_bit 8 0
   end.
+
+Lemma operand_to_bin_never_fail : forall (o : operand), exists (l : list bool), operand_to_bin o = Some l.
+Proof.
+  intros.
+  assert (forall (n : nat), n mod 256 <? 2 ^ 8 = true).
+  {
+    assert (forall (n : nat), n mod 256 < 2 ^ 8).
+  {
+    assert (2 ^ 8 = 256) by reflexivity.
+    rewrite H.
+    (* i need something of the form  "_ mod n < n" *)
+    Check Nat.mod_bound_pos.
+    intros n.
+    apply Nat.mod_bound_pos.
+    Search (0 <= _).
+    apply Peano.le_0_n.
+    Search (0 < S _).
+    apply Nat.lt_0_succ.
+  }
+  SearchAbout (_ < _).
+  intros.
+  specialize (Nat.ltb_spec0 (n mod 256) (2 ^ 8)).
+  intros.
+  apply reflect_iff in H0.
+  rewrite iff_to_and in H0.
+  destruct H0.
+  apply H0.
+  specialize (H n).
+  exact H.
+  }    
+  destruct o.  
+  -unfold operand_to_bin.
+   Check n_bit_dont_fail.
+   apply n_bit_dont_fail.
+   rewrite H.
+   reflexivity.
+  -unfold operand_to_bin.
+   apply n_bit_dont_fail.
+   rewrite H.
+   reflexivity.
+  -unfold operand_to_bin.
+   apply n_bit_dont_fail.
+   reflexivity.   
+Qed.
+
+Lemma operand_to_bin_size : forall (o : operand) (l : list bool),
+    operand_to_bin o = Some l -> length l = 8.
+Proof.
+  destruct o.
+  -unfold operand_to_bin.
+   intros l H.
+   apply size_n_bit in H.
+   rewrite H.
+   reflexivity.
+  -unfold operand_to_bin.
+   intros l H.
+   apply size_n_bit in H.
+   rewrite H.
+   reflexivity.
+   -unfold operand_to_bin.
+   intros l H.
+   apply size_n_bit in H.
+   rewrite H.
+   reflexivity.
+Qed.
+
+
 Definition bin_to_operand (l : list bool) : operand :=
   match bit_n l with
   | 0 => empty
   | n => reg n
   end.
-    
+
+Theorem operand_to_bin_to_operand : forall (o : operand) (l : list bool), operand_to_bin o = Some l -> bin_to_operand l = o.
+Proof.
+  destruct o.
+  -
+
+Theorem bin_to_operand_to_bin : forall (l : list bool) (o : operand), bin_to_operand l = o -> operand_to_bin o = Some l.
+Proof.
+  unfold bin_to_operand.
+  intros l.
+  assert (bit_n l = empty -> 
+  destruct (bit_n l).
+  -intros.
+   rewrite <- H.
+   simpl.
 
 
 (* HERE i don't make any garantee about the result if the binary_instruction is to small but i will have some lemma to give it *)
@@ -52,6 +133,17 @@ Definition bind {A B} (ma : M A)(k : A -> M B): M B :=
   | None => None
   end.
 Check bind.
+Check operand_to_bin_size.
+(* bind (operand_to_bin (instr_operande1 i)) (fun o1 : list bool => ret o1) = Some bi *)
+Lemma bind_rewrite : forall (A B : Type) (ma : M A) (k : A -> M B) (res : B), bind ma k = Some res -> exists (a : A), ma = Some a.
+Proof.
+  intros.
+  remember ma.
+  destruct m.
+  -exists a. auto.
+  -simpl in H. discriminate.
+Qed.
+
   
 
 Notation "'let!' x ':=' ma 'in' k" := (bind ma k) (at level 30). 
@@ -89,12 +181,27 @@ Definition encode_mytho (i : instruction) : option binary_instruction :=
   let! o1 := operand_to_bin i.(instr_operande1) in
   fun o1 => ret o1.
 
-Lemma test_proof : forall (i : instruction) (bi : binary_instruction), encode_mytho i = Some bi -> length bi = 32.
+Print operand_to_bin.
+
+Lemma test_proof : forall (i : instruction) (l : list bool) (bi : binary_instruction), encode_mytho i = Some bi -> length bi = 8.
 Proof.
   intros.
   unfold encode_mytho in H.
+  Check bind_rewrite.
+  specialize (bind_rewrite (list bool) (list bool) (operand_to_bin (instr_operande1 i)) (fun o1 : list bool => ret o1) bi).
+  intros.
+  apply H0 in H.
+  destruct H.
+  SearchAbout operand_to_bin.
+  apply operand_to_bin_size in H.
   
-  
+  Check operand_to_bin_size.
+  apply operand_to_bin_size in H.
+  destruct bind in H0.  
+  -admit.
+  Check operand_to_bin_never_fail.
+Admitted.
+(* flux d'instruction il faut faire une fonction qui decode le debut de la liste et retourne la suite de la liste *)
 
 Definition decode (bi : binary_instruction) : option instruction :=
   match get_first_n_bit bi 8 with

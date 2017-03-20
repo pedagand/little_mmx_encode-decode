@@ -17,6 +17,63 @@ Inductive tag :=
 Scheme Equality for tag.
 Check tag_beq.
 
+Lemma tag_beq_reflexivity : forall (t :tag), tag_beq t t = true.
+Proof.
+  destruct t.
+  -destruct t.
+   +reflexivity.
+   +reflexivity.
+  -destruct t.
+   +reflexivity.
+   +reflexivity.
+Qed.
+
+Lemma tag_beq_different : forall (t1 t2 : tag), tag_beq t1 t2 = true -> t1 = t2.
+Proof.
+  destruct t1.
+  -{
+      destruct t2.
+      -{
+          destruct t.
+          -destruct t0.
+           +reflexivity.
+           +discriminate.
+          -destruct t0.
+           +discriminate.
+           +reflexivity.            
+        }
+      -{
+          destruct t.
+          -destruct t0.
+           +discriminate.
+           +discriminate.
+          -destruct t0.
+           +discriminate.
+           +discriminate.
+        }
+    }
+  -{
+      destruct t2.
+      -{
+          destruct t.
+          -destruct t0.
+           +discriminate.
+           +discriminate.
+          -destruct t0.
+           +discriminate.
+           +discriminate.
+        }
+      -{
+          destruct t.
+          -destruct t0.
+           +reflexivity.
+           +discriminate.
+          -destruct t0.
+           +discriminate.
+           +reflexivity.
+        }      
+    }
+Qed.
 
 (* maybe it's not usefull to distinguish the special register than the 
 other because the specification says that you have different numbers for them *)
