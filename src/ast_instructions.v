@@ -83,7 +83,7 @@ Inductive operand :=
 | immediate : nat -> operand
 | reg : nat -> operand
 | empty : operand.
-
+ 
 
 (* instruction definition *)
 Record instruction :=

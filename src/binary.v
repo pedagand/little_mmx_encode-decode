@@ -28,19 +28,6 @@ Check leb 2 3.
 Lemma n_bit_dont_fail : forall (n k : nat),
     k < pow 2 n -> exists (l : list bool), n_bit n k = Some l.
 Proof.
-  (* induction n. *)
-  (* -simpl. *)
-  (*  intros. *)
-  (*  Search (_ < 1). *)
-  (*  apply Nat.lt_1_r in H. *)
-  (*  rewrite H. *)
-  (*  exists []. *)
-  (*  reflexivity. *)
-  (* -induction k. *)
-  (*  +simpl. *)
-  (*   intros. *)
-  (*   rewrite <- IHn. *)
-  (*  rewrite <- plus_n_O.       *)
   induction n.
   -induction k.
    +simpl.
@@ -180,7 +167,9 @@ Proof.
         }        
         rewrite I_2_1_1.
         Search (_ + 1 = S _).
+        Search (Nat.div2 _).
         rewrite Nat.add_1_r.
+        Check even_div2.
         rewrite <- even_div2.
         -Search (Nat.div2 (2 * _)).
          rewrite div2_double.
@@ -203,7 +192,15 @@ Proof.
         -assert (I_2_1_3 : Even.even (2 * bit_n l)).
          {
            (* this is supposed to be trivial -_-_-_-_-_-_-_-_-_-_-_-_- *)
-           SearchAbout (2 * _) Nat.even.
+           Check Nat.even_add_mul_2.
+           Search (0 + _).
+           rewrite <- Nat.add_0_l.
+           SearchAbout (even (_ + _)).
+           specialize (Nat.even_add_mul_2 0 (bit_n l)).
+           intros.
+           Check Even.even_equiv.
+           apply Even.even_equiv.
+           
           admit. 
          }
          exact I_2_1_3.

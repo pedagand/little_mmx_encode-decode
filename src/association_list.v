@@ -223,6 +223,7 @@ Proof.
     change (f (S n) = true) with ((fun n => f (S n)) n = true).
     apply IHk.
     {
+      
       admit.
     }
     {
@@ -419,9 +420,33 @@ Proof.
 Admitted.
 *)
 
+Theorem lookdup_encdec : forall (t : tag) (n : nat), lookup t encdec = Some n -> lookdown n encdec = Some t.
+Proof.
+Admitted.
+(*   SearchAbout reflect. *)
+(*   intros t n. *)
+(*   assert (reflect (forall (t : tag),lookup t encdec = Some n -> lookdown n encdec = Some t) *)
+(*                                     lookdown_encdecP). *)
+(*   { *)
+(*     unfold lookdown_encdecP. *)
+(*     SearchAbout forall_bounded. *)
+(*     apply forall_finP. *)
+(*     intro n. *)
+(*     Check forall_tag. *)
+(*     apply forall_tagP. *)
+(*     SearchAbout imply. *)
+(*     intros t. *)
+(*     apply implyP. *)
+
+(*   } *)
+(*   assert (H': lookdown_encdecP = true) by reflexivity. *)
+(*   rewrite H' in H. *)
+(*   inversion H. *)
+(*   apply H0. *)
+(* Admitted. *)
 
                              (* save of the originial stuff *)
-Theorem lookdown_encdec' : forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n.
+Theorem lookdown_encdec' : forall (n : nat) (t : tag), n <= 3 -> lookdown n encdec = Some t -> lookup t encdec = Some n.
 Proof.  
   assert (reflect (forall (n : nat), n <= 3 -> forall
                        (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n)
@@ -472,8 +497,15 @@ Proof.
   assert (H': lookdown_encdecP = true) by reflexivity.
   rewrite H' in H.
   inversion H.
-  intros n.
+  intros n t H1.
   apply H0.
+  exact H1.
+Qed.
+  
+  
+
+
+  
   Check lookdown_equiv.
   specialize (lookdown_equiv n (tag_n ADD)).
   intros H1.

@@ -8,7 +8,7 @@ Require Import Mmx.binary.
 Check n_bit_dont_fail.
 
 (* functions to encode decode instructions *)
-(* TODO :: here is that the good reasoning about empty *)
+(* TODO :: Here this function can't be call for immediate *)
 Definition operand_to_bin (o : operand) : option (list bool) :=
   match o with
     | immediate k => n_bit 8 (k mod 256)
@@ -44,8 +44,8 @@ Proof.
   apply H0.
   specialize (H n).
   exact H.
-  }    
-  destruct o.  
+  }
+  destruct o.
   -unfold operand_to_bin.
    Check n_bit_dont_fail.
    apply n_bit_dont_fail.
@@ -57,8 +57,10 @@ Proof.
    reflexivity.
   -unfold operand_to_bin.
    apply n_bit_dont_fail.
-   reflexivity.   
+   reflexivity.
 Qed.
+
+
 
 Lemma operand_to_bin_size : forall (o : operand) (l : list bool),
     operand_to_bin o = Some l -> length l = 8.
@@ -80,22 +82,6 @@ Proof.
    rewrite H.
    reflexivity.
 Qed.
-
-
-Definition bin_to_operand (l : list bool) : operand :=
-  match bit_n l with
-  | 0 => empty
-  | n => reg n
-  end.
-
-Theorem operand_to_bin_to_operand : forall (o : operand) (l : list bool), operand_to_bin o = Some l -> bin_to_operand l = o.
-Proof.
-  destruct o.
-Admitted.
-
-Theorem bin_to_operand_to_bin : forall (l : list bool) (o : operand), bin_to_operand l = o -> operand_to_bin o = Some l.
-Proof.
-Admitted.
 
 
 (* HERE i don't make any garantee about the result if the binary_instruction is to small but i will have some lemma to give it *)
@@ -145,6 +131,8 @@ Lemma bind_rewrite : forall (A B : Type) (ma : M A) (k : A -> M B) (res : B), bi
   -simpl in H.
    discriminate.
 Qed.
+
+
 
 
 (* TODO :: to delete but can't find this theorem so proof of it *)
@@ -214,6 +202,10 @@ Proof.
   rewrite <- H4.
   exact H1.
 Qed.
+
+
+
+
 
   (* flux d'instruction il faut faire une fonction qui decode le debut de la liste et retourne la suite de la liste *)
 
