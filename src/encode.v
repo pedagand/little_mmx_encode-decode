@@ -91,17 +91,11 @@ Definition bin_to_operand (l : list bool) : operand :=
 Theorem operand_to_bin_to_operand : forall (o : operand) (l : list bool), operand_to_bin o = Some l -> bin_to_operand l = o.
 Proof.
   destruct o.
-  -
+Admitted.
 
 Theorem bin_to_operand_to_bin : forall (l : list bool) (o : operand), bin_to_operand l = o -> operand_to_bin o = Some l.
 Proof.
-  unfold bin_to_operand.
-  intros l.
-  assert (bit_n l = empty -> 
-  destruct (bit_n l).
-  -intros.
-   rewrite <- H.
-   simpl.
+Admitted.
 
 
 (* HERE i don't make any garantee about the result if the binary_instruction is to small but i will have some lemma to give it *)
@@ -127,6 +121,9 @@ Definition M A := option A.
 
 Definition ret {A} (a : A) : M A := Some a.
 
+Lemma ret_rewrite : forall (A : Type) (a : A), ret a = Some a.
+Proof. intros. unfold ret. reflexivity. Qed.
+
 Definition bind {A B} (ma : M A)(k : A -> M B): M B :=
   match ma with
   | Some a => k a
@@ -134,17 +131,26 @@ Definition bind {A B} (ma : M A)(k : A -> M B): M B :=
   end.
 Check bind.
 Check operand_to_bin_size.
-(* bind (operand_to_bin (instr_operande1 i)) (fun o1 : list bool => ret o1) = Some bi *)
-Lemma bind_rewrite : forall (A B : Type) (ma : M A) (k : A -> M B) (res : B), bind ma k = Some res -> exists (a : A), ma = Some a.
-Proof.
+
+
+Lemma bind_rewrite : forall (A B : Type) (ma : M A) (k : A -> M B) (res : B), bind ma k = Some res -> exists (a : A), k a = Some res /\ Some a = ma.
   intros.
   remember ma.
   destruct m.
-  -exists a. auto.
-  -simpl in H. discriminate.
+  -exists a.
+   split.
+   +rewrite <- H.
+    reflexivity.
+   +reflexivity.
+  -simpl in H.
+   discriminate.
 Qed.
 
-  
+
+(* TODO :: to delete but can't find this theorem so proof of it *)
+Lemma commut_equal : forall (A : Type) (a b : A), a = b -> b = a.
+Proof.
+  intros. rewrite H. reflexivity. Qed.
 
 Notation "'let!' x ':=' ma 'in' k" := (bind ma k) (at level 30). 
 
@@ -177,6 +183,9 @@ Definition encode (i : instruction) : option binary_instruction :=
                                                fun o3 => ret (code ++ o1 ++ o2 ++ o3)
   else None.
 
+
+
+
 Definition encode_mytho (i : instruction) : option binary_instruction :=
   let! o1 := operand_to_bin i.(instr_operande1) in
   fun o1 => ret o1.
@@ -188,20 +197,25 @@ Proof.
   intros.
   unfold encode_mytho in H.
   Check bind_rewrite.
-  specialize (bind_rewrite (list bool) (list bool) (operand_to_bin (instr_operande1 i)) (fun o1 : list bool => ret o1) bi).
+  specialize bind_rewrite.
   intros.
   apply H0 in H.
   destruct H.
-  SearchAbout operand_to_bin.
-  apply operand_to_bin_size in H.
-  
+  destruct H.
+  specialize (ret_rewrite (list bool)).
+  intros.
+  rewrite H2 in H.
+  inversion H.
+  specialize (commut_equal (option (list bool))).
+  intros.
+  apply H3 in H1.
   Check operand_to_bin_size.
-  apply operand_to_bin_size in H.
-  destruct bind in H0.  
-  -admit.
-  Check operand_to_bin_never_fail.
-Admitted.
-(* flux d'instruction il faut faire une fonction qui decode le debut de la liste et retourne la suite de la liste *)
+  apply operand_to_bin_size in H1.  
+  rewrite <- H4.
+  exact H1.
+Qed.
+
+  (* flux d'instruction il faut faire une fonction qui decode le debut de la liste et retourne la suite de la liste *)
 
 Definition decode (bi : binary_instruction) : option instruction :=
   match get_first_n_bit bi 8 with
