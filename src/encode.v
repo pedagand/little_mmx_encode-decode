@@ -9,69 +9,76 @@ Check n_bit_dont_fail.
 
 (* (* functions to encode decode instructions *) *)
 (* (* TODO :: Here this function can't be call for immediate *) *)
-(* Definition operand_to_bin (o : operand) : option (list bool) := *)
-(*   match o with *)
-(*     | immediate k => n_bit 8 (k mod 256) *)
-(*     | reg k => n_bit 8 (k mod 256) *)
-(*   end. *)
+Definition operand_to_bin (o : operande) : option (list bool) :=
+  match o with
+    | imm_o (imm k) => n_bit 8 (k mod 256)
+    | reg_o (reg k) => n_bit 8 (k mod 256)
+  end.
 
-(* Lemma operand_to_bin_never_fail : forall (o : operand), exists (l : list bool), operand_to_bin o = Some l. *)
-(* Proof. *)
-(*   intros. *)
-(*   (* assert (forall (n : nat), n mod 256 <? 2 ^ 8 = true). *) *)
-(*   (* { *) *)
-(*     assert (forall (n : nat), n mod 256 < 2 ^ 8). *)
-(*     { *)
-(*       assert (2 ^ 8 = 256) by reflexivity. *)
-(*       rewrite H. *)
-(*       (* i need something of the form  "_ mod n < n" *) *)
-(*       Check Nat.mod_bound_pos. *)
-(*       intros n. *)
-(*       apply Nat.mod_bound_pos. *)
-(*       Search (0 <= _). *)
-(*       apply Peano.le_0_n. *)
-(*       Search (0 < S _). *)
-(*       apply Nat.lt_0_succ. *)
-(*     } *)
-(*     (* SearchAbout (_ < _). *) *)
-(*     (* intros. *) *)
-(*     (* specialize (Nat.ltb_spec0 (n mod 256) (2 ^ 8)). *) *)
-(*     (* intros. *) *)
-(*     (* apply reflect_iff in H0. *) *)
-(*     (* rewrite iff_to_and in H0. *) *)
-(*     (* destruct H0. *) *)
-(*     (* apply H0. *) *)
-(*     (* specialize (H n). *) *)
-(*     (* exact H. *) *)
-(*   (* }  *) *)
-(*   destruct o. *)
-(*   -unfold operand_to_bin. *)
-(*    apply n_bit_dont_fail. *)
-(*    specialize (H n). *)
-(*    exact H. *)
-(*   -unfold operand_to_bin. *)
-(*    apply n_bit_dont_fail. *)
-(*    specialize (H n). *)
-(*    exact H. *)
-(* Qed. *)
+Lemma operand_to_bin_never_fail : forall (o : operande), exists (l : list bool), operand_to_bin o = Some l.
+Proof.
+  intros.
+  (* assert (forall (n : nat), n mod 256 <? 2 ^ 8 = true). *)
+  (* { *)
+    assert (forall (n : nat), n mod 256 < 2 ^ 8).
+    {
+      assert (2 ^ 8 = 256) by reflexivity.
+      rewrite H.
+      (* i need something of the form  "_ mod n < n" *)
+      Check Nat.mod_bound_pos.
+      intros n.
+      apply Nat.mod_bound_pos.
+      Search (0 <= _).
+      apply Peano.le_0_n.
+      Search (0 < S _).
+      apply Nat.lt_0_succ.
+    }
+    (* SearchAbout (_ < _). *)
+    (* intros. *)
+    (* specialize (Nat.ltb_spec0 (n mod 256) (2 ^ 8)). *)
+    (* intros. *)
+    (* apply reflect_iff in H0. *)
+    (* rewrite iff_to_and in H0. *)
+    (* destruct H0. *)
+    (* apply H0. *)
+    (* specialize (H n). *)
+    (* exact H. *)
+  (* }  *)
+  destruct o.
+  -unfold operand_to_bin.
+   destruct i.
+   apply n_bit_dont_fail.
+   specialize (H n).
+   exact H.
+  -unfold operand_to_bin.
+   destruct r.
+   apply n_bit_dont_fail.
+   specialize (H n).
+   exact H.
+Qed.
 
 
 
-(* Lemma operand_to_bin_size : forall (o : operand) (l : list bool), *)
-(*     operand_to_bin o = Some l -> length l = 8. *)
-(* Proof. *)
-(*   destruct o. *)
-(*   -unfold operand_to_bin. *)
-(*    intros l H. *)
-(*    apply size_n_bit in H. *)
-(*    rewrite H. *)
-(*    reflexivity. *)
-(*    -unfold operand_to_bin. *)
-(*    intros l H. *)
-(*    apply size_n_bit in H. *)
-(*    rewrite H. *)
-(*    reflexivity. *)
-(* Qed. *)
+Lemma operand_to_bin_size : forall (o : operande) (l : list bool),
+    operand_to_bin o = Some l -> length l = 8.
+Proof.
+  destruct o.
+  -unfold operand_to_bin.
+   intros l H.
+   destruct i in H.
+   apply size_n_bit in H.
+   rewrite H.
+   reflexivity.
+   -unfold operand_to_bin.
+    intros l H.
+    destruct r in H.
+    apply size_n_bit in H.
+    rewrite H.
+    reflexivity.
+Qed.
+
+
+
 
 
 (* HERE i don't make any garantee about the result if the binary_instruction is to small but i will have some lemma to give it *)
@@ -152,19 +159,25 @@ Notation "'let!' x ':=' ma 'in' k" := (bind ma k) (at level 30).
 
 
 
-
-
-
 (* TODO :: here i know that i can always get a binary_instruction but some function don't allow me to  *)
 (* return a binary_instruction without encapsulate it into an option type *)
-Definition encode (i : instruction) : option binary_instruction :=  
-  let! k := lookup i.(instr_opcode) encdec in
+
+Definition encode_t_n (i : instruction_tern_n) : option binary_instruction :=
+  let! k := lookup (tag_t_n (i.(instr_opcode_t_n))) encdec in
   fun k => let! code := n_bit 8 k in
-           fun code => let! o1 := operand_to_bin i.(instr_operande1) in 
-                       fun o1 => let! o2 := operand_to_bin i.(instr_operande2) in
-                                 fun o2 =>                                            
-                                               let! o3 := compute_op3 i in                                              
-                                               fun o3 => ret (code ++ o1 ++ o2 ++ o3).
+           fun code => let! o1 := operand_to_bin (reg_o i.(instr_operande1_t_n)) in 
+                       fun o1 => let! o2 := operand_to_bin (reg_o i.(instr_operande2_t_n)) in
+                                 fun o2 => let! o3 := operand_to_bin (reg_o i.(instr_operande3_t_n)) in
+                                           fun o3 => ret (code ++ o1 ++ o2 ++ o3).
+                                                         
+(* Definition encode (i : instruction) : option binary_instruction :=   *)
+(*   let! k := lookup i.(instr_opcode) encdec in *)
+(*   fun k => let! code := n_bit 8 k in *)
+(*            fun code => let! o1 := operand_to_bin i.(instr_operande1) in  *)
+(*                        fun o1 => let! o2 := operand_to_bin i.(instr_operande2) in *)
+(*                                  fun o2 =>                                             *)
+(*                                                let! o3 := compute_op3 i in                                               *)
+(*                                                fun o3 => ret (code ++ o1 ++ o2 ++ o3). *)
 
 
 Theorem encode_size : forall (i : instruction) (bi : binary_instruction), encode i = Some bi -> length bi = 32.
