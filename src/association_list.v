@@ -33,7 +33,8 @@ Fixpoint lookdown (n : nat) (l : tag_opcode_assoc) : option tag :=
   end.
 
 (* this table is an association list of type tag_opcode_assoc with every associations that can be made in our langage *)
-Definition encdec : tag_opcode_assoc := [(tag_n(ADD),0);(tag_n(AND),1);(tag_i(ADD_I),2);(tag_i(AND_I),3)].
+Definition encdec : tag_opcode_assoc := [(tag_t_n(ADD),0);(tag_t_n(AND),1);(tag_t_i(ADD_I),2);(tag_t_i(AND_I),3);
+                                        (tag_d_n(JUMP),4);(tag_d_n(JUMPC),5);(tag_d_i(JUMP_I),6);(tag_d_i(JUMP_IC),7)].
 
 Theorem lookup_encdec : forall (t : tag), exists n,
                           lookup t encdec = Some n.
@@ -45,6 +46,12 @@ Proof.
   -destruct t.
    +simpl. exists 2. reflexivity.
    +simpl. exists 3. reflexivity.
+  -destruct t.
+   +simpl. exists 6. reflexivity.
+   +simpl. exists 7. reflexivity.
+  -destruct t.
+   +simpl. exists 4. reflexivity.
+   +simpl. exists 5. reflexivity.
 Qed.
 
 
@@ -52,15 +59,24 @@ Require Import Bool.
 
 Print tag.
 
-Definition forall_tag_n (p : tag_normal -> bool): bool :=
+Definition forall_tag_ter_n (p : tag_ter_normal -> bool): bool :=
   andb (p ADD) (p AND).
 
-Definition forall_tag_i (p : tag_immediate -> bool): bool :=
+Definition forall_tag_ter_i (p : tag_ter_immediate -> bool): bool :=
   andb (p ADD_I) (p AND_I).
 
+Definition forall_tag_duo_n (p : tag_duo_normal -> bool): bool :=
+  andb (p JUMP) (p JUMPC).
+
+Definition forall_tag_duo_i (p : tag_duo_immediate -> bool): bool :=
+  andb (p JUMP_I) (p JUMP_IC).
+
+
 Definition forall_tag (p : tag -> bool): bool :=
-  andb (forall_tag_n (fun (x : tag_normal) => p (tag_n x)))
-       (forall_tag_i (fun (x : tag_immediate) => p (tag_i x))).
+  andb (andb (forall_tag_ter_n (fun (x : tag_ter_normal) => p (tag_t_n x)))
+             (forall_tag_ter_i (fun (x : tag_ter_immediate) => p (tag_t_i x))))
+       (andb (forall_tag_duo_n (fun (x : tag_duo_normal) => p (tag_d_n x)))
+             (forall_tag_duo_i (fun (x : tag_duo_immediate) => p (tag_d_i x)))).
 
 
 Print reflect.
@@ -83,28 +99,54 @@ Proof.
   intros H.
   Search (_ && _ = true).
   apply andb_prop in H.
-  unfold forall_tag_n in H.
-  unfold forall_tag_i in H.
+  unfold forall_tag_ter_n in H.
+  unfold forall_tag_ter_i in H.
+  unfold forall_tag_duo_n in H.
+  unfold forall_tag_duo_i in H.
   destruct H.  
   apply andb_prop in H.
   destruct H.
   apply andb_prop in H0.
+  destruct H0.  
+  apply andb_prop in H.
+  destruct H.
+  apply andb_prop in H1.
+  destruct H1.
+  apply andb_prop in H0.
   destruct H0.
+  apply andb_prop in H2.
+  destruct H2.
   destruct t.
   {
     -destruct t.
      +rewrite H.
       reflexivity.
-     +rewrite H1.
+     +rewrite H3.
+      reflexivity.         
+  }  
+  {
+     -destruct t.
+      +rewrite H1.
+       reflexivity.
+      +rewrite H4.
+       reflexivity.
+  }
+  {
+    -destruct t.
+     +rewrite H2.
+      reflexivity.
+     +rewrite H6.
       reflexivity.
   }
   {
-     -destruct t.
-      +rewrite H0.
-       reflexivity.
-      +rewrite H2.
-       reflexivity.
-   }
+      {
+    -destruct t.
+     +rewrite H0.
+      reflexivity.
+     +rewrite H5.
+      reflexivity.
+  }
+  }
 Qed.
 
 Lemma helpBefore2 : forall (f : tag -> bool), (forall (t: tag), f t = true) -> forall_tag f = true.
@@ -114,8 +156,14 @@ Proof.
   Search (_ && _ = true).
   apply andb_true_intro.
   split.
-  -compute. rewrite H. rewrite H. reflexivity.
-  -compute. rewrite H. rewrite H. reflexivity.
+  -compute. rewrite H. rewrite H. apply andb_true_intro.
+   split.
+   +apply H.
+   +apply H.
+  -compute. rewrite H. rewrite H. apply andb_true_intro.
+   split.
+   +apply H.
+   +apply H.     
 Qed.
 
 
@@ -347,15 +395,15 @@ Qed.
   
 
 Definition lookdown_encdecP : bool :=
-  forall_bounded 3 (fun n =>                     
+  forall_bounded 7 (fun n =>                     
                       forall_tag (fun t => imply (eq_mtag (lookdown n encdec) (Some t))
                                                  (eq_mnat (lookup t encdec) (Some n)))).
 Definition lookdown_encdecP' : bool :=
-  forall_bounded 3 (fun n =>                     
+  forall_bounded 7 (fun n =>                     
                       forall_tag (fun t => imply (eq_mnat (lookup t encdec) (Some n))
                                                  (eq_mtag (lookdown n encdec) (Some t)))).
 
-Lemma lookdown_n_inf_3 : forall (n : nat) (t : tag), lookdown n encdec = Some t -> n <=3.
+Lemma lookdown_n_inf_7 : forall (n : nat) (t : tag), lookdown n encdec = Some t -> n <=7.
 Proof.
   destruct n.
   -intros.
@@ -376,7 +424,31 @@ Proof.
             -intros.
              repeat (apply le_n_S).
              apply Peano.le_0_n.
-            -discriminate.
+            -{destruct n.    
+              -intros.      
+               Search (S _ <= S _).
+               repeat apply le_n_S.
+               apply Peano.le_0_n.
+              -{destruct n.    
+                -intros.      
+                 Search (S _ <= S _).
+                 repeat apply le_n_S.
+                 apply Peano.le_0_n.
+                -{destruct n.    
+                  -intros.      
+                   Search (S _ <= S _).
+                   repeat apply le_n_S.
+                   apply Peano.le_0_n.
+                  -{destruct n.    
+                    -intros.      
+                     Search (S _ <= S _).
+                     repeat apply le_n_S.
+                     apply Peano.le_0_n.
+                    -discriminate.
+                   }
+                 }
+               }
+             }
           }
       }
    }
@@ -385,7 +457,7 @@ Qed.
 Theorem lookdown_encdec : forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n.
 Proof.
   SearchAbout (_ < _ \/ _).
-  assert (reflect (forall (n : nat), n <= 3 -> forall
+  assert (reflect (forall (n : nat), n <= 7 -> forall
                        (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n)
                   lookdown_encdecP).
   {
@@ -437,13 +509,13 @@ Proof.
   intros n.
   Search (_ <= _ \/ _).
   Check Nat.le_gt_cases.
-  specialize (Nat.le_gt_cases n 3).
+  specialize (Nat.le_gt_cases n 7).
   intros.
   destruct H1.
   -apply H0.
    exact H1.
    exact H2.
-  -assert (exists m, n = 4 + m).
+  -assert (exists m, n = 8 + m).
    {
      admit.
    }
@@ -457,7 +529,7 @@ Proof.
 Theorem lookup_encdecP : forall (n : nat) (t : tag) , lookup t encdec = Some n -> lookdown n encdec = Some t.
 Proof.
   SearchAbout reflect.
-  assert (reflect (forall (n : nat), n <= 3 -> forall (t : tag), lookup t encdec = Some n -> lookdown n encdec = Some t) lookdown_encdecP').
+  assert (reflect (forall (n : nat), n <= 7 -> forall (t : tag), lookup t encdec = Some n -> lookdown n encdec = Some t) lookdown_encdecP').
   {
     unfold lookdown_encdecP.
     SearchAbout reflect.
@@ -505,88 +577,88 @@ Proof.
   intros n.
   Search (_ <= _ \/ _).
   Check Nat.le_gt_cases.
-  specialize (Nat.le_gt_cases n 3).
+  specialize (Nat.le_gt_cases n 7).
   intros.
   destruct H2.
   -apply H1.
    exact H2.
    exact H3.
-  -assert (exists m, n = 4 + m).
+  -assert (exists m, n = 8 + m).
    {
      admit.
    }   
    destruct H4.
    subst n.
-   Check lookdown_n_inf_3.
+   Check lookdown_n_inf_7.
    simpl in H3.
   Admitted.
 
 
 
-Theorem lookup_encdecP' : forall (n : nat) (t : tag) , lookup t encdec = Some n -> lookdown n encdec = Some t.
-Proof.
-  SearchAbout reflect.
-  assert (reflect (forall (n : nat), n <= 3 -> forall (t : tag), lookup t encdec = Some n -> lookdown n encdec = Some t) lookdown_encdecP').
-  {
-    unfold lookdown_encdecP.
-    SearchAbout reflect.
-    Check forall_finP.
-    apply forall_finP.
-    Check forall_tagP.
-    intros n.
-    apply forall_tagP.
-    SearchAbout reflect.
-    Check implyP.
-    intros t.
-    apply implyP.
-    -assert (reflect (lookup t encdec = Some n) (eq_mnat (lookup t encdec) (Some n))).
-     {
-       apply iff_reflect.
-       apply iff_to_and.
-       split.
-       +intros.
-        rewrite H.
-        simpl.
-        apply Nat.eqb_refl.
-       +intros.
-        apply eq_mnat_equiv in H.
-        exact H.
-     }
-     exact H.
-    -assert (reflect (lookdown n encdec = Some t) (eq_mtag (lookdown n encdec) (Some t))).
-     {
-       apply iff_reflect.
-       apply iff_to_and.
-       split.
-       +intros.
-        rewrite H.
-        simpl.
-        apply tag_beq_reflexivity.
-       +intros.
-        apply eq_mtag_equiv in H.
-        exact H.
-     }
-     exact H.
-  }
+(* Theorem lookup_encdecP' : forall (n : nat) (t : tag) , lookup t encdec = Some n -> lookdown n encdec = Some t. *)
+(* Proof. *)
+(*   SearchAbout reflect. *)
+(*   assert (reflect (forall (n : nat), n <= 3 -> forall (t : tag), lookup t encdec = Some n -> lookdown n encdec = Some t) lookdown_encdecP'). *)
+(*   { *)
+(*     unfold lookdown_encdecP. *)
+(*     SearchAbout reflect. *)
+(*     Check forall_finP. *)
+(*     apply forall_finP. *)
+(*     Check forall_tagP. *)
+(*     intros n. *)
+(*     apply forall_tagP. *)
+(*     SearchAbout reflect. *)
+(*     Check implyP. *)
+(*     intros t. *)
+(*     apply implyP. *)
+(*     -assert (reflect (lookup t encdec = Some n) (eq_mnat (lookup t encdec) (Some n))). *)
+(*      { *)
+(*        apply iff_reflect. *)
+(*        apply iff_to_and. *)
+(*        split. *)
+(*        +intros. *)
+(*         rewrite H. *)
+(*         simpl. *)
+(*         apply Nat.eqb_refl. *)
+(*        +intros. *)
+(*         apply eq_mnat_equiv in H. *)
+(*         exact H. *)
+(*      } *)
+(*      exact H. *)
+(*     -assert (reflect (lookdown n encdec = Some t) (eq_mtag (lookdown n encdec) (Some t))). *)
+(*      { *)
+(*        apply iff_reflect. *)
+(*        apply iff_to_and. *)
+(*        split. *)
+(*        +intros. *)
+(*         rewrite H. *)
+(*         simpl. *)
+(*         apply tag_beq_reflexivity. *)
+(*        +intros. *)
+(*         apply eq_mtag_equiv in H. *)
+(*         exact H. *)
+(*      } *)
+(*      exact H. *)
+(*   } *)
   
-  assert (lookdown_encdecP' = true) by reflexivity.
-  rewrite H0 in H.
-  inversion H.
-  intros n.
-  Search (_ <= _ \/ _).
-  Check Nat.le_gt_cases.
-  specialize (Nat.le_gt_cases n 3).
-  intros.
-  destruct H2.
-  -apply H1.
-   exact H2.
-   exact H3.
-  -assert (exists m, n = 4 + m).
-   {
-     admit.
-   }
-   destruct H4.
-   subst n.
-   Check lookdown_n_inf_3.
-   simpl in H3.
-  Admitted.
+(*   assert (lookdown_encdecP' = true) by reflexivity. *)
+(*   rewrite H0 in H. *)
+(*   inversion H. *)
+(*   intros n. *)
+(*   Search (_ <= _ \/ _). *)
+(*   Check Nat.le_gt_cases. *)
+(*   specialize (Nat.le_gt_cases n 3). *)
+(*   intros. *)
+(*   destruct H2. *)
+(*   -apply H1. *)
+(*    exact H2. *)
+(*    exact H3. *)
+(*   -assert (exists m, n = 4 + m). *)
+(*    { *)
+(*      admit. *)
+(*    } *)
+(*    destruct H4. *)
+(*    subst n. *)
+(*    Check lookdown_n_inf_3. *)
+(*    simpl in H3. *)
+(*   Admitted. *)
