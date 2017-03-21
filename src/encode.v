@@ -85,11 +85,28 @@ Fixpoint get_first_n_bit (bi : list bool) (size : nat) : (list bool*list bool) :
            | [] => ([],[])
            end
   end.
-
 Definition testList := [true ; false ; true ; false ; false ; false ; true ; true ].
 Definition testList' := [true ; false ; true].
 Compute get_first_n_bit testList' 3.
+Compute get_first_n_bit testList' 4.
 
+
+Lemma get_first_n_bit_size : forall (l : list bool) (n : nat), length l = n -> get_first_n_bit l n = (l,[]).
+Proof.
+  intros.
+  Admitted.
+
+Lemma get_first_n_bit_size_tl : forall (l : list bool) (tl : list bool), length l = 8 -> get_first_n_bit (l ++ tl) 8 = (l,tl).
+Proof.
+  intros.
+  induction tl.
+  -rewrite app_nil_r.
+   apply get_first_n_bit_size.
+   exact H.
+Admitted.
+
+
+(* Lemma get_first_n_bit_size : forall (bi : list bool) (size : nat), n < (length bi) -> get_first_n_bit bi n = ( *)
 
 
 
@@ -150,28 +167,174 @@ Print negb.
 Definition is_valide_immediate (t : tag) (op : operand) : bool :=
   if is_op_immediate t then is_immediate op else negb (is_immediate op).
 
+Definition compute_op3 (i : instruction) : option (list bool) :=
+  match i.(instr_opcode) with
+  | tag_i _ => match i.(instr_operande3) with
+               | immediate _ => operand_to_bin i.(instr_operande3)
+               | _ => None
+               end
+  | tag_n _ => match i.(instr_operande3) with
+               | reg _ => operand_to_bin i.(instr_operande3)
+               | _ => None
+               end
+  end.
+
+Lemma compute_op3_P : forall (i : instruction) (l : list bool),
+    compute_op3 i = Some l -> is_valide_immediate i.(instr_opcode) i.(instr_operande3) = true.
+Proof.
+  intros.
+  unfold is_valide_immediate.
+  unfold compute_op3 in H.
+  destruct (instr_opcode i).
+  -destruct (instr_operande3 i).
+   +discriminate.
+   +reflexivity.
+  -destruct (instr_operande3 i).
+   +reflexivity.
+   +discriminate.
+Qed.
+
+Lemma compute_op3_size : forall (i : instruction) (l : list bool),
+    compute_op3 i = Some l -> length l = 8.
+Proof.
+  intros.
+  unfold compute_op3 in H.
+  destruct (instr_opcode i).
+  -destruct (instr_operande3 i).
+   +discriminate.
+   +apply operand_to_bin_size in H.
+    auto.
+  -destruct (instr_operande3 i).
+   +apply operand_to_bin_size in H.
+    auto.
+   +discriminate.
+Qed. 
+
 (* TODO :: here i know that i can always get a binary_instruction but some function don't allow me to  *)
 (* return a binary_instruction without encapsulate it into an option type *)
-Definition encode (i : instruction) : option binary_instruction :=
-  if is_valide_immediate i.(instr_opcode) i.(instr_operande3) then 
+Definition encode (i : instruction) : option binary_instruction :=  
   let! k := lookup i.(instr_opcode) encdec in
   fun k => let! code := n_bit 8 k in
            fun code => let! o1 := operand_to_bin i.(instr_operande1) in 
                        fun o1 => let! o2 := operand_to_bin i.(instr_operande2) in
                                  fun o2 =>                                            
-                                               let! o3 := operand_to_bin i.(instr_operande3) in                                              
-                                               fun o3 => ret (code ++ o1 ++ o2 ++ o3)
-  else None.
+                                               let! o3 := compute_op3 i in                                              
+                                               fun o3 => ret (code ++ o1 ++ o2 ++ o3).
 
-Definition encode_mytho (i : instruction) : option tag :=
+
+Theorem encode_size : forall (i : instruction) (bi : binary_instruction), encode i = Some bi -> length bi = 32.
+Proof.
+  intros.
+  unfold encode in H.
+  intros.
+  unfold encode in H.
+  apply bind_rewrite in H.
+  destruct H.
+  destruct H.
+  apply bind_rewrite in H.
+  destruct H.
+  destruct H.
+  apply bind_rewrite in H.
+  destruct H.
+  destruct H.
+  apply bind_rewrite in H.
+  destruct H.
+  destruct H.
+  apply bind_rewrite in H.
+  destruct H.
+  destruct H.
+  Search operand_to_bin.
+  apply commut_equal in H4.
+  apply commut_equal in H3.
+  apply commut_equal in H2.
+  apply commut_equal in H1.
+  apply commut_equal in H0.
+  apply operand_to_bin_size in H3.
+  apply operand_to_bin_size in H2.
+  assert (keep : lookup (instr_opcode i) encdec = Some x) by auto.
+  assert (forall (t : tag) (n : nat), lookup t encdec = Some n -> n <= 3) by admit.
+  apply H5 in H0.
+  Search n_bit.
+  Check size_n_bit.
+  apply size_n_bit in H1.
+  apply compute_op3_size in H4.
+  assert (length x0 = 8 -> length x1 = 8 -> length x2 = 8 -> length x3 = 8 -> length (x0 ++ x1 ++ x2 ++ x3) = 32).
+  {
+    intros.
+    Search length.
+    Check app_length.
+    repeat (rewrite app_length).
+    rewrite H6.
+    rewrite H7.
+    rewrite H8.
+    rewrite H9.
+    reflexivity.
+  }
+  rewrite ret_rewrite in H.
+  inversion H.
+  auto.
+Admitted.
+
+Definition encode_mytho (i : instruction) : option (list bool) :=
   let! bo1 := lookup i.(instr_opcode) encdec in
-  fun bo1 => ret (n_bit 8 bo1).
+  fun bo1 => (n_bit 8 bo1).
 
-Definition decode_mytho (bi : binary_instruction) : option instruction :=
-  match get_first_n_bit with
-  | (h,tl) => lookdown h tl
-  | _ => None
+Definition decode_mytho (bi : list bool) : option tag :=
+  match get_first_n_bit bi 8 with
+  | (h,tl) => lookdown (bit_n h) encdec
   end.
+
+Definition my_instr_encoded_decoded := match encode_mytho my_instr with
+                                      | Some lol => decode_mytho lol
+                                      | None => None
+                                       end.
+
+Compute my_instr_encoded_decoded.
+
+Theorem test_theorem_mytho : forall (i : instruction) (bi : list bool),
+    encode_mytho i = Some bi -> decode_mytho bi = Some i.(instr_opcode).
+Proof.
+  intros i bi H.
+  unfold encode_mytho in H.  
+  apply bind_rewrite in H.
+  destruct H.
+  destruct H.
+  unfold decode_mytho.
+  assert (length bi = 8 -> get_first_n_bit bi 8 = (bi,[])).
+  {
+    intros.
+    admit.
+  }
+  assert (keep : n_bit 8 x = Some bi) by auto.
+  Check operand_to_bin_size.
+  specialize size_n_bit.
+  intros.  
+  apply H2 in H.
+  apply H1 in H.
+  rewrite H.
+  Search lookdown.
+  apply lookdup_encdec.
+  unfold lookdown.
+  assert (n_bit 8 x = Some bi -> bit_n bi = x).
+  {
+    intros.
+    Search n_bit.
+    specialize (n_bit_n bi 8 x).
+    intros.
+    apply H4 in H3.
+    exact H3.
+  }
+  rewrite H3.
+  -apply commut_equal.
+   exact H0.
+  -exact keep.
+Admitted.
+  
+  
+  
+
+
+
 
 
 (* this is test purpose *)
@@ -237,7 +400,7 @@ Definition decode (bi : binary_instruction) : option instruction :=
 
 
 Print my_instr.
-Definition my_instr_encoded_decoded := match encode my_instr with
+Definition my_instr_encoded_decoded' := match encode my_instr with
                                       | Some lol => decode lol
                                       | None => None
                                        end.
@@ -253,50 +416,33 @@ Theorem encode_decode : forall (i : instruction) (bi : binary_instruction), enco
 Proof.
   assert (I: forall (i : instruction) (bi : binary_instruction), encode i = Some bi -> decode bi = Some i).
   {
-    destruct i.
-    destruct (instr_opcode).
-    -destruct instr_operande3.
-     +unfold encode.
-      
-    -unfold encode in H.
-     unfold encode in H.
-
-     
-    -intros bi Hencode.
-     unfold encode in Hencode.
-     
-     apply Hencode in lookdown_encdec'.
+    intros.
+    unfold encode in H.
+    apply bind_rewrite in H.
+    destruct H.
+    destruct H.
+    apply bind_rewrite in H.
+    destruct H.
+    destruct H.
+    apply bind_rewrite in H.
+    destruct H.
+    destruct H.
+    apply bind_rewrite in H.
+    destruct H.
+    destruct H.
+    apply bind_rewrite in H.
+    destruct H.
+    destruct H.
+    Check get_first_n_bit_size_tl.
+    Search ret.
+    rewrite ret_rewrite in H.
+    inversion H.
+    change (x1 ++ x2 ++ x3) with .
+    rewrite get_first_n_bit_size_tl.
+    
   }
 Admitted.
 
-
-Lemma encode_size : forall (i : instruction) (bi : binary_instruction), encode i = Some bi -> length bi = 32.
-Proof.
-  intros i bi.
-  induction i.
-  unfold encode.
-  destruct (lookup instr_opcode encdec).
-  -{
-      destruct (n_bit 8 n).
-      -{
-          destruct (operand_to_bin instr_operande1).
-          -{
-              destruct (operand_to_bin instr_operande2).
-              -{
-                  destruct (operand_to_bin instr_operande3).
-                  -{
-                      admit.
-                    }
-                  -discriminate.
-                }
-              -discriminate.
-            }
-            -discriminate.
-        }
-        -discriminate.
-  }
-  -discriminate.
-Admitted.  
 
 
 
