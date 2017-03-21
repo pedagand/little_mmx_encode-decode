@@ -29,7 +29,7 @@ Lemma n_bit_dont_fail : forall (n k : nat),
     k < pow 2 n -> exists (l : list bool), n_bit n k = Some l.
 Proof.
   induction n.
-  -induction k.
+  -destruct k.
    +simpl.
     exists [].
     reflexivity.
@@ -42,6 +42,13 @@ Proof.
     apply Nat.nlt_0_r in H.
     inversion H.    
   -intros.
+   simpl.
+   specialize (IHn (Nat.div2 k)).
+   edestruct IHn.
+   +Search Nat.div2.
+    admit.
+   +rewrite H0.
+    eauto.
 Admitted.   
 
 
@@ -200,8 +207,17 @@ Proof.
            intros.
            Check Even.even_equiv.
            apply Even.even_equiv.
-           
-          admit. 
+           (* even spec *)
+           Check Nat.even_spec.
+           simpl in H0.
+           Search (_ + _ = 2 * _).
+           Check I_2_1_1.
+           rewrite <- I_2_1_1.
+           assert (0 + (bit_n l + bit_n l) = bit_n l + (bit_n l + 0)).
+           { simpl. Search (_ + 0). rewrite <- plus_n_O. reflexivity. }
+           rewrite H1. 
+           rewrite Nat.even_spec in H0.
+           exact H0.
          }
          exact I_2_1_3.
       }
@@ -251,4 +267,4 @@ Proof.
     exact I_2.
   }
   exact I.
-Admitted.
+Qed.
