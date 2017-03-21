@@ -350,6 +350,10 @@ Definition lookdown_encdecP : bool :=
   forall_bounded 3 (fun n =>                     
                       forall_tag (fun t => imply (eq_mtag (lookdown n encdec) (Some t))
                                                  (eq_mnat (lookup t encdec) (Some n)))).
+Definition lookdown_encdecP' : bool :=
+  forall_bounded 3 (fun n =>                     
+                      forall_tag (fun t => imply (eq_mnat (lookup t encdec) (Some n))
+                                                 (eq_mtag (lookdown n encdec) (Some t)))).
 
 Lemma lookdown_n_inf_3 : forall (n : nat) (t : tag), lookdown n encdec = Some t -> n <=3.
 Proof.
@@ -380,52 +384,10 @@ Qed.
 
 
 
-Lemma lookdown_encdecP_implies : lookdown_encdecP = true -> forall (n : nat) (t : tag), n <= 3 -> lookdown n encdec = Some t.
-Proof.
-Admitted.
 
-Lemma lookdown_equiv : forall (n : nat) (t : tag), n <= 3 <-> lookdown n encdec = Some t.
-  Admitted.
-(*
+
+
 Theorem lookdown_encdec : forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n.
-Proof.
-  intros n.
-  assert (reflect (forall (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n) (forall_tag lookdown_encdecP)).
-  {
-    Search reflect.
-    Check forall_tagP.
-    apply forall_tagP.
-    intros t.
-    apply iff_reflect.
-    apply iff_to_and.
-    split.
-    -intros.
-     induction t.
-    +{
-        induction t.
-        -reflexivity.
-        -reflexivity.        
-      }
-    +{
-        induction t.
-        -reflexivity.
-        -reflexivity.
-      }
-    -admit.
-     
-  }
-  assert (H': forall_tag lookdown_encdecP = true) by reflexivity.
-  rewrite H' in H.
-  inversion H. auto.
-Admitted.
-*)
-
-Theorem lookdup_encdec : forall (t : tag) (n : nat), lookup t encdec = Some n -> lookdown n encdec = Some t.
-Proof.
-Admitted.
-
-
-Theorem lookdown_encdec' : forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n.
 Proof.
   SearchAbout (_ < _ \/ _).
   (* Nat.lt_ge_cases" *)
@@ -434,7 +396,8 @@ Proof.
                   lookdown_encdecP).
   {
     unfold lookdown_encdecP.
-    SearchAbout forall_bounded. 
+    SearchAbout forall_bounded.
+    Check forall_finP.
     apply forall_finP.        
     intro n.
     Check forall_tag.
@@ -473,8 +436,7 @@ Proof.
        exact H.
     }
     exact H.
-  }
-  
+  }  
   assert (H': lookdown_encdecP = true) by reflexivity.
   rewrite H' in H.
   inversion H.
@@ -495,4 +457,73 @@ Proof.
    subst n.
    simpl in H2.
    discriminate.
+  Admitted.
+
+
+Theorem lookup_encdecP : forall (n : nat) (t : tag) , lookup t encdec = Some n -> lookdown n encdec = Some t.
+Proof.
+  SearchAbout reflect.
+  assert (reflect (forall (n : nat), n <= 3 -> forall (t : tag), lookup t encdec = Some n -> lookdown n encdec = Some t) lookdown_encdecP').
+  {
+    unfold lookdown_encdecP.
+    SearchAbout reflect.
+    Check forall_finP.
+    apply forall_finP.
+    Check forall_tagP.
+    intros n.
+    apply forall_tagP.
+    SearchAbout reflect.
+    Check implyP.
+    intros t.
+    apply implyP.
+    -assert (reflect (lookup t encdec = Some n) (eq_mnat (lookup t encdec) (Some n))).
+     {
+       apply iff_reflect.
+       apply iff_to_and.
+       split.
+       +intros.
+        rewrite H.
+        simpl.
+        apply Nat.eqb_refl.
+       +intros.
+        apply eq_mnat_equiv in H.
+        exact H.
+     }
+     exact H.
+    -assert (reflect (lookdown n encdec = Some t) (eq_mtag (lookdown n encdec) (Some t))).
+     {
+       apply iff_reflect.
+       apply iff_to_and.
+       split.
+       +intros.
+        rewrite H.
+        simpl.
+        apply tag_beq_reflexivity.
+       +intros.
+        apply eq_mtag_equiv in H.
+        exact H.
+     }
+     exact H.
+  }
+  
+  assert (lookdown_encdecP' = true) by reflexivity.
+  rewrite H0 in H.
+  inversion H.
+  intros n.
+  Search (_ <= _ \/ _).
+  Check Nat.le_gt_cases.
+  specialize (Nat.le_gt_cases n 3).
+  intros.
+  destruct H2.
+  -apply H1.
+   exact H2.
+   exact H3.
+  -assert (exists m, n = 4 + m).
+   {
+     admit.
+   }   
+   destruct H4.
+   subst n.
+   Check lookdown_n_inf_3.
+   simpl in H3.
   Admitted.
