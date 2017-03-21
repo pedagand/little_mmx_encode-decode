@@ -207,7 +207,7 @@ Proof.
    apply le_n_0_eq in H0.
    rewrite <- H0.
    exact H.
-  -induction n.
+  -destruct n.
    +intros.
     apply IHk.
     simpl in H.
@@ -222,7 +222,7 @@ Proof.
     intros.
     change (f (S n) = true) with ((fun n => f (S n)) n = true).
     apply IHk.
-    {
+    {(* c'est donner par H0 et H mais faut trouver un théoreme pour reussir a exprimer ça *)
       
       admit.
     }
@@ -423,29 +423,8 @@ Admitted.
 Theorem lookdup_encdec : forall (t : tag) (n : nat), lookup t encdec = Some n -> lookdown n encdec = Some t.
 Proof.
 Admitted.
-(*   SearchAbout reflect. *)
-(*   intros t n. *)
-(*   assert (reflect (forall (t : tag),lookup t encdec = Some n -> lookdown n encdec = Some t) *)
-(*                                     lookdown_encdecP). *)
-(*   { *)
-(*     unfold lookdown_encdecP. *)
-(*     SearchAbout forall_bounded. *)
-(*     apply forall_finP. *)
-(*     intro n. *)
-(*     Check forall_tag. *)
-(*     apply forall_tagP. *)
-(*     SearchAbout imply. *)
-(*     intros t. *)
-(*     apply implyP. *)
 
-(*   } *)
-(*   assert (H': lookdown_encdecP = true) by reflexivity. *)
-(*   rewrite H' in H. *)
-(*   inversion H. *)
-(*   apply H0. *)
-(* Admitted. *)
 
-                             (* save of the originial stuff *)
 Theorem lookdown_encdec' : forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n.
 Proof.
   SearchAbout (_ < _ \/ _).
@@ -498,175 +477,22 @@ Proof.
   
   assert (H': lookdown_encdecP = true) by reflexivity.
   rewrite H' in H.
+  inversion H.
   intros n.
-  specialize (Nat.lt_ge_cases 3 n).
+  Search (_ <= _ \/ _).
+  Check Nat.le_gt_cases.
+  specialize (Nat.le_gt_cases n 3).
   intros.
-  destruct H0.
-  -assert (lookdown n encdec = Some t -> n <= 3).
+  destruct H1.
+  -apply H0.
+   exact H1.
+   exact H2.
+  -assert (exists m, n = 4 + m).
    {
-     destruct n.     
-     -intros.
-      apply Peano.le_0_n.
-     -admit.
-      
-   }   
-   Search (_ <= _ /\ _).
-   inversion H.
-   apply H3.
-   +admit.
-   +admit.
-  -inversion H.
-   apply H2.
-   +exact H0.
-   +exact H1.
-  
-
-  
+     admit.
+   }
+   destruct H3.
+   subst n.
+   simpl in H2.
+   discriminate.
   Admitted.
-  
-  
-
-
-  
-(* il faut que je prouve n <= 3, je peux le transformer en lookdown n encdec = Some t sauf que le problème après c'est qu'il faudrais
-que j'arrive a extraire de l'information de lookdown_enncdeP *)
-(*     unfold lookdown_encdecP in H'. *)
-(*   induction n. *)
-(*   -reflexivity. *)
-(*   - *)
-
-
-  
-(*   Search (_ <-> _ -> _). *)
-(*   Check lookdown_n_inf_3. *)
-(*   specialize lookdown_n_inf_3. *)
-(*   intros. *)
-(*   specialize (H1 n (tag_n ADD)). *)
-(*   Check lookdown_equiv. *)
-(*   specialize lookdown_equiv. *)
-(*   intros. *)
-
-(*   apply H1 in LOL. *)
-(*   exact LOL. *)
-(* Qed. *)
-
-
-
-                             
-(* Lemma eq_natP: forall a b: nat, reflect (a = b) (eqdec a b). *)
-
-(* Lemma eq_optionP: forall A a b: option A, (eq : A -> A -> bool) ->  reflect (a = b) (eqdec eq a b). *)
- 
-(* (* TODO : i know that i can refoctor this proof but at the first try i didn't succeed so will try later *) *)
-(* Theorem look_up_down_encdec : forall (n : nat) (t : tag), *)
-(*                                 lookup t encdec = Some n -> lookdown n encdec = Some t. *)
-(* Proof. *)
-(* intros. *)
-(* repeat match goal with *)
-(*        | t : tag |- _ => destruct t *)
-(*        | t : tag_normal |- _ => destruct t *)
-(*        | t : tag_immediate |- _ => destruct t *)
-(*        end; inversion H; auto. *)
-(* Qed. *)
-
-(* (* uglyest proof in the world *) *)
-(* Theorem look_down_up_encdec : forall (n : nat) (t : tag), *)
-(*                                 lookdown n encdec = Some t -> lookup t encdec = Some n. *)
-(* Proof. *)
-(*   induction n. *)
-(*   -intros t H. *)
-(*    simpl in H. *)
-(*    inversion H. *)
-(*    reflexivity. *)
-(*   -{induction n. *)
-(*     -intros t H. *)
-(*      simpl in H. *)
-(*      inversion H. *)
-(*      reflexivity. *)
-(*     -{induction n. *)
-(*       -intros t H. *)
-(*        simpl in H. *)
-(*        inversion H. *)
-(*        reflexivity. *)
-(*       -{induction n. *)
-(*       -intros t H. *)
-(*        simpl in H. *)
-(*        inversion H. *)
-(*        reflexivity. *)
-(*       -assert(help : forall (n' : nat), lookdown (S (S (S (S n')))) encdec = None). *)
-(*        { *)
-(*          induction n'. *)
-(*          -reflexivity. *)
-(*          -reflexivity. *)
-(*        } *)
-(*        intros t H. *)
-(*        rewrite help in H. *)
-(*        discriminate. *)
-(*        } *)
-(*      } *)
-(*    } *)
-(* Qed. *)
-
-
-(* (* (* if i wan't it's very easy to proof with forall t exists n but this theorem is better and actually it's true *) *) *)
-(* (* Theorem look_down_up_encdec : forall (n : nat) (t : tag), *) *)
-(* (*                                 lookdown n encdec = Some t -> lookup t encdec = Some n. *) *)
-(* (* Proof. *) *)
-(* (*   assert (I : forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n). *) *)
-(* (*   { *) *)
-(* (*     induction n. *) *)
-(* (*     -intros t H. *) *)
-(* (*      simpl in H. *) *)
-(* (*      discriminate. *) *)
-(* (*     - *) *)
-      
-
-    
-(* (*     induction encdec as [|t' tl IHencdec].     *) *)
-(* (*     -assert (I_1 : forall (t : tag) (n : nat), lookdown n [] = Some t -> lookup t [] = Some n). *) *)
-(* (*      { *) *)
-(* (*        simpl. *) *)
-(* (*        intros t n H. *) *)
-(* (*        discriminate. *) *)
-(* (*      } *) *)
-(* (*      exact I_1. *) *)
-(* (*     -assert (I_2 : forall (t : tag) (n : nat), lookdown n (t' :: tl) = Some t -> lookup t (t' :: tl) = Some n). *) *)
-(* (*      { *) *)
-       
-
-
-
-
-       
-(* (*        intros t0 n. *) *)
-(* (*        destruct a. *) *)
-(* (*        -unfold lookdown. *) *)
-(* (*         destruct (n =? n0). *) *)
-(* (*         +intro H. *) *)
-(* (*          inversion H. *) *)
-(* (*          rewrite <- H1. *) *)
-(* (*          assert (I_2_1 : forall (t' : tag) (n' : nat) (tl : list (tag * nat)), lookup t' ((t', n') :: tl) = Some n'). *) *)
-(* (*          { *) *)
-(* (*            intros t' n' tl. *) *)
-(* (*            unfold lookup. *) *)
-(* (*            assert (I_2_1_1 : forall (t'' : tag), tag_beq t'' t'' = true). *) *)
-(* (*            { *) *)
-(* (*              destruct t''. *) *)
-(* (*              -destruct t2. *) *)
-(* (*               +reflexivity. *) *)
-(* (*               +reflexivity. *) *)
-(* (*              -destruct t2. *) *)
-(* (*               +reflexivity. *) *)
-(* (*               +reflexivity.                 *) *)
-(* (*            } *) *)
-(* (*            rewrite I_2_1_1. *) *)
-(* (*            reflexivity. *) *)
-(* (*          } *) *)
-(* (*          rewrite <- IHt. *) *)
-(* (*      } *) *)
-        
-     
-(* (*   } *) *)
-  
-(* (* Admitted. *) *)
-
