@@ -1,0 +1,25 @@
+DIGEST 4a6a6e214f3ea51763f4fb5225a370e2
+FMmx.encode
+R15:18 Coq.Bool.Bool <> <> lib
+R20:23 Coq.Lists.List <> <> lib
+R25:29 Coq.Arith.Arith <> <> lib
+R31:33 Coq.Init.Nat <> <> lib
+R73:92 Mmx.ast_instructions <> <> lib
+R94:103 Mmx.binary <> <> lib
+R105:124 Mmx.association_list <> <> lib
+R143:162 Mmx.ast_instructions <> <> lib
+R180:189 Mmx.binary <> <> lib
+R199:213 Mmx.binary <> n_bit_dont_fail prfax
+def 335:348 <> operand_to_bin
+R355:361 Mmx.ast_instructions <> operand ind
+R366:371 Coq.Init.Datatypes <> option ind
+R374:377 Coq.Init.Datatypes <> list ind
+R379:382 Coq.Init.Datatypes <> bool ind
+R396:396 Mmx.encode <> o var
+R409:417 Mmx.ast_instructions <> immediate constr
+R424:428 Mmx.binary <> n_bit def
+R434:438 Coq.Arith.PeanoNat <> :nat_scope:x_'mod'_x not
+R450:452 Mmx.ast_instructions <> reg constr
+R459:463 Mmx.binary <> n_bit def
+R469:473 Coq.Arith.PeanoNat <> :nat_scope:x_'mod'_x not
+R494:498 Mmx.binary <> n_bit def

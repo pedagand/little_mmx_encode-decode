@@ -1,0 +1,74 @@
+DIGEST 6cb4a710e0c1a02e8b06d5bcd0e57c93
+FMmx.ast_instructions
+R15:18 Coq.Lists.List <> <> lib
+ind 53:62 <> tag_normal
+constr 69:71 <> ADD
+constr 88:90 <> AND
+R75:84 Mmx.ast_instructions <> tag_normal ind
+R94:103 Mmx.ast_instructions <> tag_normal ind
+ind 117:129 <> tag_immediate
+constr 136:140 <> ADD_I
+constr 160:164 <> AND_I
+R144:156 Mmx.ast_instructions <> tag_immediate ind
+R168:180 Mmx.ast_instructions <> tag_immediate ind
+ind 195:197 <> tag
+constr 204:208 <> tag_n
+constr 232:236 <> tag_i
+R222:225 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R226:228 Mmx.ast_instructions <> tag ind
+R212:221 Mmx.ast_instructions <> tag_normal ind
+R253:256 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R257:259 Mmx.ast_instructions <> tag ind
+R240:252 Mmx.ast_instructions <> tag_immediate ind
+R283:285 Mmx.ast_instructions <> tag ind
+R294:300 Mmx.ast_instructions <> tag_beq scheme
+prf 310:328 <> tag_beq_reflexivity
+R343:345 Mmx.ast_instructions <> tag ind
+R360:362 Coq.Init.Logic <> :type_scope:x_'='_x not
+R349:355 Mmx.ast_instructions <> tag_beq scheme
+R359:359 Mmx.ast_instructions <> t var
+R357:357 Mmx.ast_instructions <> t var
+R363:366 Coq.Init.Datatypes <> true constr
+prf 500:516 <> tag_beq_different
+R536:538 Mmx.ast_instructions <> tag ind
+R562:565 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R568:570 Coq.Init.Logic <> :type_scope:x_'='_x not
+R566:567 Mmx.ast_instructions <> t1 var
+R571:572 Mmx.ast_instructions <> t2 var
+R555:557 Coq.Init.Logic <> :type_scope:x_'='_x not
+R542:548 Mmx.ast_instructions <> tag_beq scheme
+R553:554 Mmx.ast_instructions <> t2 var
+R550:551 Mmx.ast_instructions <> t1 var
+R558:561 Coq.Init.Datatypes <> true constr
+ind 1638:1644 <> operand
+constr 1651:1659 <> immediate
+constr 1680:1682 <> reg
+R1666:1669 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R1670:1676 Mmx.ast_instructions <> operand ind
+R1663:1665 Coq.Init.Datatypes <> nat ind
+R1689:1692 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R1693:1699 Mmx.ast_instructions <> operand ind
+R1686:1688 Coq.Init.Datatypes <> nat ind
+constr 1758:1765 <> mk_instr
+rec 1741:1751 <> instruction
+proj 1769:1780 <> instr_opcode
+proj 1803:1817 <> instr_operande1
+proj 1845:1859 <> instr_operande2
+proj 1887:1901 <> instr_operande3
+R1784:1786 Mmx.ast_instructions <> tag ind
+R1821:1827 Mmx.ast_instructions <> operand ind
+R1863:1869 Mmx.ast_instructions <> operand ind
+R1905:1911 Mmx.ast_instructions <> operand ind
+def 1964:1981 <> binary_instruction
+R1986:1989 Coq.Init.Datatypes <> list ind
+R1991:1994 Coq.Init.Datatypes <> bool ind
+def 2055:2062 <> my_instr
+R2067:2074 Mmx.ast_instructions <> mk_instr constr
+R2109:2117 Mmx.ast_instructions <> immediate constr
+R2100:2102 Mmx.ast_instructions <> reg constr
+R2091:2093 Mmx.ast_instructions <> reg constr
+R2077:2081 Mmx.ast_instructions <> tag_i constr
+R2083:2087 Mmx.ast_instructions <> ADD_I constr
+def 2133:2149 <> first_field_instr
+R2164:2175 Mmx.ast_instructions <> instr_opcode proj
+R2154:2161 Mmx.ast_instructions <> my_instr ex
