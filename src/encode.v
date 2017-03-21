@@ -180,113 +180,113 @@ Definition encode_t_n (i : instruction_tern_n) : option binary_instruction :=
 (*                                                fun o3 => ret (code ++ o1 ++ o2 ++ o3). *)
 
 
-Theorem encode_size : forall (i : instruction) (bi : binary_instruction), encode i = Some bi -> length bi = 32.
-Proof.
-  intros.
-  unfold encode in H.
-  intros.
-  unfold encode in H.
-  apply bind_rewrite in H.
-  destruct H.
-  destruct H.
-  apply bind_rewrite in H.
-  destruct H.
-  destruct H.
-  apply bind_rewrite in H.
-  destruct H.
-  destruct H.
-  apply bind_rewrite in H.
-  destruct H.
-  destruct H.
-  apply bind_rewrite in H.
-  destruct H.
-  destruct H.
-  Search operand_to_bin.
-  apply commut_equal in H4.
-  apply commut_equal in H3.
-  apply commut_equal in H2.
-  apply commut_equal in H1.
-  apply commut_equal in H0.
-  apply operand_to_bin_size in H3.
-  apply operand_to_bin_size in H2.
-  assert (keep : lookup (instr_opcode i) encdec = Some x) by auto.
-  assert (forall (t : tag) (n : nat), lookup t encdec = Some n -> n <= 3) by admit.
-  apply H5 in H0.
-  Search n_bit.
-  Check size_n_bit.
-  apply size_n_bit in H1.
-  apply compute_op3_size in H4.
-  assert (length x0 = 8 -> length x1 = 8 -> length x2 = 8 -> length x3 = 8 -> length (x0 ++ x1 ++ x2 ++ x3) = 32).
-  {
-    intros.
-    Search length.
-    Check app_length.
-    repeat (rewrite app_length).
-    rewrite H6.
-    rewrite H7.
-    rewrite H8.
-    rewrite H9.
-    reflexivity.
-  }
-  rewrite ret_rewrite in H.
-  inversion H.
-  auto.
-Admitted.
+(* Theorem encode_size : forall (i : instruction) (bi : binary_instruction), encode i = Some bi -> length bi = 32. *)
+(* Proof. *)
+(*   intros. *)
+(*   unfold encode in H. *)
+(*   intros. *)
+(*   unfold encode in H. *)
+(*   apply bind_rewrite in H. *)
+(*   destruct H. *)
+(*   destruct H. *)
+(*   apply bind_rewrite in H. *)
+(*   destruct H. *)
+(*   destruct H. *)
+(*   apply bind_rewrite in H. *)
+(*   destruct H. *)
+(*   destruct H. *)
+(*   apply bind_rewrite in H. *)
+(*   destruct H. *)
+(*   destruct H. *)
+(*   apply bind_rewrite in H. *)
+(*   destruct H. *)
+(*   destruct H. *)
+(*   Search operand_to_bin. *)
+(*   apply commut_equal in H4. *)
+(*   apply commut_equal in H3. *)
+(*   apply commut_equal in H2. *)
+(*   apply commut_equal in H1. *)
+(*   apply commut_equal in H0. *)
+(*   apply operand_to_bin_size in H3. *)
+(*   apply operand_to_bin_size in H2. *)
+(*   assert (keep : lookup (instr_opcode i) encdec = Some x) by auto. *)
+(*   assert (forall (t : tag) (n : nat), lookup t encdec = Some n -> n <= 3) by admit. *)
+(*   apply H5 in H0. *)
+(*   Search n_bit. *)
+(*   Check size_n_bit. *)
+(*   apply size_n_bit in H1. *)
+(*   apply compute_op3_size in H4. *)
+(*   assert (length x0 = 8 -> length x1 = 8 -> length x2 = 8 -> length x3 = 8 -> length (x0 ++ x1 ++ x2 ++ x3) = 32). *)
+(*   { *)
+(*     intros. *)
+(*     Search length. *)
+(*     Check app_length. *)
+(*     repeat (rewrite app_length). *)
+(*     rewrite H6. *)
+(*     rewrite H7. *)
+(*     rewrite H8. *)
+(*     rewrite H9. *)
+(*     reflexivity. *)
+(*   } *)
+(*   rewrite ret_rewrite in H. *)
+(*   inversion H. *)
+(*   auto. *)
+(* Admitted. *)
 
-Definition encode_mytho (i : instruction) : option (list bool) :=
-  let! bo1 := lookup i.(instr_opcode) encdec in
-  fun bo1 => (n_bit 8 bo1).
+(* Definition encode_mytho (i : instruction) : option (list bool) := *)
+(*   let! bo1 := lookup i.(instr_opcode) encdec in *)
+(*   fun bo1 => (n_bit 8 bo1). *)
 
-Definition decode_mytho (bi : list bool) : option tag :=
-  match get_first_n_bit bi 8 with
-  | (h,tl) => lookdown (bit_n h) encdec
-  end.
+(* Definition decode_mytho (bi : list bool) : option tag := *)
+(*   match get_first_n_bit bi 8 with *)
+(*   | (h,tl) => lookdown (bit_n h) encdec *)
+(*   end. *)
 
-Definition my_instr_encoded_decoded := match encode_mytho my_instr with
-                                      | Some lol => decode_mytho lol
-                                      | None => None
-                                       end.
+(* Definition my_instr_encoded_decoded := match encode_mytho my_instr with *)
+(*                                       | Some lol => decode_mytho lol *)
+(*                                       | None => None *)
+(*                                        end. *)
 
-Compute my_instr_encoded_decoded.
+(* Compute my_instr_encoded_decoded. *)
 
-Theorem test_theorem_mytho : forall (i : instruction) (bi : list bool),
-    encode_mytho i = Some bi -> decode_mytho bi = Some i.(instr_opcode).
-Proof.
-  intros i bi H.
-  unfold encode_mytho in H.  
-  apply bind_rewrite in H.
-  destruct H.
-  destruct H.
-  unfold decode_mytho.
-  assert (length bi = 8 -> get_first_n_bit bi 8 = (bi,[])).
-  {
-    intros.
-    admit.
-  }
-  assert (keep : n_bit 8 x = Some bi) by auto.
-  Check operand_to_bin_size.
-  specialize size_n_bit.
-  intros.  
-  apply H2 in H.
-  apply H1 in H.
-  rewrite H.
-  Search lookdown.
-  apply lookdup_encdec.
-  unfold lookdown.
-  assert (n_bit 8 x = Some bi -> bit_n bi = x).
-  {
-    intros.
-    Search n_bit.
-    specialize (n_bit_n bi 8 x).
-    intros.
-    apply H4 in H3.
-    exact H3.
-  }
-  rewrite H3.
-  -apply commut_equal.
-   exact H0.
-  -exact keep.
-Admitted.
+(* Theorem test_theorem_mytho : forall (i : instruction) (bi : list bool), *)
+(*     encode_mytho i = Some bi -> decode_mytho bi = Some i.(instr_opcode). *)
+(* Proof. *)
+(*   intros i bi H. *)
+(*   unfold encode_mytho in H.   *)
+(*   apply bind_rewrite in H. *)
+(*   destruct H. *)
+(*   destruct H. *)
+(*   unfold decode_mytho. *)
+(*   assert (length bi = 8 -> get_first_n_bit bi 8 = (bi,[])). *)
+(*   { *)
+(*     intros. *)
+(*     admit. *)
+(*   } *)
+(*   assert (keep : n_bit 8 x = Some bi) by auto. *)
+(*   Check operand_to_bin_size. *)
+(*   specialize size_n_bit. *)
+(*   intros.   *)
+(*   apply H2 in H. *)
+(*   apply H1 in H. *)
+(*   rewrite H. *)
+(*   Search lookdown. *)
+(*   apply lookdup_encdec. *)
+(*   unfold lookdown. *)
+(*   assert (n_bit 8 x = Some bi -> bit_n bi = x). *)
+(*   { *)
+(*     intros. *)
+(*     Search n_bit. *)
+(*     specialize (n_bit_n bi 8 x). *)
+(*     intros. *)
+(*     apply H4 in H3. *)
+(*     exact H3. *)
+(*   } *)
+(*   rewrite H3. *)
+(*   -apply commut_equal. *)
+(*    exact H0. *)
+(*   -exact keep. *)
+(* Admitted. *)
   
   
   
@@ -334,6 +334,40 @@ Admitted.
 
 
   (* flux d'instruction il faut faire une fonction qui decode le debut de la liste et retourne la suite de la liste *)
+
+Definition decode (bi : binary_instruction) : option instruction :=
+  match get_first_n_bit bi 8 with
+  | (li,next) => let! t := lookdown (bit_n li) encdec in
+                 fun t => match get_first_n_bit next 8 with
+                          | (op1,next) => match get_first_n_bit next 8 with
+                                          | (op2,next) => match get_first_n_bit next 8 with
+                                                          | (op3,next) => match t with
+                                                                          | tag_t_n tn =>
+                                                                            ret (instr_t_n (mk_instr_t_n tn
+                                                                                         (reg (bit_n op1))
+                                                                                         (reg (bit_n op2))
+                                                                                         (reg (bit_n op3))))
+                                                                          | tag_t_i ti =>
+                                                                            ret (instr_t_i (mk_instr_t_i ti
+                                                                                         (reg (bit_n op1))
+                                                                                         (reg (bit_n op2))
+                                                                                         (imm (bit_n op3))))
+                                                                          | tag_d_i di =>
+                                                                            ret (instr_d_i (mk_instr_d_i di
+                                                                                         (reg (bit_n op1))
+                                                                                         (imm (bit_n (op2 ++ op3)))))
+                                                                          | tag_d_n dn =>
+                                                                            ret (instr_d_n (mk_instr_d_n dn
+                                                                                         (reg (bit_n op1))
+                                                                                         (reg (bit_n (op2 ++ op3)))))
+                                                                          end
+                                                          end
+                                          end
+                          end
+  end.
+
+
+                                                                            
 
 Definition decode (bi : binary_instruction) : option instruction :=
   match get_first_n_bit bi 8 with
