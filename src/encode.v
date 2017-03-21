@@ -7,71 +7,71 @@ Require Import Mmx.binary.
 
 Check n_bit_dont_fail.
 
-(* functions to encode decode instructions *)
-(* TODO :: Here this function can't be call for immediate *)
-Definition operand_to_bin (o : operand) : option (list bool) :=
-  match o with
-    | immediate k => n_bit 8 (k mod 256)
-    | reg k => n_bit 8 (k mod 256)
-  end.
+(* (* functions to encode decode instructions *) *)
+(* (* TODO :: Here this function can't be call for immediate *) *)
+(* Definition operand_to_bin (o : operand) : option (list bool) := *)
+(*   match o with *)
+(*     | immediate k => n_bit 8 (k mod 256) *)
+(*     | reg k => n_bit 8 (k mod 256) *)
+(*   end. *)
 
-Lemma operand_to_bin_never_fail : forall (o : operand), exists (l : list bool), operand_to_bin o = Some l.
-Proof.
-  intros.
-  (* assert (forall (n : nat), n mod 256 <? 2 ^ 8 = true). *)
-  (* { *)
-    assert (forall (n : nat), n mod 256 < 2 ^ 8).
-    {
-      assert (2 ^ 8 = 256) by reflexivity.
-      rewrite H.
-      (* i need something of the form  "_ mod n < n" *)
-      Check Nat.mod_bound_pos.
-      intros n.
-      apply Nat.mod_bound_pos.
-      Search (0 <= _).
-      apply Peano.le_0_n.
-      Search (0 < S _).
-      apply Nat.lt_0_succ.
-    }
-    (* SearchAbout (_ < _). *)
-    (* intros. *)
-    (* specialize (Nat.ltb_spec0 (n mod 256) (2 ^ 8)). *)
-    (* intros. *)
-    (* apply reflect_iff in H0. *)
-    (* rewrite iff_to_and in H0. *)
-    (* destruct H0. *)
-    (* apply H0. *)
-    (* specialize (H n). *)
-    (* exact H. *)
-  (* }  *)
-  destruct o.
-  -unfold operand_to_bin.
-   apply n_bit_dont_fail.
-   specialize (H n).
-   exact H.
-  -unfold operand_to_bin.
-   apply n_bit_dont_fail.
-   specialize (H n).
-   exact H.
-Qed.
+(* Lemma operand_to_bin_never_fail : forall (o : operand), exists (l : list bool), operand_to_bin o = Some l. *)
+(* Proof. *)
+(*   intros. *)
+(*   (* assert (forall (n : nat), n mod 256 <? 2 ^ 8 = true). *) *)
+(*   (* { *) *)
+(*     assert (forall (n : nat), n mod 256 < 2 ^ 8). *)
+(*     { *)
+(*       assert (2 ^ 8 = 256) by reflexivity. *)
+(*       rewrite H. *)
+(*       (* i need something of the form  "_ mod n < n" *) *)
+(*       Check Nat.mod_bound_pos. *)
+(*       intros n. *)
+(*       apply Nat.mod_bound_pos. *)
+(*       Search (0 <= _). *)
+(*       apply Peano.le_0_n. *)
+(*       Search (0 < S _). *)
+(*       apply Nat.lt_0_succ. *)
+(*     } *)
+(*     (* SearchAbout (_ < _). *) *)
+(*     (* intros. *) *)
+(*     (* specialize (Nat.ltb_spec0 (n mod 256) (2 ^ 8)). *) *)
+(*     (* intros. *) *)
+(*     (* apply reflect_iff in H0. *) *)
+(*     (* rewrite iff_to_and in H0. *) *)
+(*     (* destruct H0. *) *)
+(*     (* apply H0. *) *)
+(*     (* specialize (H n). *) *)
+(*     (* exact H. *) *)
+(*   (* }  *) *)
+(*   destruct o. *)
+(*   -unfold operand_to_bin. *)
+(*    apply n_bit_dont_fail. *)
+(*    specialize (H n). *)
+(*    exact H. *)
+(*   -unfold operand_to_bin. *)
+(*    apply n_bit_dont_fail. *)
+(*    specialize (H n). *)
+(*    exact H. *)
+(* Qed. *)
 
 
 
-Lemma operand_to_bin_size : forall (o : operand) (l : list bool),
-    operand_to_bin o = Some l -> length l = 8.
-Proof.
-  destruct o.
-  -unfold operand_to_bin.
-   intros l H.
-   apply size_n_bit in H.
-   rewrite H.
-   reflexivity.
-   -unfold operand_to_bin.
-   intros l H.
-   apply size_n_bit in H.
-   rewrite H.
-   reflexivity.
-Qed.
+(* Lemma operand_to_bin_size : forall (o : operand) (l : list bool), *)
+(*     operand_to_bin o = Some l -> length l = 8. *)
+(* Proof. *)
+(*   destruct o. *)
+(*   -unfold operand_to_bin. *)
+(*    intros l H. *)
+(*    apply size_n_bit in H. *)
+(*    rewrite H. *)
+(*    reflexivity. *)
+(*    -unfold operand_to_bin. *)
+(*    intros l H. *)
+(*    apply size_n_bit in H. *)
+(*    rewrite H. *)
+(*    reflexivity. *)
+(* Qed. *)
 
 
 (* HERE i don't make any garantee about the result if the binary_instruction is to small but i will have some lemma to give it *)
@@ -123,7 +123,6 @@ Definition bind {A B} (ma : M A)(k : A -> M B): M B :=
   | None => None
   end.
 Check bind.
-Check operand_to_bin_size.
 
 
 Lemma bind_rewrite : forall (A B : Type) (ma : M A) (k : A -> M B) (res : B), bind ma k = Some res -> exists (a : A), k a = Some res /\ Some a = ma.
@@ -151,64 +150,10 @@ Proof.
 
 Notation "'let!' x ':=' ma 'in' k" := (bind ma k) (at level 30). 
 
-Definition is_op_immediate (t : tag) : bool :=
-  match t with
-  | tag_i _ => true
-  | _ => false
-  end.
-Definition is_immediate (op : operand) : bool :=
-  match op with
-  | immediate _ => true
-  | _ => false
-  end.
 
-Print negb.
 
-Definition is_valide_immediate (t : tag) (op : operand) : bool :=
-  if is_op_immediate t then is_immediate op else negb (is_immediate op).
 
-Definition compute_op3 (i : instruction) : option (list bool) :=
-  match i.(instr_opcode) with
-  | tag_i _ => match i.(instr_operande3) with
-               | immediate _ => operand_to_bin i.(instr_operande3)
-               | _ => None
-               end
-  | tag_n _ => match i.(instr_operande3) with
-               | reg _ => operand_to_bin i.(instr_operande3)
-               | _ => None
-               end
-  end.
 
-Lemma compute_op3_P : forall (i : instruction) (l : list bool),
-    compute_op3 i = Some l -> is_valide_immediate i.(instr_opcode) i.(instr_operande3) = true.
-Proof.
-  intros.
-  unfold is_valide_immediate.
-  unfold compute_op3 in H.
-  destruct (instr_opcode i).
-  -destruct (instr_operande3 i).
-   +discriminate.
-   +reflexivity.
-  -destruct (instr_operande3 i).
-   +reflexivity.
-   +discriminate.
-Qed.
-
-Lemma compute_op3_size : forall (i : instruction) (l : list bool),
-    compute_op3 i = Some l -> length l = 8.
-Proof.
-  intros.
-  unfold compute_op3 in H.
-  destruct (instr_opcode i).
-  -destruct (instr_operande3 i).
-   +discriminate.
-   +apply operand_to_bin_size in H.
-    auto.
-  -destruct (instr_operande3 i).
-   +apply operand_to_bin_size in H.
-    auto.
-   +discriminate.
-Qed. 
 
 (* TODO :: here i know that i can always get a binary_instruction but some function don't allow me to  *)
 (* return a binary_instruction without encapsulate it into an option type *)

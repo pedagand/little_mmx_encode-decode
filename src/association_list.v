@@ -382,15 +382,9 @@ Proof.
    }
 Qed.
 
-
-
-
-
-
 Theorem lookdown_encdec : forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n.
 Proof.
   SearchAbout (_ < _ \/ _).
-  (* Nat.lt_ge_cases" *)
   assert (reflect (forall (n : nat), n <= 3 -> forall
                        (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n)
                   lookdown_encdecP).
@@ -504,8 +498,7 @@ Proof.
         exact H.
      }
      exact H.
-  }
-  
+  }  
   assert (lookdown_encdecP' = true) by reflexivity.
   rewrite H0 in H.
   inversion H.
@@ -530,8 +523,7 @@ Proof.
 
 
 
-(* test fin de prog *)
-Theorem lookup_encdecP : forall (n : nat) (t : tag) , lookup t encdec = Some n -> lookdown n encdec = Some t.
+Theorem lookup_encdecP' : forall (n : nat) (t : tag) , lookup t encdec = Some n -> lookdown n encdec = Some t.
 Proof.
   SearchAbout reflect.
   assert (reflect (forall (n : nat), n <= 3 -> forall (t : tag), lookup t encdec = Some n -> lookdown n encdec = Some t) lookdown_encdecP').
@@ -592,10 +584,9 @@ Proof.
   -assert (exists m, n = 4 + m).
    {
      admit.
-   }   
+   }
    destruct H4.
    subst n.
    Check lookdown_n_inf_3.
    simpl in H3.
   Admitted.
-
