@@ -222,24 +222,24 @@ Inductive operande :=
 
 (* instruction definition *)
 Record instruction_tern_n :=
-  mk_instr_t_n { instr_opcode_t_n : tag; 
+  mk_instr_t_n { instr_opcode_t_n : tag_ter_normal; 
              instr_operande1_t_n : register ; 
              instr_operande2_t_n : register ; 
              instr_operande3_t_n : register }.
 
 Record instruction_tern_i :=
-  mk_instr_t_i { instr_opcode_t_i : tag; 
+  mk_instr_t_i { instr_opcode_t_i : tag_ter_immediate; 
              instr_operande1_t_i : register ; 
              instr_operande2_t_i : register ; 
              instr_operande3_t_i : imediate }.
 
 Record instruction_duo_n :=
-  mk_instr_d_n { instr_opcode_d_n : tag; 
+  mk_instr_d_n { instr_opcode_d_n : tag_duo_normal; 
              instr_operande1_d_n : register ; 
              instr_operande2_d_n : register }.
 
 Record instruction_duo_i :=
-  mk_instr_d_i { instr_opcode_d_i : tag; 
+  mk_instr_d_i { instr_opcode_d_i : tag_duo_immediate; 
              instr_operande1_d_i : register ; 
              instr_operande2_d_i : imediate }.
 
@@ -253,8 +253,8 @@ Definition binary_instruction := list bool.
 
 
 (* some example to test the record structure *)
-Example my_instr := mk_instr_t_i (tag_t_i ADD_I) (reg 10) (reg 11) (imm 12).
+(* Example my_instr := mk_instr_t_i (tag_t_i ADD_I) (reg 10) (reg 11) (imm 12). *)
 
-Example first_field_instr := my_instr.(instr_opcode_t_i).
+(* Example first_field_instr := my_instr.(instr_opcode_t_i).  *)
 
 
