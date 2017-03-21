@@ -437,9 +437,32 @@ Proof.
     Search ret.
     rewrite ret_rewrite in H.
     inversion H.
-    change (x1 ++ x2 ++ x3) with .
-    rewrite get_first_n_bit_size_tl.
-    
+    Check get_first_n_bit_size_tl.
+    assert (length x0 = 8 -> get_first_n_bit (x0 ++ x1 ++ x2 ++ x3) 8 = (x0, x1 ++ x2 ++ x3)) by admit.    
+    unfold decode.
+    rewrite H5.
+    -{
+        apply commut_equal in H0.
+        apply lookdup_encdec in H0.
+        Search n_bit.
+        Check bit_n_bit.
+        apply commut_equal in H1.
+        apply n_bit_n in H1.
+        rewrite H1.
+        rewrite H0.
+        assert (forall (f : tag -> option instruction), bind (Some (instr_opcode i)) f = f (instr_opcode i)) by reflexivity.
+        rewrite H7.
+        assert(get_first_n_bit (x1 ++ x2 ++ x3) 8 = (x1,x2 ++ x3)) by admit.
+        rewrite H8.
+        assert(get_first_n_bit (x2 ++ x3) 8 = (x2,x3)) by admit.
+        rewrite H9.
+        assert(get_first_n_bit x3 8 = (x3,[])) by admit.
+        rewrite H10.
+        destruct (instr_opcode i).        
+        -{
+            admit.
+          }
+        -
   }
 Admitted.
 
