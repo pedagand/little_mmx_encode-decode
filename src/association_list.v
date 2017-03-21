@@ -527,3 +527,75 @@ Proof.
    Check lookdown_n_inf_3.
    simpl in H3.
   Admitted.
+
+
+
+(* test fin de prog *)
+Theorem lookup_encdecP : forall (n : nat) (t : tag) , lookup t encdec = Some n -> lookdown n encdec = Some t.
+Proof.
+  SearchAbout reflect.
+  assert (reflect (forall (n : nat), n <= 3 -> forall (t : tag), lookup t encdec = Some n -> lookdown n encdec = Some t) lookdown_encdecP').
+  {
+    unfold lookdown_encdecP.
+    SearchAbout reflect.
+    Check forall_finP.
+    apply forall_finP.
+    Check forall_tagP.
+    intros n.
+    apply forall_tagP.
+    SearchAbout reflect.
+    Check implyP.
+    intros t.
+    apply implyP.
+    -assert (reflect (lookup t encdec = Some n) (eq_mnat (lookup t encdec) (Some n))).
+     {
+       apply iff_reflect.
+       apply iff_to_and.
+       split.
+       +intros.
+        rewrite H.
+        simpl.
+        apply Nat.eqb_refl.
+       +intros.
+        apply eq_mnat_equiv in H.
+        exact H.
+     }
+     exact H.
+    -assert (reflect (lookdown n encdec = Some t) (eq_mtag (lookdown n encdec) (Some t))).
+     {
+       apply iff_reflect.
+       apply iff_to_and.
+       split.
+       +intros.
+        rewrite H.
+        simpl.
+        apply tag_beq_reflexivity.
+       +intros.
+        apply eq_mtag_equiv in H.
+        exact H.
+     }
+     exact H.
+  }
+  
+  assert (lookdown_encdecP' = true) by reflexivity.
+  rewrite H0 in H.
+  inversion H.
+  intros n.
+  Search (_ <= _ \/ _).
+  Check Nat.le_gt_cases.
+  specialize (Nat.le_gt_cases n 3).
+  intros.
+  destruct H2.
+  -apply H1.
+   exact H2.
+   exact H3.
+  -assert (exists m, n = 4 + m).
+   {
+     admit.
+   }   
+   destruct H4.
+   subst n.
+   Check lookdown_n_inf_3.
+   simpl in H3.
+  Admitted.
+
