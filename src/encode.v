@@ -204,38 +204,55 @@ Proof.
    +fold get_first_n_bit.
     assert (get_first_n_bit l n = (l,[])) by (apply IHn; auto).
     rewrite H0.
-    reflexivity.  
-Admitted.
-   
- 
-
-Lemma get_first_n_bit_size_tl : forall (tl : list bool) (l : list bool), length l = 8 -> get_first_n_bit (l ++ tl) 8 = (l,tl).
+    reflexivity.
+Qed.
+    
+Lemma get_first_n_bit_size_tl : forall  (n : nat) (l : list bool) (tl : list bool), length l = n -> get_first_n_bit (l ++ tl) n = (l,tl).
 Proof.
-  induction tl.
+  induction n.
   -intros.
-   rewrite app_nil_r.
-   apply get_first_n_bit_size_nil_n.
-   exact H.
-  -
-Admitted.
+   apply length_zero_iff_nil in H.
+   rewrite H.
+   simpl.
+   destruct tl.
+   +reflexivity.
+   +reflexivity.
+  -intros.
+   unfold get_first_n_bit.
+   destruct l.
+   fold get_first_n_bit.
+   +discriminate.
+   +simpl.
+    fold get_first_n_bit.
+    assert (get_first_n_bit (l ++ tl) n = (l,tl)).
+    {
+      apply IHn.
+      simpl in H.
+      inversion H.
+      reflexivity.
+    }
+    rewrite H0.
+    reflexivity.   
+Qed.
   
 
 Lemma get_first_n_bit_size_4 : forall (l1 l2 l3 l4 : list bool),
     length l1 = 8 -> get_first_n_bit (l1 ++ l2 ++ l3 ++ l4) 8 = (l1,l2 ++ l3 ++ l4).
 Proof.
   intros.
-  specialize (get_first_n_bit_size_tl (l2 ++ l3 ++ l4) l1).
-  intros.
-  auto.
+  specialize (get_first_n_bit_size_tl 8 l1 (l2 ++ l3 ++ l4)).
+  intros.  
+  auto.  
 Qed.
+
 Lemma get_first_n_bit_size_3 : forall (n : nat) (l1 l2 l3 : list bool),
     length l1 = n -> get_first_n_bit (l1 ++ l2 ++ l3) n = (l1,l2 ++ l3).
 Proof.
   intros.
-  specialize (get_first_n_bit_size_tl (l2 ++ l3) l1).
+  specialize (get_first_n_bit_size_tl n l1 (l2 ++ l3)).
   intros.
   auto.
-Admitted.
+Qed.
 
 
 
