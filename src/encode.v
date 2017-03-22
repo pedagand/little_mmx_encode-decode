@@ -15,68 +15,127 @@ Definition operand_to_bin (o : operande) : option (list bool) :=
     | reg_o (reg k) => n_bit 8 k
   end.
 
-(* Lemma operand_to_bin_never_fail : forall (o : operande), exists (l : list bool), operand_to_bin o = Some l. *)
-(* Proof. *)
-(*   intros. *)
-(*   (* assert (forall (n : nat), n mod 256 <? 2 ^ 8 = true). *) *)
-(*   (* { *) *)
-(*     assert (forall (n : nat), n mod 256 < 2 ^ 8). *)
-(*     { *)
-(*       assert (2 ^ 8 = 256) by reflexivity. *)
-(*       rewrite H. *)
-(*       (* i need something of the form  "_ mod n < n" *) *)
-(*       Check Nat.mod_bound_pos. *)
-(*       intros n. *)
-(*       apply Nat.mod_bound_pos. *)
-(*       Search (0 <= _). *)
-(*       apply Peano.le_0_n. *)
-(*       Search (0 < S _). *)
-(*       apply Nat.lt_0_succ. *)
-(*     } *)
-(*     (* SearchAbout (_ < _). *) *)
-(*     (* intros. *) *)
-(*     (* specialize (Nat.ltb_spec0 (n mod 256) (2 ^ 8)). *) *)
-(*     (* intros. *) *)
-(*     (* apply reflect_iff in H0. *) *)
-(*     (* rewrite iff_to_and in H0. *) *)
-(*     (* destruct H0. *) *)
-(*     (* apply H0. *) *)
-(*     (* specialize (H n). *) *)
-(*     (* exact H. *) *)
-(*   (* }  *) *)
-(*   destruct o. *)
-(*   -unfold operand_to_bin. *)
-(*    destruct i. *)
-(*    apply n_bit_dont_fail. *)
-(*    specialize (H n). *)
-(*    exact H. *)
-(*   -unfold operand_to_bin. *)
-(*    destruct r. *)
-(*    apply n_bit_dont_fail. *)
-(*    specialize (H n). *)
-(*    exact H. *)
-(* Qed. *)
-(* SearchAbout bit_n. *)
-Lemma operand_to_bin_hypothesis1 : forall (l : list bool) (i : instruction_tern_n),
+Definition operand_to_bin_double (o : operande) : option (list bool) :=
+  match o with
+  | imm_o (imm k) => n_bit 16 k
+  | reg_o (reg k) => n_bit 16 k
+  end.
+
+(* -----------------------------------now for instr_operande_t_n ----------------------------------*)
+Lemma operand_to_bin_hypothesis1_t_n : forall (l : list bool) (i : instruction_tern_n),
     operand_to_bin (reg_o (instr_operande1_t_n i)) = Some l -> reg (bit_n l) = i.(instr_operande1_t_n).
 Proof.
   intros.
   unfold operand_to_bin in H.
   destruct (instr_operande1_t_n i).
-  Search n_bit.
+  apply n_bit_n in H.
+  rewrite H.
+  reflexivity.
+Qed.
+Lemma operand_to_bin_hypothesis2_t_n : forall (l : list bool) (i : instruction_tern_n),
+    operand_to_bin (reg_o (instr_operande2_t_n i)) = Some l -> reg (bit_n l) = i.(instr_operande2_t_n).
+Proof.
+  intros.
+  unfold operand_to_bin in H.
+  destruct (instr_operande2_t_n i).
+  apply n_bit_n in H.
+  rewrite H.
+  reflexivity.
+Qed.
+Lemma operand_to_bin_hypothesis3_t_n : forall (l : list bool) (i : instruction_tern_n),
+    operand_to_bin (reg_o (instr_operande3_t_n i)) = Some l -> reg (bit_n l) = i.(instr_operande3_t_n).
+  intros.
+  unfold operand_to_bin in H.
+  destruct (instr_operande3_t_n i).
   apply n_bit_n in H.
   rewrite H.
   reflexivity.
 Qed.
 
-Lemma operand_to_bin_hypothesis2 : forall (l : list bool) (i : instruction_tern_n),
-    operand_to_bin (reg_o (instr_operande2_t_n i)) = Some l -> reg (bit_n l) = i.(instr_operande2_t_n).
-Admitted.
 
-Lemma operand_to_bin_hypothesis3 : forall (l : list bool) (i : instruction_tern_n),
-    operand_to_bin (reg_o (instr_operande3_t_n i)) = Some l -> reg (bit_n l) = i.(instr_operande3_t_n).
-Admitted.
 
+
+(* -----------------------------------now for instr_operande_t_i ----------------------------------*)
+Lemma operand_to_bin_hypothesis1_t_i : forall (l : list bool) (i : instruction_tern_i),
+    operand_to_bin (reg_o (instr_operande1_t_i i)) = Some l -> reg (bit_n l) = i.(instr_operande1_t_i).
+Proof.
+  intros.
+  unfold operand_to_bin in H.
+  destruct (instr_operande1_t_i i).
+  apply n_bit_n in H.
+  rewrite H.
+  reflexivity.
+Qed.
+Lemma operand_to_bin_hypothesis2_t_i : forall (l : list bool) (i : instruction_tern_i),
+    operand_to_bin (reg_o (instr_operande2_t_i i)) = Some l -> reg (bit_n l) = i.(instr_operande2_t_i).
+Proof.
+  intros.
+  unfold operand_to_bin in H.
+  destruct (instr_operande2_t_i i).
+  apply n_bit_n in H.
+  rewrite H.
+  reflexivity.
+Qed.
+Lemma operand_to_bin_hypothesis3_t_i : forall (l : list bool) (i : instruction_tern_i),
+    operand_to_bin (imm_o (instr_operande3_t_i i)) = Some l -> imm (bit_n l) = i.(instr_operande3_t_i).
+  intros.
+  unfold operand_to_bin in H.
+  destruct (instr_operande3_t_i i).
+  apply n_bit_n in H.
+  rewrite H.
+  reflexivity.
+Qed.
+
+
+
+(* -----------------------------------now for instr_operande_d_n ----------------------------------*)
+Lemma operand_to_bin_hypothesis1_d_n : forall (l : list bool) (i : instruction_duo_n),
+    operand_to_bin (reg_o (instr_operande1_d_n i)) = Some l -> reg (bit_n l) = i.(instr_operande1_d_n).
+Proof.
+  intros.
+  unfold operand_to_bin in H.
+  destruct (instr_operande1_d_n i).
+  apply n_bit_n in H.
+  rewrite H.
+  reflexivity.
+Qed.
+Lemma operand_to_bin_double_hypothesis2_d_n : forall (l : list bool) (i : instruction_duo_n),
+    operand_to_bin_double (reg_o (instr_operande2_d_n i)) = Some l -> reg (bit_n l) = i.(instr_operande2_d_n).
+Proof.
+  intros.
+  unfold operand_to_bin in H.
+  destruct (instr_operande2_d_n i).
+  apply n_bit_n in H.
+  rewrite H.
+  reflexivity.
+Qed.
+
+
+
+(* -----------------------------------now for instr_operande_d_i ----------------------------------*)
+Lemma operand_to_bin_hypothesis1_d_i : forall (l : list bool) (i : instruction_duo_i),
+    operand_to_bin (reg_o (instr_operande1_d_i i)) = Some l -> reg (bit_n l) = i.(instr_operande1_d_i).
+Proof.
+  intros.
+  unfold operand_to_bin in H.
+  destruct (instr_operande1_d_i i).
+  apply n_bit_n in H.
+  rewrite H.
+  reflexivity.
+Qed.
+Lemma operand_to_bin_double_hypothesis2_d_i : forall (l : list bool) (i : instruction_duo_i),
+    operand_to_bin_double (imm_o (instr_operande2_d_i i)) = Some l -> imm (bit_n l) = i.(instr_operande2_d_i).
+Proof.
+  intros.
+  unfold operand_to_bin in H.
+  destruct (instr_operande2_d_i i).
+  apply n_bit_n in H.
+  rewrite H.
+  reflexivity.
+Qed.
+
+
+(* -----------------------------------Other operand_to_bin lemma ----------------------------------*)
 Lemma operand_to_bin_size : forall (o : operande) (l : list bool),
     operand_to_bin o = Some l -> length l = 8.
 Proof.
@@ -95,6 +154,23 @@ Proof.
     reflexivity.
 Qed.
 
+Lemma operand_to_bin_double_size : forall (o : operande) (l : list bool),
+    operand_to_bin_double o = Some l -> length l = 16.
+Proof.
+  destruct o.
+  -unfold operand_to_bin.
+   intros l H.
+   destruct i in H.
+   apply size_n_bit in H.
+   rewrite H.
+   reflexivity.
+   -unfold operand_to_bin.
+    intros l H.
+    destruct r in H.
+    apply size_n_bit in H.
+    rewrite H.
+    reflexivity.
+Qed.
 
 
 
@@ -149,14 +225,14 @@ Proof.
   intros.
   auto.
 Qed.
-Lemma get_first_n_bit_size_3 : forall (l1 l2 l3 : list bool),
-    length l1 = 8 -> get_first_n_bit (l1 ++ l2 ++ l3) 8 = (l1,l2 ++ l3).
+Lemma get_first_n_bit_size_3 : forall (n : nat) (l1 l2 l3 : list bool),
+    length l1 = n -> get_first_n_bit (l1 ++ l2 ++ l3) n = (l1,l2 ++ l3).
 Proof.
   intros.
   specialize (get_first_n_bit_size_tl (l2 ++ l3) l1).
   intros.
   auto.
-Qed.
+Admitted.
 
 
 
@@ -227,21 +303,22 @@ Definition encode_t_i (i : instruction_tern_i) : option binary_instruction :=
                        fun o1 => let! o2 := operand_to_bin (reg_o i.(instr_operande2_t_i)) in
                                  fun o2 => let! o3 := operand_to_bin (imm_o i.(instr_operande3_t_i)) in
                                            fun o3 => ret (code ++ o1 ++ o2 ++ o3).
-Definition zero_8_bits := [false;false;false;false;false;false;false;false].
 
 Definition encode_d_n (i : instruction_duo_n) : option binary_instruction :=
   let! k := lookup (tag_d_n (i.(instr_opcode_d_n))) encdec in
   fun k => let! code := n_bit 8 k in
            fun code => let! o1 := operand_to_bin (reg_o i.(instr_operande1_d_n)) in 
-                       fun o1 => let! o2 := operand_to_bin (reg_o i.(instr_operande2_d_n)) in
-                                 fun o2 => ret (code ++ o1 ++ o2 ++ zero_8_bits).
+                       fun o1 => let! o2 := operand_to_bin_double (reg_o i.(instr_operande2_d_n)) in
+                                 fun o2 => ret (code ++ o1 ++ o2).
 
 Definition encode_d_i (i : instruction_duo_i) : option binary_instruction :=
   let! k := lookup (tag_d_i (i.(instr_opcode_d_i))) encdec in
   fun k => let! code := n_bit 8 k in
            fun code => let! o1 := operand_to_bin (reg_o i.(instr_operande1_d_i)) in 
-                       fun o1 => let! o2 := operand_to_bin (imm_o i.(instr_operande2_d_i)) in
-                                 fun o2 => ret (code ++ o1 ++ o2 ++ zero_8_bits).
+                       fun o1 => let! o2 := operand_to_bin_double (imm_o i.(instr_operande2_d_i)) in
+                                 fun o2 => ret (code ++ o1 ++ o2).
+
+
 
 (* now the general encode function which take a general instruction *)
 
@@ -289,6 +366,13 @@ Definition decode (bi : binary_instruction) : option instruction :=
                           end
   end.
 
+
+
+
+
+
+
+(* little test (this is the end of the file) *)
 
 
 Definition my_instr := (mk_instr_t_n AND (reg 10) (reg 11) (reg 12)).
