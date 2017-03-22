@@ -176,7 +176,7 @@ Qed.
 
 
 (* HERE i don't make any garantee about the result if the binary_instruction is to small but i will have some lemma to give it *)
-Fixpoint get_first_n_bit (bi : list bool) (size : nat) : (list bool*list bool) :=
+Fixpoint get_first_n_bit  (bi : list bool) (size : nat) : (list bool*list bool) :=
   match size with
   | 0 => ([],bi)
   | S n => match bi with
@@ -188,11 +188,8 @@ Fixpoint get_first_n_bit (bi : list bool) (size : nat) : (list bool*list bool) :
   end.
 Definition testList := [true ; false ; true ; false ; false ; false ; true ; true ].
 Definition testList' := [true ; false ; true].
-Compute get_first_n_bit testList' 3.
-Compute get_first_n_bit testList' 4.
 
-
-Lemma get_first_n_bit_size_nil_n : forall (n : nat) (l : list bool), length l = n -> get_first_n_bit l n = (l,[]).
+Lemma get_first_n_bit_size_nil_n : forall (n : nat) (l : list bool), length l = n -> get_first_n_bit l n= (l,[]).
 Proof.
   induction n.
   -intros.
@@ -201,7 +198,13 @@ Proof.
    rewrite H.
    reflexivity.
   -intros.
-   Search (length _ = S _).
+   unfold get_first_n_bit.
+   destruct l.
+   +reflexivity.
+   +fold get_first_n_bit.
+    assert (get_first_n_bit l n = (l,[])) by (apply IHn; auto).
+    rewrite H0.
+    reflexivity.  
 Admitted.
    
  
