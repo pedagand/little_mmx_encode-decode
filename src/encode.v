@@ -257,6 +257,8 @@ Qed.
 
 
 
+
+
 (* Lemma get_first_n_bit_size : forall (bi : list bool) (size : nat), n < (length bi) -> get_first_n_bit bi n = ( *)
 
 
