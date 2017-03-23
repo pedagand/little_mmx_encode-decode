@@ -171,11 +171,10 @@ Proof.
    rewrite app_nil_r.
    reflexivity.
    
-  -
+  -admit.
+   Admitted.
    
-   
-   assert (forall (f : list bool -> option binary_instruction), bind (n_bit 8 (bit_n l)) f = f (bit_n l)) by reflexivity.
-   (* ok a la fin je me retrouve avec un truc assez cool au niveau du i le seul problème c'est que je n'ai pas assez d'hypothèse *)
+  
    
    
    
