@@ -2,38 +2,67 @@ Require Import Bool List Arith Nat.
 Import ListNotations.
 Require Import Mmx.ast_instructions Mmx.binary Mmx.association_list Mmx.encode.
 
-Lemma help_get_first_n_bit_size_out : forall (n : nat) (bi l l0 : list bool),
+Lemma get_first_n_bit_0_nil : forall (bi : list bool),
+    get_first_n_bit bi 0 = ([],bi).
+Proof.
+  destruct bi.
+  -reflexivity.
+  -reflexivity.
+Qed.
+
+Lemma help_get_first_n_bit_size_out : forall (bi : list bool) (n : nat) (l l0 : list bool),
     n <= length bi -> get_first_n_bit bi n = (l, l0) -> length l = n.
 Proof.
-  Search (_ <= _).
-  Check Nat.lt_eq_cases .
-  intros n bi.
-  specialize (Nat.lt_eq_cases n (length bi)).
-  intros.
-  destruct H.
-  destruct H.
-  -auto.
-  -destruct H2.
-   +auto.
-   +Search (_ < _).
+  induction bi.
+  -intros.
+   simpl in H.
+   apply le_n_0_eq in H.
+   assert (forall (n' : nat), get_first_n_bit [] n' = ([],[])).
+   {
+     destruct n'.
+     -reflexivity.
+     -reflexivity.
+   }
+   rewrite H1 in H0.
+   inversion H0.
+   rewrite <- H.
+   simpl.
+   reflexivity.
+  -intros.
+   destruct n.
+   +simpl in H0.
+    inversion H0.
+    reflexivity.
+   +simpl in H.    
+    apply le_S_n in H.
+    simpl in H0.
+    destruct l.
+    {
+      specialize (IHbi n [] l0).
+      apply IHbi in H.
+      -simpl in H.
+      rewrite <- H in H0.
+      rewrite get_first_n_bit_0_nil in H0.
+      discriminate.
+      -assert((let (l1, l2) := get_first_n_bit bi n in (a :: l1, l2)) = ([],l0) -> get_first_n_bit bi n = ([], l0)).
+       {
+         admit.
+       }
+       apply H1.
+       exact H0.
+    }
+    {
+      simpl.
+      apply eq_S.
+      specialize (IHbi n l l0).
+      apply IHbi.
+      -auto.
+      -admit.
+    }
     
+Admitted.
 
-  
-  induction n.
-  -destruct bi.
-   +simpl in H0.
-    inversion H0.
-    apply length_zero_iff_nil.
-    reflexivity.
-   +simpl in H0.
-    inversion H0.
-    apply length_zero_iff_nil.
-    reflexivity.
-  -destruct bi.
-   +simpl in H.
-    apply Nat.nle_succ_0 in H.
-    inversion H.
-   +simpl in H0.
+    
 Lemma get_first_n_bit_size_out : forall (n : nat) (bi l l0 : list bool),
     n <= length bi -> get_first_n_bit bi n = (l, l0) -> length l = n /\ length l0 = (length bi) - n.
 Proof.
