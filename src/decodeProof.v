@@ -21,6 +21,8 @@ Proof.
   auto.
 Qed.
 
+  
+  
 
 Lemma help_get_first_n_bit_size_out1 : forall (bi : list bool) (n : nat) (l l0 : list bool),
     n <= length bi -> get_first_n_bit bi n = (l, l0) -> length l = n.
@@ -77,14 +79,34 @@ Proof.
     }
 Qed.
 
-Lemma get_first_n_bit_size_nil_n_opposite : forall (n : nat) (l : list bool), get_first_n_bit l n = (l, []) -> length l = n.
+
+Lemma get_first_n_bit_size_nil_n_opposite : forall (n : nat) (l : list bool), n <= length l -> get_first_n_bit l n = (l, []) -> length l = n.
 Proof.
   induction n.
   -destruct l.
    +reflexivity.
    +discriminate.
-  -destruct l.
-   +simpl.
+  -intros.
+   destruct l.
+   +simpl in H.
+    inversion H.
+   +simpl in H.
+    apply le_S_n in H.
+    simpl.
+    apply eq_S.
+    apply IHn.
+    { auto. }
+    simpl in H0.
+    rewrite get_first_n_bit_rewrite in H0.
+    inversion H0.
+    rewrite H2.
+    rewrite H2 in H3.
+    rewrite H3.
+    rewrite get_first_n_bit_rewrite.
+    rewrite H2.
+    rewrite H3.
+    reflexivity.
+Qed.
 
 Lemma help_get_first_n_bit_size_out2 : forall (bi : list bool) (n : nat) (l l0 : list bool),
     n <= length bi -> get_first_n_bit bi n = (l, l0) -> length l0 = (length bi) - n.
@@ -106,7 +128,21 @@ Proof.
     reflexivity.
    +destruct l0.
     {
-      Search get_first_n_bit.
+      Check get_first_n_bit_size_nil_n_opposite.
+      simpl in H.
+      apply le_S_n in H.
+      specialize (get_first_n_bit_size_nil_n_opposite n bi).
+      intros.
+      apply H1 in H.
+      -simpl.
+       rewrite H.
+       rewrite Nat.sub_diag.
+       reflexivity.
+      -simpl in H0.
+       Check get_first_n_bit_rewrite.
+       rewrite get_first_n_bit_rewrite in H0.
+       inversion H0.
+      
     }
 
 
