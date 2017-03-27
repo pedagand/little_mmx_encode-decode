@@ -354,7 +354,7 @@ Definition encode (i : instruction) : option binary_instruction :=
   
 
 
-  (* flux d'instruction il faut faire une fonction qui decode le debut de la liste et retourne la suite de la liste *)
+  
 
 (* this is the decode function (with this one we only need one general function) *)
 Definition decode (bi : binary_instruction) : option instruction :=
@@ -406,6 +406,43 @@ Definition decode (bi : binary_instruction) : option instruction :=
 
 
 (* little test (this is the end of the file) *)
+
+
+
+(* flux d'instruction il faut faire une fonction qui decode le debut de la liste et retourne la suite de la liste *)
+Definition decode_flux (bi : list bool) : option (instruction*list bool) :=
+  match get_first_n_bit bi 32 with
+  | (l1,l2) => match decode l1 with
+               | Some res => Some (res,l2)
+               | None => None
+               end
+  end.
+
+Definition encode_flux (li : list instruction) : option (list bool*list instruction) :=
+  match li with
+  | [] => Some ([],[])
+  | i :: tl => match i with
+               | instr_t_n t => match encode_t_n t with
+                                | Some res => Some (res,tl)
+                                | None => None
+                                end
+               | instr_t_i t => match encode_t_i t with
+                                | Some res => Some (res,tl)
+                                | None => None
+                                end
+               | instr_d_n t => match encode_d_n t with
+                                | Some res => Some (res,tl)
+                                | None => None
+                                end
+               | instr_d_i t => match encode_d_i t with
+                                | Some res => Some (res,tl)
+                                | None => None
+                                end
+               end
+  end.
+
+
+
 
 
 Definition my_instr := (mk_instr_t_n AND (reg 10) (reg 11) (reg 12)).
