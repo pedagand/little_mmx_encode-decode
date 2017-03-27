@@ -2,10 +2,45 @@ Require Import Bool List Arith Nat.
 Import ListNotations.
 Require Import Mmx.ast_instructions Mmx.binary Mmx.association_list Mmx.encode.
 
+Lemma help_get_first_n_bit_size_out : forall (n : nat) (bi l l0 : list bool),
+    n <= length bi -> get_first_n_bit bi n = (l, l0) -> length l = n.
+Proof.
+  Search (_ <= _).
+  Check Nat.lt_eq_cases .
+  intros n bi.
+  specialize (Nat.lt_eq_cases n (length bi)).
+  intros.
+  destruct H.
+  destruct H.
+  -auto.
+  -destruct H2.
+   +auto.
+   +Search (_ < _).
+    
+
+  
+  induction n.
+  -destruct bi.
+   +simpl in H0.
+    inversion H0.
+    apply length_zero_iff_nil.
+    reflexivity.
+   +simpl in H0.
+    inversion H0.
+    apply length_zero_iff_nil.
+    reflexivity.
+  -destruct bi.
+   +simpl in H.
+    apply Nat.nle_succ_0 in H.
+    inversion H.
+   +simpl in H0.
 Lemma get_first_n_bit_size_out : forall (n : nat) (bi l l0 : list bool),
     n <= length bi -> get_first_n_bit bi n = (l, l0) -> length l = n /\ length l0 = (length bi) - n.
 Proof.
-Admitted.
+  intros.
+
+
+  
 
 Lemma get_first_n_bit_with_size : forall (bi li tl: list bool) , length bi = 32 -> get_first_n_bit bi 8 = (li,tl) -> length li = 8 /\ length tl = 24.
 Proof.
