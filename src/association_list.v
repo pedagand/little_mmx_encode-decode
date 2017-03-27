@@ -592,6 +592,8 @@ Proof.
    subst n.
    Check lookdown_n_inf_7.
    simpl in H3.
-  Admitted
+Admitted.
+
+
 
 

@@ -66,7 +66,7 @@ Admitted.
 Lemma get_first_n_bit_size_out : forall (n : nat) (bi l l0 : list bool),
     n <= length bi -> get_first_n_bit bi n = (l, l0) -> length l = n /\ length l0 = (length bi) - n.
 Proof.
-  intros.
+Admitted.
 
 
   
@@ -78,21 +78,21 @@ Proof.
 Admitted.
 
 Lemma get_first_n_bit_res' : forall (n : nat) (l l1 l2 : list bool), length l = n -> get_first_n_bit l n = (l1, l2) -> l = l1 ++ [].
-  induction n.
-  -intros.
-   Search get_first_n_bit.
-   apply get_first_n_bit_size_out in H0.
-   +destruct H0.
-    Search (length _ = 0).
-    apply length_zero_iff_nil in H0.
-    apply length_zero_iff_nil in H.
-    rewrite H0.
-    rewrite H.
-    reflexivity.
-   +apply Peano.le_0_n.
-  -intros.
-   apply get_first_n_bit_size_out in H0.
-   +destruct H0.
+  (* induction n. *)
+  (* -intros. *)
+  (*  Search get_first_n_bit. *)
+  (*  apply get_first_n_bit_size_out in H0. *)
+  (*  +destruct H0. *)
+  (*   Search (length _ = 0). *)
+  (*   apply length_zero_iff_nil in H0. *)
+  (*   apply length_zero_iff_nil in H. *)
+  (*   rewrite H0. *)
+  (*   rewrite H. *)
+  (*   reflexivity. *)
+  (*  +apply Peano.le_0_n. *)
+  (* -intros. *)
+  (*  apply get_first_n_bit_size_out in H0. *)
+  (*  +destruct H0. *)
 Admitted.
   
 Lemma get_first_n_bit_res_16 : forall (l l1 l2 : list bool), get_first_n_bit l 16 = (l1, l2) -> l = l1 ++ l2.
