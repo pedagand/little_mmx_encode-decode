@@ -1,6 +1,10 @@
 -R src Mmx
+-I src
+
 
 src/association_list.v
 src/ast_instructions.v
 src/binary.v
 src/encode.v
+src/encodeProof.v
+src/decodeProof.v
