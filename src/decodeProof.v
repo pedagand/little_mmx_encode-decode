@@ -10,7 +10,19 @@ Proof.
   -reflexivity.
 Qed.
 
-Lemma help_get_first_n_bit_size_out : forall (bi : list bool) (n : nat) (l l0 : list bool),
+Lemma help_get_first_n_bit_rewrite : forall (n : nat) (bi l1 l2: list bool), get_first_n_bit bi n = (l1,l2) -> fst(get_first_n_bit bi n) = l1.
+ Admitted.
+
+Lemma get_first_n_bit_rewrite : forall  (n : nat) (bi : list bool), get_first_n_bit bi n = (fst(get_first_n_bit bi n),snd(get_first_n_bit bi n)).
+Proof.
+  Check surjective_pairing.
+  intros n bi.
+  specialize (surjective_pairing (get_first_n_bit bi n)).
+  auto.
+Qed.
+
+
+Lemma help_get_first_n_bit_size_out1 : forall (bi : list bool) (n : nat) (l l0 : list bool),
     n <= length bi -> get_first_n_bit bi n = (l, l0) -> length l = n.
 Proof.
   induction bi.
@@ -46,7 +58,8 @@ Proof.
       discriminate.
       -assert((let (l1, l2) := get_first_n_bit bi n in (a :: l1, l2)) = ([],l0) -> get_first_n_bit bi n = ([], l0)).
        {
-         admit.
+         rewrite get_first_n_bit_rewrite in H0.
+         inversion H0.         
        }
        apply H1.
        exact H0.
@@ -57,15 +70,58 @@ Proof.
       specialize (IHbi n l l0).
       apply IHbi.
       -auto.
-      -admit.
+      -rewrite get_first_n_bit_rewrite in H0.
+       inversion H0.
+       rewrite <- get_first_n_bit_rewrite.
+       reflexivity.
     }
-    
-Admitted.
+Qed.
+
+Lemma get_first_n_bit_size_nil_n_opposite : forall (n : nat) (l : list bool), get_first_n_bit l n = (l, []) -> length l = n.
+Proof.
+  induction n.
+  -destruct l.
+   +reflexivity.
+   +discriminate.
+  -destruct l.
+   +simpl.
+
+Lemma help_get_first_n_bit_size_out2 : forall (bi : list bool) (n : nat) (l l0 : list bool),
+    n <= length bi -> get_first_n_bit bi n = (l, l0) -> length l0 = (length bi) - n.
+Proof.
+  induction bi.
+  -intros.
+   simpl in H.
+   Search (_ <= 0).
+   apply le_n_0_eq in H.
+   rewrite <- H in H0.
+   simpl in H0.
+   inversion H0.
+   rewrite <- H.
+   reflexivity.
+  -intros.
+   destruct n.
+   +simpl in H0.
+    inversion H0.
+    reflexivity.
+   +destruct l0.
+    {
+      Search get_first_n_bit.
+    }
+
 
     
 Lemma get_first_n_bit_size_out : forall (n : nat) (bi l l0 : list bool),
     n <= length bi -> get_first_n_bit bi n = (l, l0) -> length l = n /\ length l0 = (length bi) - n.
 Proof.
+  intros.
+  split.  
+  -specialize (help_get_first_n_bit_size_out1 bi n l l0).
+   intros.
+   auto.
+  -
+
+  
 Admitted.
 
 

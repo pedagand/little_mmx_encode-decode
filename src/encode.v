@@ -410,13 +410,28 @@ Definition decode (bi : binary_instruction) : option instruction :=
 
 
 (* flux d'instruction il faut faire une fonction qui decode le debut de la liste et retourne la suite de la liste *)
-Definition decode_flux (bi : list bool) : option (instruction*list bool) :=
-  match get_first_n_bit bi 32 with
-  | (l1,l2) => match decode l1 with
-               | Some res => Some (res,l2)
-               | None => None
-               end
+Print fold_right.
+Definition cut32 (l : list bool) (res : list (list bool)) : list (list bool) :=
+  
+
+Definition decode_flux  (bi : list bool) (res : option (list instruction)): option (list instruction) :=
+  match res with
+  | Some l =>
+    match get_first_n_bit bi 32 with
+    | (l1,l2) => match decode l1 with
+                 | Some i => Some (i :: l)
+                 | None => None
+                 end
+    end
+  | None => None 
   end.
+Check fold_right.
+Definition decode_fold (l : list bool) :=
+  fold_right decode_flux (Some []) l.
+
+
+  Print fold_left.
+Definition decode_fold (
 
 Definition encode_flux (li : list instruction) : option (list bool*list instruction) :=
   match li with
@@ -440,6 +455,9 @@ Definition encode_flux (li : list instruction) : option (list bool*list instruct
                                 end
                end
   end.
+
+Print fold_left.
+
 
 
 
