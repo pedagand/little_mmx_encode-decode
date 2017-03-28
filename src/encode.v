@@ -426,14 +426,6 @@ Definition concat_listes (l : list (list bool)) : list bool :=
 
 
 
-
-(* Lemma about cut32 properties *)
-Lemma cut32_size : forall (n : nat) (l : list bool) (res : (list (list bool))),
-    cut32 l = Some res -> length res = (length l) / 32.
-Proof.
-Admitted.   
-
-
 (* decode flux functions *)
 Definition fold_function_decode (a : binary_instruction) (li : option(list instruction)) : (option (list instruction)) :=
   let! i := decode a in
@@ -477,11 +469,5 @@ Compute my_instr_list_encoded_decoded.
 (* it seem's to work *)
 
 
-
-
-Definition my_instr_encoded_decoded' := match encode_t_n my_instr with
-                                      | Some lol => decode lol
-                                      | None => None
-                                       end. 
 
 
