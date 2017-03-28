@@ -10,6 +10,8 @@ Proof.
   -reflexivity.
 Qed.
 
+
+
 (* Lemma help_get_first_n_bit_rewrite : forall (n : nat) (bi l1 l2: list bool), get_first_n_bit bi n = (l1,l2) -> fst(get_first_n_bit bi n) = l1. *)
 (*  Admitted. *)
 
@@ -21,8 +23,20 @@ Proof.
   auto.
 Qed.
 
-  
-  
+
+Lemma get_first_n_bit_rewrite_apply : forall  (n : nat) (bi l1 l2: list bool) (a : bool),
+    (a :: fst(get_first_n_bit bi n),snd(get_first_n_bit bi n)) = (l1,l2) ->
+    (fst(get_first_n_bit (a :: bi) (S n)), snd(get_first_n_bit (a :: bi) (S n))) = (l1,l2).
+Proof.
+  intros.
+  simpl.
+  rewrite get_first_n_bit_rewrite.
+  simpl.
+  exact H.
+Qed.
+
+(* Lemma get_first_n_bit_rewrite  *)
+
 
 Lemma help_get_first_n_bit_size_out1 : forall (bi : list bool) (n : nat) (l l0 : list bool),
     n <= length bi -> get_first_n_bit bi n = (l, l0) -> length l = n.
@@ -108,6 +122,13 @@ Proof.
     reflexivity.
 Qed.
 
+
+Lemma get_first_n_bit_size_nil_n_opposite2 : forall (n : nat) (bi l l0: list bool),
+    n <= length bi -> get_first_n_bit bi n = (l,l0) -> length l0 = n - length l.
+Proof.
+  Admitted.
+
+
 Lemma help_get_first_n_bit_size_out2 : forall (bi : list bool) (n : nat) (l l0 : list bool),
     n <= length bi -> get_first_n_bit bi n = (l, l0) -> length l0 = (length bi) - n.
 Proof.
@@ -173,17 +194,6 @@ Proof.
        reflexivity.      
     }
     {
-      Search get_first_n_bit.
-      simpl in H.
-      apply le_S_n in H.
-      specialize (IHbi n 
-      apply H in IHbi.
-      
-      simpl in H0.
-      rewrite get_first_n_bit_rewrite in H0.
-      inversion H0.
-      
-    }
 Admitted.
 
     
@@ -199,31 +209,109 @@ Proof.
    intros.
    auto.
 Qed.
-   
+
+Definition lolliste := [true;true;true;false;false].
+Compute get_first_n_bit lolliste 1.
+
+
+
 
 Lemma get_first_n_bit_res_n : forall (n : nat) (l l1 l2 : list bool), get_first_n_bit l n = (l1, l2) -> l = l1 ++ l2.
 Proof.
   induction n.
-  -destruct l.
-   +intros.
-    simpl in H.
+  -intros.
+   rewrite get_first_n_bit_0_nil in H.
+   inversion H.
+   reflexivity.
+  -intros.
+   destruct l.
+   +simpl in H.
     inversion H.
     reflexivity.
-   +intros.
-    simpl in H.
-    inversion H.
-    reflexivity.
-  -destruct l.
-   +intros.
-    simpl in H.
-    inversion H.
-    reflexivity.
-   +intros.
-    simpl in H.
+   +simpl in H.
     rewrite get_first_n_bit_rewrite in H.
-    apply IHn.
     inversion H.
+    rewrite <- app_comm_cons.
+    Check get_first_n_bit_rewrite_apply.
+    apply get_first_n_bit_rewrite_apply in H.   
+    rewrite app_comm_cons.
+    rewrite H1.
+    rewrite H2.
+
+
+    
+    assert (forall (b : bool) (l1 l2 : list bool), l1 = l2 -> b :: l1 = b :: l2).
+    {
+      intros.
+      destruct b.
+      -rewrite H0.
+       reflexivity.
+      -rewrite H0.
+       reflexivity.
+    }
+    
+    apply H0.
+    
+
+     
+   Search get_first_n_bit.
+   rewrite get_first_n_bit_rewrite in H.
+   inversion H.
+   fold get_first_n_bit in H1.
+   destruct n.
+   +simpl.
+    reflexivity.
+   +rewrite get_first_n_bit_rewrite.
+    simpl.
+    assert (forall (b : bool) (l1 l2 : list bool), l1 = l2 -> b :: l1 = b :: l2).
+    {
+      intros.
+      destruct b.
+      -rewrite H0.
+       reflexivity.
+      -rewrite H0.
+       reflexivity.
+    }
+    rewrite <- get_first_n_bit_rewrite in H.
+    destruct l1.
+    {
+      rewrite get_first_n_bit_rewrite in H.
+      inversion H.
+    }
+
+    
+    apply H0.
+    
+     
+
+
+
+     rewrite get_first_n_bit_rewrite in H1.
+    inversion H1.
+    rewrite get_first_n_bit_rewrite in H2.
+    inversion H2.
+    simpl in H1.
+    simpl in H2.
+    simpl in H3.
+    simpl in H0.
     rewrite get_first_n_bit_rewrite.
+    simpl.
+    Search (_ :: _).
+    assert (forall (b : bool) (l1 l2 : list bool), l1 = l2 -> b :: l1 = b :: l2).
+    {
+      intros.
+      destruct b.
+      -rewrite H4.
+       reflexivity.
+      -rewrite H4.
+       reflexivity.
+    }
+    specialize (H4 a l (fst (get_first_n_bit l n) ++ snd (get_first_n_bit l n))).
+    apply H4.
+    
+    
+              
+    
 Admitted.
   
 Lemma get_first_n_bit_res_16 : forall (l l1 l2 : list bool), get_first_n_bit l 16 = (l1, l2) -> l = l1 ++ l2.
