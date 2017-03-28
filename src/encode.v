@@ -411,7 +411,6 @@ Definition decode (bi : binary_instruction) : option instruction :=
 
 (* flux d'instruction il faut faire une fonction qui decode le debut de la liste et retourne la suite de la liste *)
 Print fold_right.
-(* start the function with  n = length l / 32 *)
 Fixpoint cut32_n (n : nat) (l : list bool) : (list (list bool)) :=
   match n with
   | 0 => []
@@ -421,6 +420,10 @@ Fixpoint cut32_n (n : nat) (l : list bool) : (list (list bool)) :=
 Definition cut32 (l : list bool) : option (list (list bool)) :=
   let n := length l in
   if n mod 32 =? 0 then Some (cut32_n (n / 32) l) else None.
+
+Definition concat_listes (l : list (list bool)) : list bool :=
+  fold_right (fun l res => l ++ res) [] l.
+
 
 
 
@@ -432,69 +435,48 @@ Admitted.
 
 
 (* decode flux functions *)
-Definition fold_function (a : binary_instruction) (li : option(list instruction)) : (option (list instruction)) :=
+Definition fold_function_decode (a : binary_instruction) (li : option(list instruction)) : (option (list instruction)) :=
   let! i := decode a in
   fun i => match li with
            | None => None
            | Some l => Some (i :: l)
            end.
 Definition decode_fold (lbi : list binary_instruction) : option (list instruction) :=
-  fold_right fold_function (Some []) lbi.
+  fold_right fold_function_decode (Some []) lbi.
 Definition decode_flux (l : list bool) : option (list instruction) :=
   let! lbi := cut32 l in
   fun lbi => decode_fold lbi.
   
-  
-
-Definition decode_flux  (bi : list bool) (res : option (list instruction)): option (list instruction) :=
-  match res with
-  | Some l =>
-    match get_first_n_bit bi 32 with
-    | (l1,l2) => match decode l1 with
-                 | Some i => Some (i :: l)
-                 | None => None
-                 end
-    end
-  | None => None 
-  end.
-Check fold_right.
-(* Definition decode_fold (l : list bool) := *)
-(*   fold_right decode_flux (Some []) l. *)
+ 
+(* definition encode_flux *)
+Definition fold_function_encode (i : instruction) (lbi : option (list binary_instruction)) : option (list binary_instruction) :=
+  let! bi := encode i in
+  fun bi => match lbi with
+            | None => None
+            | Some l => Some (bi :: l)
+            end.
+Definition encode_flux_lbi (li : list instruction) : option (list binary_instruction) :=
+  fold_right fold_function_encode (Some []) li.
+Definition encode_flux (li : list instruction) : option (list bool) :=
+  let! l :=  encode_flux_lbi li in
+  fun l => Some (concat_listes l).
 
 
-Print fold_left.
+(* Some little tests about encode and decode_flux *)
 
-Definition encode_flux (li : list instruction) : option (list bool*list instruction) :=
-  match li with
-  | [] => Some ([],[])
-  | i :: tl => match i with
-               | instr_t_n t => match encode_t_n t with
-                                | Some res => Some (res,tl)
-                                | None => None
-                                end
-               | instr_t_i t => match encode_t_i t with
-                                | Some res => Some (res,tl)
-                                | None => None
-                                end
-               | instr_d_n t => match encode_d_n t with
-                                | Some res => Some (res,tl)
-                                | None => None
-                                end
-               | instr_d_i t => match encode_d_i t with
-                                | Some res => Some (res,tl)
-                                | None => None
-                                end
-               end
-  end.
+Definition my_instr := instr_t_n (mk_instr_t_n AND (reg 10) (reg 11) (reg 12)).
+Definition my_instr_liste := [my_instr;my_instr;my_instr;my_instr].
 
-Print fold_left.
+Definition my_instr_list_encoded_decoded := match encode_flux my_instr_liste with
+                                      | Some lol => decode_flux lol
+                                      | None => None
+                                       end. 
+
+Compute my_instr_list_encoded_decoded.
+
+(* it seem's to work *)
 
 
-
-
-
-
-Definition my_instr := (mk_instr_t_n AND (reg 10) (reg 11) (reg 12)).
 
 
 Definition my_instr_encoded_decoded' := match encode_t_n my_instr with
