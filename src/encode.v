@@ -411,7 +411,34 @@ Definition decode (bi : binary_instruction) : option instruction :=
 
 (* flux d'instruction il faut faire une fonction qui decode le debut de la liste et retourne la suite de la liste *)
 Print fold_right.
-Definition cut32 (l : list bool) (res : list (list bool)) : list (list bool) :=
+(* start the function with  n = length l / 32 *)
+Fixpoint cut32_n (n : nat) (l : list bool) : (list (list bool)) :=
+  match n with
+  | 0 => []
+  | S n' => (firstn 32 l) :: (cut32_n n' (skipn 32 l))
+  end.
+
+Definition cut32 (n : nat) (l : list bool) : option (list (list bool)) :=
+  if n mod 32 =? 0 then Some (cut32_n (n / 32) l) else None.
+
+
+Lemma cut32_size : forall (n : nat) (l : list bool) (res : (list (list bool))),
+    cut32 n l = Some res -> length res = n / 32.
+Proof.
+  induction n.
+  -intros.
+   unfold cut32 in H.
+   simpl in H.
+   inversion H.
+   reflexivity.
+  -intros.
+   unfold cut32 in H.   
+   destruct (S n mod 32 =? 0).
+   +
+Admitted.  
+
+  
+  
   
 
 Definition decode_flux  (bi : list bool) (res : option (list instruction)): option (list instruction) :=
@@ -426,12 +453,11 @@ Definition decode_flux  (bi : list bool) (res : option (list instruction)): opti
   | None => None 
   end.
 Check fold_right.
-Definition decode_fold (l : list bool) :=
-  fold_right decode_flux (Some []) l.
+(* Definition decode_fold (l : list bool) := *)
+(*   fold_right decode_flux (Some []) l. *)
 
 
-  Print fold_left.
-Definition decode_fold (
+Print fold_left.
 
 Definition encode_flux (li : list instruction) : option (list bool*list instruction) :=
   match li with
