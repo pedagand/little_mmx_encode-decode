@@ -418,26 +418,31 @@ Fixpoint cut32_n (n : nat) (l : list bool) : (list (list bool)) :=
   | S n' => (firstn 32 l) :: (cut32_n n' (skipn 32 l))
   end.
 
-Definition cut32 (n : nat) (l : list bool) : option (list (list bool)) :=
+Definition cut32 (l : list bool) : option (list (list bool)) :=
+  let n := length l in
   if n mod 32 =? 0 then Some (cut32_n (n / 32) l) else None.
 
 
-Lemma cut32_size : forall (n : nat) (l : list bool) (res : (list (list bool))),
-    cut32 n l = Some res -> length res = n / 32.
-Proof.
-  induction n.
-  -intros.
-   unfold cut32 in H.
-   simpl in H.
-   inversion H.
-   reflexivity.
-  -intros.
-   unfold cut32 in H.   
-   destruct (S n mod 32 =? 0).
-   +
-Admitted.  
 
-  
+(* Lemma about cut32 properties *)
+Lemma cut32_size : forall (n : nat) (l : list bool) (res : (list (list bool))),
+    cut32 l = Some res -> length res = (length l) / 32.
+Proof.
+Admitted.   
+
+
+(* decode flux functions *)
+Definition fold_function (a : binary_instruction) (li : option(list instruction)) : (option (list instruction)) :=
+  let! i := decode a in
+  fun i => match li with
+           | None => None
+           | Some l => Some (i :: l)
+           end.
+Definition decode_fold (lbi : list binary_instruction) : option (list instruction) :=
+  fold_right fold_function (Some []) lbi.
+Definition decode_flux (l : list bool) : option (list instruction) :=
+  let! lbi := cut32 l in
+  fun lbi => decode_fold lbi.
   
   
 
