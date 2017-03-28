@@ -127,6 +127,7 @@ Proof.
     inversion H0.
     reflexivity.
    +destruct l0.
+    
     {
       Check get_first_n_bit_size_nil_n_opposite.
       simpl in H.
@@ -171,9 +172,18 @@ Proof.
        simpl.
        reflexivity.      
     }
-    simpl in H0.
-    rewrite get_first_n_bit_rewrite in H0.
-    inversion H0.
+    {
+      Search get_first_n_bit.
+      simpl in H.
+      apply le_S_n in H.
+      specialize (IHbi n 
+      apply H in IHbi.
+      
+      simpl in H0.
+      rewrite get_first_n_bit_rewrite in H0.
+      inversion H0.
+      
+    }
 Admitted.
 
     
