@@ -2,6 +2,19 @@ Require Import Bool List Arith Nat.
 Import ListNotations.
 Require Import Mmx.ast_instructions Mmx.binary Mmx.association_list Mmx.encode.
 
+(* weird it is not in the santard librairie *)
+Lemma delete_concat : forall (b : bool) (l1 l2 : list bool), l1 = l2 -> b :: l1 = b :: l2.
+Proof.  
+  intros.
+  destruct b.
+  -rewrite H.
+   reflexivity.
+  -rewrite H.
+   reflexivity.
+Qed.
+
+
+(* two obvious Lemma but very usefull during the proof *)
 Lemma get_first_n_bit_0_nil : forall (bi : list bool),
     get_first_n_bit bi 0 = ([],bi).
 Proof.
@@ -11,10 +24,6 @@ Proof.
 Qed.
 
 
-
-(* Lemma help_get_first_n_bit_rewrite : forall (n : nat) (bi l1 l2: list bool), get_first_n_bit bi n = (l1,l2) -> fst(get_first_n_bit bi n) = l1. *)
-(*  Admitted. *)
-
 Lemma get_first_n_bit_rewrite : forall  (n : nat) (bi : list bool), get_first_n_bit bi n = (fst(get_first_n_bit bi n),snd(get_first_n_bit bi n)).
 Proof.
   Check surjective_pairing.
@@ -22,6 +31,64 @@ Proof.
   specialize (surjective_pairing (get_first_n_bit bi n)).
   auto.
 Qed.
+
+
+
+
+
+
+(* Some lemma to make the connection between get_first_n_bit and the functions firstn and skipn *)
+Lemma get_first_n_bit_firstn : forall (n : nat) (l l1 l2 : list bool), get_first_n_bit l n = (l1,l2) -> firstn n l = l1.
+Proof.
+  induction n.
+  -intros.
+   simpl.
+   rewrite get_first_n_bit_0_nil in H.
+   inversion H.
+   reflexivity.
+  -intros.
+   destruct l.
+   +simpl in H.
+    inversion H.
+    reflexivity.
+   +simpl.
+    simpl in H.
+    rewrite get_first_n_bit_rewrite in H.
+    inversion H.
+    apply delete_concat.
+    specialize (IHn l (fst (get_first_n_bit l n)) l2).
+    apply IHn.
+    rewrite <- H2.
+    rewrite <- get_first_n_bit_rewrite.
+    reflexivity.
+Qed.
+
+
+Lemma get_first_n_bit_skipn : forall (n : nat) (l l1 l2 : list bool), get_first_n_bit l n = (l1,l2) -> skipn n l = l2.
+Proof.
+  induction n.
+  -intros.
+   rewrite get_first_n_bit_0_nil in H.
+   inversion H.
+   reflexivity.
+  -intros.
+   destruct l.
+   +inversion H.
+    reflexivity.
+   +simpl in H.
+    rewrite get_first_n_bit_rewrite in H.
+    inversion H.
+    rewrite H2.
+    simpl.
+    specialize (IHn l (fst (get_first_n_bit l n)) l2).
+    apply IHn.
+    rewrite <- H2.
+    rewrite <- get_first_n_bit_rewrite.
+    reflexivity.
+Qed.
+
+
+
 
 
 Lemma get_first_n_bit_rewrite_apply : forall  (n : nat) (bi l1 l2: list bool) (a : bool),
@@ -35,9 +102,22 @@ Proof.
   exact H.
 Qed.
 
+
+Lemma get_first_n_bit_res_n : forall (n : nat) (l l1 l2 : list bool), get_first_n_bit l n = (l1, l2) -> l = l1 ++ l2.
+Proof.
+  intros.
+  assert (keep : get_first_n_bit l n = (l1, l2)) by auto.
+  apply get_first_n_bit_firstn in H.
+  apply get_first_n_bit_skipn in keep.
+  rewrite <- H.
+  rewrite <- keep.
+  rewrite firstn_skipn.
+  reflexivity.
+Qed.
+
+
+
 (* Lemma get_first_n_bit_rewrite  *)
-
-
 Lemma help_get_first_n_bit_size_out1 : forall (bi : list bool) (n : nat) (l l0 : list bool),
     n <= length bi -> get_first_n_bit bi n = (l, l0) -> length l = n.
 Proof.
@@ -123,78 +203,33 @@ Proof.
 Qed.
 
 
-Lemma get_first_n_bit_size_nil_n_opposite2 : forall (n : nat) (bi l l0: list bool),
-    n <= length bi -> get_first_n_bit bi n = (l,l0) -> length l0 = n - length l.
-Proof.
-  Admitted.
-
 
 Lemma help_get_first_n_bit_size_out2 : forall (bi : list bool) (n : nat) (l l0 : list bool),
     n <= length bi -> get_first_n_bit bi n = (l, l0) -> length l0 = (length bi) - n.
 Proof.
-  induction bi.
-  -intros.
-   simpl in H.
-   Search (_ <= 0).
-   apply le_n_0_eq in H.
-   rewrite <- H in H0.
-   simpl in H0.
-   inversion H0.
-   rewrite <- H.
+  intros.
+  Check get_first_n_bit_firstn.
+  assert (keep : get_first_n_bit bi n = (l, l0)) by auto.
+  assert (keep2 : get_first_n_bit bi n = (l, l0)) by auto.
+(*   apply get_first_n_bit_firstn in H0. *)
+  apply get_first_n_bit_skipn in keep.
+  apply get_first_n_bit_res_n in keep2.
+  rewrite keep2.
+  Search (length (_ ++ _)).
+  rewrite app_length.
+  apply help_get_first_n_bit_size_out1 in H0.
+  -Check firstn_length.
+   rewrite H0.
+   Search (_ - _ ).
+   rewrite Nat.add_comm.
+   Check Nat.sub_diag.
+   Search (_ + _ - _).
+   rewrite Nat.add_sub.
    reflexivity.
-  -intros.
-   destruct n.
-   +simpl in H0.
-    inversion H0.
-    reflexivity.
-   +destruct l0.
-    
-    {
-      Check get_first_n_bit_size_nil_n_opposite.
-      simpl in H.
-      apply le_S_n in H.
-      specialize (get_first_n_bit_size_nil_n_opposite n bi).
-      intros.
-      apply H1 in H.
-      -simpl.
-       rewrite H.
-       rewrite Nat.sub_diag.
-       reflexivity.
-      -simpl in H0.
-       Check get_first_n_bit_rewrite.
-(*        rewrite get_first_n_bit_rewrite in H0.        *)
-       assert (a :: fst (get_first_n_bit bi n) = a :: bi).
-       {         
-         rewrite get_first_n_bit_rewrite in H0.         
-         inversion H0.
-         Check get_first_n_bit_size_nil_n_opposite.
-         admit.
-       }
-       rewrite get_first_n_bit_rewrite in H0.         
-       inversion H0.
-       rewrite H2 in H4.
-       rewrite get_first_n_bit_rewrite.
-       assert (forall (b : bool) (l1 l2 : list bool), b :: l1 = b :: l2 -> l1 = l2).
-       {
-         destruct b.
-         -intros.
-          inversion H3.
-          reflexivity.
-         -intros.
-          inversion H3.
-          reflexivity.
-       }
-       specialize (H3 a (fst (get_first_n_bit bi n)) bi).
-       rewrite H2 in H3.
-       assert (a :: bi = a :: bi) by reflexivity.
-       apply H3 in H6.
-       rewrite H6.
-       rewrite H5.
-       simpl.
-       reflexivity.      
-    }
-    {
-Admitted.
+  -auto.
+Qed.
+  
+  
 
     
 Lemma get_first_n_bit_size_out : forall (n : nat) (bi l l0 : list bool),
@@ -213,77 +248,9 @@ Qed.
 Definition lolliste := [true;true;true;false;false].
 Compute get_first_n_bit lolliste 1.
 
-(* weird it is not in the santard librairie *)
-Lemma delete_concat : forall (b : bool) (l1 l2 : list bool), l1 = l2 -> b :: l1 = b :: l2.
-Proof.  
-  intros.
-  destruct b.
-  -rewrite H.
-   reflexivity.
-  -rewrite H.
-   reflexivity.
-Qed.
    
    
-Lemma get_first_n_bit_firstn : forall (n : nat) (l l1 l2 : list bool), get_first_n_bit l n = (l1,l2) -> firstn n l = l1.
-Proof.
-  induction n.
-  -intros.
-   simpl.
-   rewrite get_first_n_bit_0_nil in H.
-   inversion H.
-   reflexivity.
-  -intros.
-   destruct l.
-   +simpl in H.
-    inversion H.
-    reflexivity.
-   +simpl.
-    simpl in H.
-    rewrite get_first_n_bit_rewrite in H.
-    inversion H.
-    apply delete_concat.
-    specialize (IHn l (fst (get_first_n_bit l n)) l2).
-    apply IHn.
-    rewrite <- H2.
-    rewrite <- get_first_n_bit_rewrite.
-    reflexivity.
-Qed.
 
-Lemma get_first_n_bit_skipn : forall (n : nat) (l l1 l2 : list bool), get_first_n_bit l n = (l1,l2) -> skipn n l = l2.
-Proof.
-  induction n.
-  -intros.
-   rewrite get_first_n_bit_0_nil in H.
-   inversion H.
-   reflexivity.
-  -intros.
-   destruct l.
-   +inversion H.
-    reflexivity.
-   +simpl in H.
-    rewrite get_first_n_bit_rewrite in H.
-    inversion H.
-    rewrite H2.
-    simpl.
-    specialize (IHn l (fst (get_first_n_bit l n)) l2).
-    apply IHn.
-    rewrite <- H2.
-    rewrite <- get_first_n_bit_rewrite.
-    reflexivity.
-Qed.
-
-Lemma get_first_n_bit_res_n : forall (n : nat) (l l1 l2 : list bool), get_first_n_bit l n = (l1, l2) -> l = l1 ++ l2.
-Proof.
-  intros.
-  assert (keep : get_first_n_bit l n = (l1, l2)) by auto.
-  apply get_first_n_bit_firstn in H.
-  apply get_first_n_bit_skipn in keep.
-  rewrite <- H.
-  rewrite <- keep.
-  rewrite firstn_skipn.
-  reflexivity.
-Qed.
 
 
 (* Some littles macro *)
