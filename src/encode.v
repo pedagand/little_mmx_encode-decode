@@ -459,6 +459,14 @@ Definition encode_flux (li : list instruction) : option (list bool) :=
 Definition my_instr := instr_t_n (mk_instr_t_n AND (reg 10) (reg 11) (reg 12)).
 Definition my_instr_liste := [my_instr;my_instr;my_instr;my_instr].
 
+
+Definition my_instr_list_encoded_decoded' := match encode_flux_lbi my_instr_liste with
+                                      | Some lol => decode_fold lol
+                                      | None => None
+                                            end.
+Compute my_instr_list_encoded_decoded'.
+
+
 Definition my_instr_list_encoded_decoded := match encode_flux my_instr_liste with
                                       | Some lol => decode_flux lol
                                       | None => None
