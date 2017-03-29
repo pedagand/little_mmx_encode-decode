@@ -190,6 +190,9 @@ Proof.
       simpl.
       intros.
       Search decode.
+      Check decode_size.
+      apply decode_size in keep.
+      auto.
     }
     apply H2 in keep2.
     auto.
