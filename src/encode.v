@@ -425,8 +425,12 @@ Definition cut32 (l : list bool) : option (list (list bool)) :=
   let n := length l in
   if n mod 32 =? 0 then Some (cut32_n (n / 32) l) else None.
 
-(* Definition concat_listes (l : list (list bool)) : list bool := *)
-(*   fold_right (fun l res => l ++ res) [] l. *)
+Fixpoint concat_listes (l : list (list bool)) : list bool :=
+  match l with
+  | [] => []
+  | h :: tl => h ++ (concat_listes tl)
+  end.
+
 
 
 
@@ -448,13 +452,20 @@ Definition encode_flux_opt (li : list instruction) : list (option binary_instruc
 Definition encode_flux (li : list instruction) : option (list binary_instruction) :=
   traverse (encode_flux_opt li).
 
+Definition encode_flux_b (li : list instruction) : option (list bool) :=
+  match encode_flux li with
+  | None => None
+  | Some res => Some (concat_listes res)
+  end.
 
 Definition decode_flux_opt (lbi : list binary_instruction) : list (option instruction) :=
   map decode lbi.
 Definition decode_flux_decoup (lbi : list binary_instruction) : option (list instruction) :=
   traverse (decode_flux_opt lbi).
-           
-
+Definition decode_flux (lb : list bool) : option (list instruction) :=
+  let! lbi := cut32 lb in
+  fun lbi => 
+    decode_flux_decoup lbi.
 
 
 
@@ -474,6 +485,11 @@ Definition my_instr_list_encoded_decoded' := match encode_flux my_instr_liste wi
 Compute my_instr_list_encoded_decoded'.
 
 
+Definition my_instr_list_encoded_decoded := match encode_flux_b my_instr_liste with
+                                      | Some lol => decode_flux lol
+                                      | None => None
+                                             end.
+Compute my_instr_list_encoded_decoded.
 (* it seem's to work *)
 
 
