@@ -199,9 +199,99 @@ Proof.
 Qed.
 
 
-Lemma encode_decode_flux_decoup : forall (lb : list binary_instruction) (l : list instruction),
-    encode_flux l = Some lb -> decode_flux_decoup lb = Some l.
 
+
+(* need theese 2 lemma to make the final proof *)
+Lemma concat_listes_cut32 : forall (l : list bool) (ll : list (list bool)),
+    concat_listes ll = l -> cut32 l = Some ll.
+Proof.
+  induction l.
+  -intros.
+   assert (concat_listes ll = [] -> ll = []).
+   {
+     induction ll.
+     -reflexivity.
+     -simpl.
+      Search ([] :: _).
+      intros.
+      destruct (concat_listes ll).
+      +rewrite app_nil_r in H0.
+       rewrite H0 in H.
+       simpl in H.
+       rewrite H0.
+       Admitted.
+
+
+
+
+Lemma cut32_concat_listes : forall  (ll : list (list bool)) (l : list bool),
+    cut32 l = Some ll -> concat_listes ll = l.
+Proof.
+  induction ll.
+  -simpl.
+   intros.
+   assert (cut32 l = Some [] -> l = []).
+   {
+     induction l.
+     -reflexivity.
+     -intros.
+      unfold cut32 in H0.
+      destruct (length (a :: l)) eqn:H1.
+      +apply length_zero_iff_nil in H1.
+       rewrite H1.
+       reflexivity.
+      +destruct (S n mod 32 =? 0).
+       {
+         simpl in H0.
+         Search (_ = _ \/ _).
+         admit.
+       }
+       discriminate.
+   }
+   apply H0 in H.
+   rewrite H.
+   reflexivity.
+Admitted.
+
+
+Lemma encode_decode_flux_decoup : forall (lb : list bool) (l : list instruction),
+    encode_flux_b l = Some lb -> decode_flux lb = Some l.
+Proof.
+  intros.
+  unfold encode_flux_b in H.
+  destruct encode_flux eqn:H1.
+  -Search (encode_flux).
+   apply encode_decode_decoup_flux_decoup in H1.
+   unfold decode_flux.
+   inversion H.
+   rewrite H2.
+   apply concat_listes_cut32 in H2.
+   rewrite H2.
+   simpl.
+   auto.          
+  -discriminate.
+Qed.
+
+
+Lemma decode_flux_decoup_encode : forall (lb : list bool) (l : list instruction), 
+    decode_flux lb = Some l -> encode_flux_b l = Some lb.
+Proof.
+  intros.
+  unfold decode_flux in H.
+  unfold encode_flux_b.
+  destruct (cut32 lb) eqn:H1.
+  -simpl in H. Search (decode_flux_decoup).
+   apply decode_decoup_encode_flux in H.
+   rewrite H.
+   Search cut32.
+   apply cut32_concat_listes in H1.
+   rewrite H1.
+   reflexivity.
+  -simpl in H.
+   discriminate.
+Qed.  
+
+   
   
     
  
@@ -212,4 +302,3 @@ Lemma encode_decode_flux_decoup : forall (lb : list binary_instruction) (l : lis
    
    
 
-   
