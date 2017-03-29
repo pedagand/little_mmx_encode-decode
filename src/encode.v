@@ -457,7 +457,8 @@ Definition encode_flux (li : list instruction) : option (list bool) :=
 (* Some little tests about encode and decode_flux *)
 
 Definition my_instr := instr_t_n (mk_instr_t_n AND (reg 10) (reg 11) (reg 12)).
-Definition my_instr_liste := [my_instr;my_instr;my_instr;my_instr].
+Definition my_instr2 := instr_t_n (mk_instr_t_n ADD (reg 1) (reg 2) (reg 3)).
+Definition my_instr_liste := [my_instr;my_instr;my_instr;my_instr2].
 
 
 Definition my_instr_list_encoded_decoded' := match encode_flux_lbi my_instr_liste with

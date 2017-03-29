@@ -21,7 +21,8 @@ Lemma encode_flux_size : forall (l : list instruction) (lb : list bool),
 
 Lemma encode_decode_fold : forall (li : list instruction) (lbi : list binary_instruction),
     encode_flux_lbi li = Some lbi -> decode_fold lbi = Some li.
-Proof.  
+Proof.
+  Search fold_right.    
   induction li.
   -intros.
    simpl in H.
@@ -47,12 +48,31 @@ Proof.
     unfold fold_function_decode.
     rewrite H0.
     reflexivity.
-   +unfold encode_flux_lbi in keep.
+   +Search fold_right.
+    Check fold_left_rev_right.
+    unfold encode_flux_lbi in keep.
+
+
+   assert(fold_function_encode a (fold_right fold_function_encode (Some []) li) = Some lbi -> Some (x :: li) = Some lbi).
+
+   destruct li.
+   +simpl in H.
+    inversion H.
+    apply commut_equal in H0.
+    Search encode.
+    apply encode_decode in H0.
+    unfold decode_fold.
+    simpl.
+    unfold fold_function_decode.
+    rewrite H0.
+    reflexivity.
+   +unfold encode_flux_lbi in keep.    
     destruct (fold_right fold_function_encode (Some []) (i :: li)).
-    {
+    {      
       inversion H.
       simpl.
-      unfold decode_fold.      
+      unfold decode_fold.
+      
     }
 
 
