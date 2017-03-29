@@ -267,60 +267,7 @@ Qed.
 
 
 
-(* little propertie on decode lenght *)
-Lemma decode_size : forall (bi : binary_instruction) (i : instruction),
-    decode bi = Some i -> length bi = 32.
-Proof.
-  intros.
-  unfold decode in H.
-  destruct (get_first_n_bit bi 8) eqn:Hl1.
-  Search bind.
-  apply bind_rewrite in H.
-  destruct H.
-  destruct H.
-  destruct (get_first_n_bit l0 8) eqn:Hl2.
-  Search get_first_n_bit.
-  (* get_first_n_bit_size_out je pose ça la ;) *)
-  destruct x.
-  -destruct (get_first_n_bit l2 8) eqn:Hl3.
-   destruct (get_first_n_bit l4 8) eqn:Hl4.
-   rewrite  ret_rewrite in H.
-   assert (keepHl1 : get_first_n_bit bi 8 = (l, l0)) by auto.   
-   apply get_first_n_bit_res_8 in Hl1.
-   apply get_first_n_bit_size_out in keepHl1.
-   destruct keepHl1.
-   Check get_first_n_bit_res_8.
-   Check get_first_n_bit_size_out.
-   assert (keepHl2 : get_first_n_bit l0 8 = (l1, l2)) by auto.   
-   apply get_first_n_bit_res_8 in Hl2.
-   apply get_first_n_bit_size_out in keepHl2.
-   destruct keepHl2.
 
-   assert (keepHl3 : get_first_n_bit l2 8 = (l3, l4)) by auto.   
-   apply get_first_n_bit_res_8 in Hl3.
-   apply get_first_n_bit_size_out in keepHl3.
-   destruct keepHl3.
-
-   assert (keepHl4 : get_first_n_bit l4 8 = (l5, l6)) by auto.   
-   apply get_first_n_bit_res_8 in Hl4.
-   apply get_first_n_bit_size_out in keepHl4.
-   destruct keepHl4.
-
-   rewrite Hl1.
-   rewrite Hl2.
-   rewrite Hl3.
-   rewrite Hl4.
-   Search length.
-   Check app_length.
-   repeat rewrite app_length.
-   rewrite H1.
-   rewrite H3.
-   rewrite H5.
-   rewrite H7.
-   destruct l6.
-   +reflexivity.
-   +discriminate.
-   +Admitted.
      
 
    
@@ -499,6 +446,8 @@ Proof.
    rewrite app_nil_r.
    reflexivity.
    discriminate.
+
+   
    (* case instruction t_i *)
   -destruct (get_first_n_bit l2 8) eqn:Hl3.
    destruct (get_first_n_bit l4 8) eqn:Hl4.
@@ -656,6 +605,8 @@ Proof.
    rewrite app_nil_r.
    reflexivity.
    discriminate.
+
+   
    (* case d_i *)
   -destruct (get_first_n_bit l2 16) eqn:Hl3.
    rewrite  ret_rewrite in H0.
@@ -911,4 +862,22 @@ Qed.
    
    
    
+
+
+
+(* little propertie on decode lenght *)
+Lemma decode_size : forall (bi : binary_instruction) (i : instruction),
+    decode bi = Some i -> length bi = 32.
+Proof.
+    intros.  
+    unfold decode in H.
+    (* c'est quoi la façon de détruire (let (li, next) := get_first_n_bit bi 8 in mais en laissant en hypothèse (li, next) = get_first_n_bit bi 8 in *)
+    destruct (get_first_n_bit bi 8) eqn:Hl1.
+    Search bind.
+    apply bind_rewrite in H.
+    destruct H.
+    destruct H.
+    destruct (get_first_n_bit l0 8) eqn:Hl2.
+    destruct x.
+Admitted.     
   
