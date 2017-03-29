@@ -19,8 +19,8 @@ Lemma encode_flux_size : forall (l : list instruction) (lb : list binary_instruc
 Admitted.
 
 
-Lemma encode_decode_flux : forall (lb : list binary_instruction) (l : list instruction),
-    encode_flux l = Some lb -> decode_flux lb = Some l.
+Lemma encode_decode_decoup_flux_decoup : forall (lb : list binary_instruction) (l : list instruction),
+    encode_flux l = Some lb -> decode_flux_decoup lb = Some l.
 Proof.
   induction lb.
   -intros.
@@ -76,18 +76,18 @@ Proof.
       -discriminate.
     }
     apply H0 in H.
-    unfold decode_flux.
+    unfold decode_flux_decoup.
     simpl.
     apply encode_decode in H.
     rewrite H.
-    fold decode_flux.
-    assert (traverse (decode_flux_opt lb) = decode_flux lb).
+    fold decode_flux_decoup.
+    assert (traverse (decode_flux_opt lb) = decode_flux_decoup lb).
     {
-      unfold decode_flux.
+      unfold decode_flux_decoup.
       reflexivity.
     }
     rewrite H1.
-    assert (decode_flux lb = Some l).
+    assert (decode_flux_decoup lb = Some l).
     {
       apply IHlb.
       assert (encode_flux (i :: l) = Some (a :: lb) -> encode_flux l = Some lb).
@@ -110,11 +110,11 @@ Proof.
 Qed.
 
 
-Lemma decode_encode_flux : forall (l : list instruction) (lb : list binary_instruction),
-    decode_flux lb = Some l -> encode_flux l = Some lb.
+Lemma decode_decoup_encode_flux : forall (l : list instruction) (lb : list binary_instruction),
+    decode_flux_decoup lb = Some l -> encode_flux l = Some lb.
 Proof.
   induction l.
-  -unfold decode_flux.
+  -unfold decode_flux_decoup.
    unfold encode_flux.
    intros.
    assert (traverse (decode_flux_opt lb) = Some [] -> lb = []).
@@ -133,14 +133,14 @@ Proof.
    reflexivity.
   -intros.
    destruct lb.
-   +unfold decode_flux in H.
+   +unfold decode_flux_decoup in H.
     simpl in H.
     discriminate.
-   +assert (keep : decode_flux (b :: lb) = Some (a :: l)) by auto.
-    assert (keep2 : decode_flux (b :: lb) = Some (a :: l)) by auto.
-    assert (decode_flux (b :: lb) = Some (a :: l) -> decode_flux lb = Some l).
+   +assert (keep : decode_flux_decoup (b :: lb) = Some (a :: l)) by auto.
+    assert (keep2 : decode_flux_decoup (b :: lb) = Some (a :: l)) by auto.
+    assert (decode_flux_decoup (b :: lb) = Some (a :: l) -> decode_flux_decoup lb = Some l).
     {
-      unfold decode_flux.
+      unfold decode_flux_decoup.
       intros.
       simpl in H0.
       destruct (decode b).
@@ -153,10 +153,10 @@ Proof.
     apply H0 in H.
     unfold encode_flux.
     simpl.
-    assert (decode_flux (b :: lb) = Some (a :: l) -> decode b = Some a).
+    assert (decode_flux_decoup (b :: lb) = Some (a :: l) -> decode b = Some a).
     { 
       intros.
-      unfold decode_flux in H1.
+      unfold decode_flux_decoup in H1.
       simpl in H1.
       destruct (decode b).
       -destruct (traverse (decode_flux_opt lb)).
@@ -184,9 +184,9 @@ Proof.
       rewrite H3.
       reflexivity.
     }    
-    assert (decode_flux (b :: lb) = Some (a :: l) -> length b = 32).
+    assert (decode_flux_decoup (b :: lb) = Some (a :: l) -> length b = 32).
     {
-      unfold decode_flux.
+      unfold decode_flux_decoup.
       simpl.
       intros.
       Search decode.
@@ -197,7 +197,11 @@ Proof.
     apply H2 in keep2.
     auto.
 Qed.
-  
+
+
+Lemma encode_decode_flux_decoup : forall (lb : list binary_instruction) (l : list instruction),
+    encode_flux l = Some lb -> decode_flux_decoup lb = Some l.
+
   
     
  

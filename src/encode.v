@@ -451,9 +451,9 @@ Definition encode_flux (li : list instruction) : option (list binary_instruction
 
 Definition decode_flux_opt (lbi : list binary_instruction) : list (option instruction) :=
   map decode lbi.
-Definition decode_flux (lbi : list binary_instruction) : option (list instruction) :=
+Definition decode_flux_decoup (lbi : list binary_instruction) : option (list instruction) :=
   traverse (decode_flux_opt lbi).
-
+           
 
 
 
@@ -468,7 +468,7 @@ Definition my_instr_liste := [my_instr;my_instr;my_instr;my_instr2].
 Compute traverse (encode_flux_opt my_instr_liste).
 
 Definition my_instr_list_encoded_decoded' := match encode_flux my_instr_liste with
-                                      | Some lol => decode_flux lol
+                                      | Some lol => decode_flux_decoup lol
                                       | None => None
                                             end.
 Compute my_instr_list_encoded_decoded'.
