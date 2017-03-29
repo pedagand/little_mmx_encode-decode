@@ -3,6 +3,9 @@ Import ListNotations.
 Require Import Mmx.ast_instructions Mmx.binary Mmx.association_list Mmx.encodeProof Mmx.decodeProof Mmx.encode.
 
 
+Print encode_flux.
+
+
 
 (* First i need some lemma about the cut32 comportement *)
 Lemma cut32_size : forall (n : nat) (l : list bool) (res : (list (list bool))),
@@ -10,110 +13,196 @@ Lemma cut32_size : forall (n : nat) (l : list bool) (res : (list (list bool))),
 Proof.
 Admitted.   
 
-
 (* size of encode_flux l = Some lb *)
-Lemma encode_flux_size : forall (l : list instruction) (lb : list bool),
+Lemma encode_flux_size : forall (l : list instruction) (lb : list binary_instruction),
     encode_flux l = Some lb -> (length lb) mod 32 = 0.
-  Admitted.
-
-
-
-
-Lemma encode_decode_fold : forall (li : list instruction) (lbi : list binary_instruction),
-    encode_flux_lbi li = Some lbi -> decode_fold lbi = Some li.
-Proof.
-  Search fold_right.    
-  induction li.
-  -intros.
-   simpl in H.
-   inversion H.
-   reflexivity.
-  -intros.
-   assert (keep : encode_flux_lbi (a :: li) = Some lbi) by auto.
-   unfold encode_flux_lbi in H.
-   simpl in H.
-   unfold encode_flux_lbi in IHli.
-(*    unfold fold_function_encode in H. *)
-   apply bind_rewrite in H.
-   destruct H.
-   destruct H.
-   destruct li.
-   +simpl in H.
-    inversion H.
-    apply commut_equal in H0.
-    Search encode.
-    apply encode_decode in H0.
-    unfold decode_fold.
-    simpl.
-    unfold fold_function_decode.
-    rewrite H0.
-    reflexivity.
-   +Search fold_right.
-    Check fold_left_rev_right.
-    unfold encode_flux_lbi in keep.
-
-
-   assert(fold_function_encode a (fold_right fold_function_encode (Some []) li) = Some lbi -> Some (x :: li) = Some lbi).
-
-   destruct li.
-   +simpl in H.
-    inversion H.
-    apply commut_equal in H0.
-    Search encode.
-    apply encode_decode in H0.
-    unfold decode_fold.
-    simpl.
-    unfold fold_function_decode.
-    rewrite H0.
-    reflexivity.
-   +unfold encode_flux_lbi in keep.    
-    destruct (fold_right fold_function_encode (Some []) (i :: li)).
-    {      
-      inversion H.
-      simpl.
-      unfold decode_fold.
-      
-    }
-
-
-     assert encode a = Some x -> (fold_right fold_function_encode (Some []) (i :: li)
-
-  (fun (i : instruction) (lbi : option (list binary_instruction)) =>
-           bind (encode i) (fun bi : binary_instruction => match lbi with
-                                                           | Some l => Some (bi :: l)
-                                                           | None => None
-                                                           end)) (Some []) (i :: li) 
-
-     
-   destruct (encode i) in H.
-   assert (fold_function_encode a (fold_right fold_function_encode (Some []) li) = Some lbi ->
-           
-   specialize (IHli lbi).
-   unfold encode_flux_lbi in IHli.
-   
 Admitted.
 
 
-
-(* these are the final lemma we wan't *)
-Lemma encode_decode_flux : forall (l : list instruction) (lb : list bool),
+Lemma encode_decode_flux : forall (lb : list binary_instruction) (l : list instruction),
     encode_flux l = Some lb -> decode_flux lb = Some l.
 Proof.
-  intros.
-  assert (keep : encode_flux l = Some lb) by auto.
-  unfold encode_flux in H.
-  apply bind_rewrite in H.
-  destruct H.
-  destruct H.
-  SearchAbout (_ = _).
-  apply commut_equal in H0.
-  apply encode_decode_fold in H0.
-  unfold decode_flux.
-  apply encode_flux_size in keep.
-  unfold cut32.
-  rewrite keep.
-  unfold decode_fold in H0.
-  simpl.
+  induction lb.
+  -intros.
+   unfold encode_flux in H.
+   assert (traverse (encode_flux_opt l) = Some [] -> l = []).
+   {
+     destruct l.
+     -reflexivity.
+     -simpl.
+      destruct (encode i).
+      +destruct (traverse (encode_flux_opt l)).
+       discriminate.
+       discriminate.
+      +discriminate.
+   }
+   apply H0 in H.
+   rewrite H.
+   auto.
+  -destruct l.
+   +unfold encode_flux.
+    simpl.
+    discriminate.
+   +intros.
+    assert (keep : encode_flux (i :: l) = Some (a :: lb)) by auto.
+    assert (encode_flux (i :: l) = Some (a :: lb) -> encode i = Some a).
+    {
+      unfold encode_flux.
+      simpl.
+      intros.
+      destruct (encode i).
+      assert (encode_flux (i :: l) = Some (a :: lb) -> encode_flux l = Some lb).
+      {
+        unfold encode_flux.
+        simpl.
+        intros.
+        destruct (encode i).
+        -destruct (traverse (encode_flux_opt l)).
+         +inversion H1.
+          reflexivity.
+         +discriminate.
+        -discriminate.
+      }
+      apply H1 in H.
+      assert (traverse (encode_flux_opt l) = encode_flux l).
+      {
+        unfold encode_flux.
+        reflexivity.
+      }
+      rewrite H2 in H0.
+      rewrite H in H0.
+      -inversion H0.
+       reflexivity.
+      -discriminate.
+    }
+    apply H0 in H.
+    unfold decode_flux.
+    simpl.
+    apply encode_decode in H.
+    rewrite H.
+    fold decode_flux.
+    assert (traverse (decode_flux_opt lb) = decode_flux lb).
+    {
+      unfold decode_flux.
+      reflexivity.
+    }
+    rewrite H1.
+    assert (decode_flux lb = Some l).
+    {
+      apply IHlb.
+      assert (encode_flux (i :: l) = Some (a :: lb) -> encode_flux l = Some lb).
+      {
+        unfold encode_flux.
+        simpl.
+        intros.
+        destruct (encode i).
+        -destruct (traverse (encode_flux_opt l)).
+         +inversion H2.
+          reflexivity.
+         +discriminate.
+        -discriminate.
+      }
+      apply H2 in keep.
+      auto.                   
+    }
+    rewrite H2.
+    reflexivity.
+Qed.
+
+
+Lemma decode_encode_flux : forall (l : list instruction) (lb : list binary_instruction),
+    decode_flux lb = Some l -> encode_flux l = Some lb.
+Proof.
+  induction l.
+  -unfold decode_flux.
+   unfold encode_flux.
+   intros.
+   assert (traverse (decode_flux_opt lb) = Some [] -> lb = []).
+   {
+     destruct lb.
+     -reflexivity.
+     -simpl.
+      destruct (decode b).
+      +destruct (traverse (decode_flux_opt lb)).
+       discriminate.
+       discriminate.
+      +discriminate.
+   }
+   apply H0 in H.
+   rewrite H.
+   reflexivity.
+  -intros.
+   destruct lb.
+   +unfold decode_flux in H.
+    simpl in H.
+    discriminate.
+   +assert (keep : decode_flux (b :: lb) = Some (a :: l)) by auto.
+    assert (keep2 : decode_flux (b :: lb) = Some (a :: l)) by auto.
+    assert (decode_flux (b :: lb) = Some (a :: l) -> decode_flux lb = Some l).
+    {
+      unfold decode_flux.
+      intros.
+      simpl in H0.
+      destruct (decode b).
+      -destruct (traverse (decode_flux_opt lb)).
+       +inversion H0.
+        reflexivity.
+       +discriminate.
+      -discriminate.
+    }
+    apply H0 in H.
+    unfold encode_flux.
+    simpl.
+    assert (decode_flux (b :: lb) = Some (a :: l) -> decode b = Some a).
+    { 
+      intros.
+      unfold decode_flux in H1.
+      simpl in H1.
+      destruct (decode b).
+      -destruct (traverse (decode_flux_opt lb)).
+       +inversion H1.
+       reflexivity.
+       +discriminate.
+      -discriminate.
+    }
+    apply H1 in keep.
+    Search decode.
+    apply decode_encode in keep.
+    {
+      rewrite keep.
+      assert (traverse (encode_flux_opt l) = encode_flux l).
+      {
+        unfold encode_flux.
+        reflexivity.
+      }
+      rewrite H2.
+      assert (encode_flux l = Some lb).
+      {
+        apply IHl.
+        auto.        
+      }
+      rewrite H3.
+      reflexivity.
+    }    
+    assert (decode_flux (b :: lb) = Some (a :: l) -> length b = 32).
+    {
+      unfold decode_flux.
+      simpl.
+      intros.
+      Search decode.
+    }
+    apply H2 in keep2.
+    auto.
+Qed.
+  
+  
+    
+ 
+
+
+
   
    
+   
+
    
