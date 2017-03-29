@@ -186,30 +186,68 @@ Proof.
     auto.
 Qed.
 
+Lemma cut32_check_length_32 : forall (ll : list (list bool)) (l : list bool),
+    cut32 l = Some ll -> check_length_32 ll = true.
+Proof.
+  induction ll.
+  -intros.
+   reflexivity.
+  -intros.
+   assert (cut32 l = Some (a :: ll) -> length a = 32).
+   {
+     unfold cut32.
+     destruct (length l mod 32 =? 0).
+     -unfold cut32_n.
+      destruct (length l / 32).
+      +discriminate.
+      +Search (firstn).
+   }
 
 
-
-(* need theese 2 lemma to make the final proof *)
 Lemma concat_listes_cut32 : forall (l : list bool) (ll : list (list bool)),
-    concat_listes ll = l -> cut32 l = Some ll.
+    check_length_32 ll = true -> concat_listes ll = l -> cut32 l = Some ll.
 Proof.
   induction l.
   -intros.
    assert (concat_listes ll = [] -> ll = []).
    {
-     induction ll.
+     unfold check_length_32 in H.
+     unfold concat_listes ll.
+   }
+Admitted.
+
+Fixpoint concat_listes' (l : list (list bool)) : option (list bool) :=
+  match l with
+  | [] => Some []
+  | [] :: tl => None
+  | h :: tl => let! res := (concat_listes' tl) in fun res => Some (h ++ res)
+  end.
+
+(* need theese 2 lemma to make the final proof *)
+Lemma concat_listes'_cut32 : forall (l : list bool) (ll : list (list bool)),
+    concat_listes' ll = Some l -> cut32 l = Some ll.
+Proof.
+  induction l.
+  -intros.
+   assert (concat_listes' ll = Some [] -> ll = []).
+   {
+     destruct ll.
      -reflexivity.
      -simpl.
-      Search ([] :: _).
-      intros.
-      destruct (concat_listes ll).
-      +rewrite app_nil_r in H0.
-       rewrite H0 in H.
-       simpl in H.
-       rewrite H0.
-       Admitted.
-
-
+      destruct l.
+      +discriminate.
+      +simpl in H.
+       apply bind_rewrite in H.
+       destruct H.
+       destruct H.
+       discriminate.
+   }
+   apply H0 in H.
+   rewrite H.
+   reflexivity.
+  -intros.
+   unfold cut32.
+Admitted.
 
 
 Lemma cut32_concat_listes : forall  (ll : list (list bool)) (l : list bool),
