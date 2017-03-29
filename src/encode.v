@@ -425,12 +425,21 @@ Definition cut32 (l : list bool) : option (list (list bool)) :=
   let n := length l in
   if n mod 32 =? 0 then Some (cut32_n (n / 32) l) else None.
 
+(* i make the option choice because it's easyer for the proof *)
 Fixpoint concat_listes (l : list (list bool)) : list bool :=
   match l with
   | [] => []
   | h :: tl => h ++ (concat_listes tl)
   end.
 
+
+Fixpoint check_length_32 (l : list (list bool)) : bool :=
+  match l with
+  | [] => true
+  | l' :: tl => (length l' =? 32) && check_length_32 tl
+  end.
+
+Compute concat_listes [].
 
 
 
