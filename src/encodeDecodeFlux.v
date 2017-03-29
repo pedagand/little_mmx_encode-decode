@@ -7,18 +7,6 @@ Print encode_flux.
 
 
 
-(* First i need some lemma about the cut32 comportement *)
-Lemma cut32_size : forall (n : nat) (l : list bool) (res : (list (list bool))),
-    cut32 l = Some res -> length res = (length l) / 32.
-Proof.
-Admitted.   
-
-(* size of encode_flux l = Some lb *)
-Lemma encode_flux_size : forall (l : list instruction) (lb : list binary_instruction),
-    encode_flux l = Some lb -> (length lb) mod 32 = 0.
-Admitted.
-
-
 Lemma encode_decode_decoup_flux_decoup : forall (lb : list binary_instruction) (l : list instruction),
     encode_flux l = Some lb -> decode_flux_decoup lb = Some l.
 Proof.
