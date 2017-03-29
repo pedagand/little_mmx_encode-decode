@@ -435,7 +435,7 @@ Definition fold_function_decode (a : binary_instruction) (li : option(list instr
            end.
 Definition decode_fold (lbi : list binary_instruction) : option (list instruction) :=
   fold_right fold_function_decode (Some []) lbi.
-Definition decode_flux (l : list bool) : option (list instruction) :=
+Definition decode_flux2 (l : list bool) : option (list instruction) :=
   let! lbi := cut32 l in
   fun lbi => decode_fold lbi.
   
@@ -449,9 +449,22 @@ Definition fold_function_encode (i : instruction) (lbi : option (list binary_ins
             end.
 Definition encode_flux_lbi (li : list instruction) : option (list binary_instruction) :=
   fold_right fold_function_encode (Some []) li.
-Definition encode_flux (li : list instruction) : option (list bool) :=
+Definition encode_flux2 (li : list instruction) : option (list bool) :=
   let! l :=  encode_flux_lbi li in
   fun l => Some (concat_listes l).
+
+
+(* other way to define encode_flux*)
+Print map.
+Definition encode_flux_opt (li : list instruction) : list (option (list bool)) :=
+  map encode li.
+Definition decode_flux_opt (lbi : list binary_instruction) : list (option instruction) :=
+  map decode lbi.
+Fixpoint list_some_to_list {A} (l : list (option A)) : option (list A) :=
+  match l with
+  | Some e => 
+
+
 
 
 (* Some little tests about encode and decode_flux *)
