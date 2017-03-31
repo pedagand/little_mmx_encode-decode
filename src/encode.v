@@ -426,11 +426,17 @@ Definition cut32 (l : list bool) : option (list (list bool)) :=
   if n mod 32 =? 0 then Some (cut32_n (n / 32) l) else None.
 
 (* i make the option choice because it's easyer for the proof *)
-Fixpoint concat_listes (l : list (list bool)) : list bool :=
+Fixpoint concat_listes_32 (l : list (list bool)) : option (list bool) :=
   match l with
-  | [] => []
-  | h :: tl => h ++ (concat_listes tl)
+  | [] => Some []
+  | h :: tl => let! res := concat_listes_32 tl in
+               fun res => if length h =? 32 then Some (h ++ res)
+               else None
   end.
+
+
+Compute cut32 [].
+Compute concat_listes_32 [].
 
 
 Fixpoint check_length_32 (l : list (list bool)) : bool :=
@@ -439,7 +445,6 @@ Fixpoint check_length_32 (l : list (list bool)) : bool :=
   | l' :: tl => (length l' =? 32) && check_length_32 tl
   end.
 
-Compute concat_listes [].
 
 
 
@@ -464,7 +469,7 @@ Definition encode_flux (li : list instruction) : option (list binary_instruction
 Definition encode_flux_b (li : list instruction) : option (list bool) :=
   match encode_flux li with
   | None => None
-  | Some res => Some (concat_listes res)
+  | Some res => concat_listes_32 res
   end.
 
 Definition decode_flux_opt (lbi : list binary_instruction) : list (option instruction) :=
