@@ -328,7 +328,29 @@ Proof.
    destruct H.
    destruct H.
    destruct (length a =? 32) eqn:H1.
-   +
+   +fold concat_listes_32 in H0.
+    specialize (IHll x).
+    apply commut_equal in H0.
+    apply IHll in H0.
+    inversion H.
+    Search (length (_ ++ _)).
+    rewrite app_length.
+    rewrite Nat.add_mod.
+    {
+      rewrite H0.
+      Search (_ + 0).
+      rewrite <- plus_n_O.
+      Search ((_ =? _) = true).
+      apply beq_nat_true in H1.
+      rewrite H1.
+      Search (_ mod _ = 0).
+      rewrite Nat.mod_same.
+      -reflexivity.
+      -auto.
+    }    
+    auto.
+   +discriminate.
+Qed.
 
 Lemma concat_listes_cut32 : forall (l : list bool) (ll : list (list bool)),
     check_length_32 ll = true -> concat_listes_32 ll = Some l -> cut32 l = Some ll.
@@ -358,9 +380,17 @@ Proof.
      assert (32 mod 32 = 0).
      { apply Nat.mod_same. auto. }
      rewrite H2.
-     rewrite plus_O_n.
-     
+     rewrite plus_O_n.     
+     apply commut_equal in H1.
+     Check concat_listes_prop.
+     apply concat_listes_prop in H1.
+     rewrite H1.
+     reflexivity.
+     auto.
    }
+   rewrite H2.
+   simpl.
+   
    
 Admitted.
 
