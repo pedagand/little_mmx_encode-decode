@@ -186,34 +186,182 @@ Proof.
     auto.
 Qed.
 
-Lemma cut32_check_length_32 : forall (ll : list (list bool)) (l : list bool),
-    cut32 l = Some ll -> check_length_32 ll = true.
+Lemma div_S_n : forall (n m q : nat), n / m = S q -> m <= n.
+Proof.
+  intros.
+  apply Nat.div_str_pos_iff.
+  -destruct m.
+   +discriminate.
+   +auto.
+  -rewrite H.
+   apply Nat.lt_0_succ.
+Qed.
+   
+Lemma cut32_not_useful_now : forall (l l': list bool) (ll : list (list bool)),
+    cut32 l = Some (l' :: ll) -> length l' = 32.
+Proof.
+  intros.
+  unfold cut32 in H.
+  destruct (length l mod 32 =? 0) eqn:H1.
+  -destruct (length l / 32) eqn:H2.
+   +simpl in H.
+    discriminate.
+   +unfold cut32_n in H.
+    fold cut32_n in H.
+    assert (32 <= length l) by (specialize (div_S_n (length l) 32 n);auto).
+    assert (forall (l1 l2: list bool) (tl1 tl2 : list (list bool)), Some (l1 :: tl1) = Some (l2 :: tl2) -> l1 = l2).
+    { intros. inversion H3. reflexivity. }
+    apply H3 in H.
+    rewrite <- H.
+    Search firstn.
+    apply firstn_length_le.
+    auto.
+  -discriminate.
+Qed.
+
+    
+(* Lemma cut32_check_length_32' : forall (l : list bool) (ll : list (list bool)), *)
+(*     cut32 l = Some ll -> check_length_32 ll = true. *)
+(* Proof. *)
+(*   induction l. *)
+(*   -intros. *)
+(*    unfold cut32 in H. *)
+(*    simpl in H. *)
+(*    inversion H. *)
+(*    reflexivity. *)
+(*   -intros. *)
+(*    unfold cut32 in H. *)
+(*    destruct (length (a :: l) mod 32 =? 0) eqn:H1. *)
+(*    +unfold cut32_n in H. *)
+(*     destruct (length (a :: l) / 32) eqn:H2. *)
+(*     { inversion H. reflexivity. } *)
+(*     { fold cut32_n in H. *)
+(*       assert (forall (l1: list bool) (l2 tl1 : list (list bool)), Some (l1 :: tl1) = Some l2 -> l2 = l1 :: tl1). *)
+(*       { intros. inversion H0. reflexivity. } *)
+(*       apply H0 in H. *)
+(*       unfold check_length_32. *)
+    
+(*    +discriminate. *)
+
+
+(* Lemma cut32_check_length_32 : forall (ll : list (list bool)) (l : list bool), *)
+(*     cut32 l = Some ll -> check_length_32 ll = true. *)
+(* Proof.   *)
+(*   induction ll. *)
+(*   -intros. *)
+(*    reflexivity. *)
+(*   -intros. *)
+(*    assert (length a =? 32 = true). *)
+(*    { *)
+(*      unfold cut32 in H. *)
+(*      destruct (length l mod 32 =? 0) eqn:H1. *)
+(*      -Search (_ mod _). *)
+(*       destruct (length l / 32) eqn:H2. *)
+(*       +discriminate. *)
+(*       +assert (32 <= length l) by (specialize (div_S_n (length l) 32 n);auto). *)
+(*        unfold cut32_n in H. *)
+(*        fold cut32_n in H. *)
+(*        assert (a = firstn 32 l). *)
+(*        { *)
+(*          fold cut32_n in H. *)
+(*          assert (forall (l1 l2: list bool) (tl1 tl2 : list (list bool)), Some (l1 :: tl1) = Some (l2 :: tl2) -> l1 = l2). *)
+(*          { *)
+(*            intros. *)
+(*            inversion H3. *)
+(*            reflexivity. *)
+(*          } *)
+(*          apply H3 in H. *)
+(*          auto. *)
+(*        } *)
+(*        rewrite H3. *)
+(*        Search firstn. *)
+(*        assert (length (firstn 32 l) = 32) by (apply firstn_length_le;auto). *)
+(*        rewrite H4. *)
+(*        reflexivity. *)
+(*      -discriminate. *)
+(*    } *)
+   
+   
+
+
+   
+(*    unfold check_length_32. *)
+(*    rewrite H0. *)
+(*    simpl. *)
+(*    fold check_length_32. *)
+(*    specialize (IHll l). *)
+(*    apply IHll. *)
+(*    unfold cut32 in H. *)
+(*    destruct (length l mod 32 =? 0) eqn:Hl1. *)
+(*    +Search (_ mod _). *)
+(*    +discriminate. *)
+(*    assert (cut32 l = Some (a :: ll) -> length a = 32). *)
+(*    { *)
+(*      unfold cut32. *)
+(*      destruct (length l mod 32 =? 0). *)
+(*      -unfold cut32_n. *)
+(*       destruct (length l / 32). *)
+(*       +discriminate. *)
+(*       + *)
+(*    } *)
+
+Lemma check_length_true : forall (l : list bool) (ll : list (list bool)), check_length_32 (l :: ll) = true -> length l = 32.
+Proof.
+  intros.
+  simpl in H.
+  apply andb_true_iff in H.
+  destruct H.
+  apply beq_nat_true in H.
+  auto.
+Qed.
+
+Lemma concat_listes_prop : forall (ll : list (list bool)) (l : list bool), concat_listes_32 ll = Some l -> (length l) mod 32 = 0.
 Proof.
   induction ll.
   -intros.
+   simpl in H.
+   inversion H.
    reflexivity.
   -intros.
-   assert (cut32 l = Some (a :: ll) -> length a = 32).
-   {
-     unfold cut32.
-     destruct (length l mod 32 =? 0).
-     -unfold cut32_n.
-      destruct (length l / 32).
-      +discriminate.
-      +Search (firstn).
-   }
-
+   unfold concat_listes_32 in H.
+   apply bind_rewrite in H.
+   destruct H.
+   destruct H.
+   destruct (length a =? 32) eqn:H1.
+   +
 
 Lemma concat_listes_cut32 : forall (l : list bool) (ll : list (list bool)),
-    check_length_32 ll = true -> concat_listes ll = l -> cut32 l = Some ll.
+    check_length_32 ll = true -> concat_listes_32 ll = Some l -> cut32 l = Some ll.
 Proof.
-  induction l.
-  -intros.
-   assert (concat_listes ll = [] -> ll = []).
+  intros.
+  unfold concat_listes_32 in H0.
+  destruct ll eqn:HL1.
+  -inversion H0.
+   reflexivity.
+  -assert (keep : check_length_32 (l0 :: l1) = true) by auto.
+   apply bind_rewrite in H0.
+   destruct H0.
+   apply check_length_true in H.
+   rewrite H in H0.
+   simpl in H0.
+   destruct H0.
+   inversion H0.
+   fold concat_listes_32 in H1.
+   unfold cut32.
+   assert (length (l0 ++ x) mod 32 = 0).
    {
-     unfold check_length_32 in H.
-     unfold concat_listes ll.
+     rewrite app_length.
+     apply check_length_true in keep.
+     rewrite keep.
+     Search ((_ + _) mod _).
+     rewrite Nat.add_mod.
+     assert (32 mod 32 = 0).
+     { apply Nat.mod_same. auto. }
+     rewrite H2.
+     rewrite plus_O_n.
+     
    }
+   
 Admitted.
 
 Fixpoint concat_listes' (l : list (list bool)) : option (list bool) :=
