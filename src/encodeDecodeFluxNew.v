@@ -3,6 +3,8 @@ Import ListNotations.
 Require Import Mmx.ast_instructions Mmx.binary Mmx.association_list Mmx.encodeProof Mmx.decodeProof Mmx.encode.
 
 
+(* Proof about encode_decode_flux *)
+
 Lemma encode_decode_decoup_flux_decoup : forall (lb : list binary_instruction) (l : list instruction),
     encode_flux l = Some lb -> decode_flux_decoup lb = Some l.
 Proof.
@@ -93,7 +95,6 @@ Proof.
     reflexivity.
 Qed.
 
-
 Lemma decode_decoup_encode_flux : forall (l : list instruction) (lb : list binary_instruction),
     decode_flux_decoup lb = Some l -> encode_flux l = Some lb.
 Proof.
@@ -181,5 +182,108 @@ Proof.
     apply H2 in keep2.
     auto.
 Qed.
+
+
+
+(* Some proofs about cut32 and concatlistes *)
+
+  
+Lemma app_cut32 : forall (l1 l2 : list bool) (ll : list (list bool)), length l1 = 32 -> cut32 l2 = Some ll
+                                                                      -> cut32 (l1 ++ l2) = Some (l1 :: ll).
+Proof.
+  intros.
+  unfold cut32.
+  assert (length (l1 ++ l2) mod 32 =? 0 = true) by admit.
+  rewrite H1.
+  
+
+
+
+Lemma concat_listes_cut32 : forall (ll : list (list bool)) (l : list bool) ,
+    concat_listes_32 ll = Some l -> cut32 l = Some ll.
+Proof.
+  assert (I : forall (ll : list (list bool)) (l : list bool), concat_listes_32 ll = Some l -> cut32 l = Some ll).
+  {
+    induction ll.
+    -assert (I_1 : forall l : list bool, concat_listes_32 [] = Some l -> cut32 l = Some []).
+     {
+       intros.
+       simpl in H.
+       inversion H.
+       reflexivity.
+     }
+     auto.
+    -assert(forall l : list bool, concat_listes_32 (a :: ll) = Some l -> cut32 l = Some (a :: ll)).
+     {
+       intros.
+       unfold concat_listes_32 in H.
+       apply bind_rewrite in H.
+       destruct H.
+       destruct H.
+       fold concat_listes_32 in H0.
+       destruct (length a =? 32) eqn:H1.
+       -{
+           inversion H.
+           specialize (IHll x).
+           apply commut_equal in H0.
+           apply IHll in H0.
+           Check app_cut32.
+           apply app_cut32.           
+           -apply beq_nat_true in H1.
+            auto.
+           -auto.
+         }
+       -discriminate.
+     }
+     auto.
+  }
+  auto.
+Qed.           
+
+
+Lemma cut32_concat_listes : forall  (ll : list (list bool)) (l : list bool),
+    cut32 l = Some ll -> concat_listes_32 ll = Some l.
+Admitted.
+
+
+
+(* Finals goal of this file, proofs about encode_flux_b and decode_flux_b *)
+
+Lemma encode_decode_flux_decoup : forall (lb : list bool) (l : list instruction),
+    encode_flux_b l = Some lb -> decode_flux lb = Some l.
+Proof.
+  intros.
+  unfold encode_flux_b in H.
+  destruct encode_flux eqn:H1.
+  -Search (encode_flux).
+   apply encode_decode_decoup_flux_decoup in H1.
+   unfold decode_flux.
+   Search concat_listes_32.
+   apply concat_listes_cut32 in H.
+   rewrite H.
+   auto.   
+  -discriminate.
+Qed.
+
+
+Lemma decode_flux_decoup_encode : forall (lb : list bool) (l : list instruction), 
+    decode_flux lb = Some l -> encode_flux_b l = Some lb.
+Proof.
+  intros.
+  unfold decode_flux in H.
+  unfold encode_flux_b.
+  destruct (cut32 lb) eqn:H1.
+  -simpl in H. Search (decode_flux_decoup).
+   apply decode_decoup_encode_flux in H.
+   rewrite H.
+   Search cut32.
+   apply cut32_concat_listes in H1.
+   rewrite H1.
+   reflexivity.
+  -simpl in H.
+   discriminate.
+Qed.  
+
+
 
 
