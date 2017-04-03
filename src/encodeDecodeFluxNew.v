@@ -195,6 +195,32 @@ Proof.
   unfold cut32.
   assert (length (l1 ++ l2) mod 32 =? 0 = true) by admit.
   rewrite H1.
+  assert(length (l1 ++ l2) / 32 = S (length l2 / 32)) by admit.
+  rewrite H2.
+  unfold cut32_n.
+  assert (firstn 32 (l1 ++ l2) = l1) by admit.
+  rewrite H3.
+  fold cut32_n.
+  Search (_ :: _ = _ :: _).
+  assert (forall (l1 l2: list (list bool)), l1 = l2 -> Some l1 = Some l2) by admit.
+  apply H4.
+  Check delete_concat.
+  assert (forall (lb : list bool) (ll1 ll2 : list (list bool)), ll1 = ll2 -> lb :: ll1 = lb :: ll2) by admit.
+  apply H5.
+  unfold cut32 in H0.
+  assert (length l2 mod 32 =? 0 = true) by admit.
+  rewrite H6 in H0.
+  assert (skipn 32 (l1 ++ l2) = l2) by admit.
+  rewrite H7.
+  inversion H0.
+  assert (forall (n : nat), n / 32 = fst (Nat.divmod n 31 0 31)).
+  {
+    destruct n.
+    -reflexivity.
+    -reflexivity.
+  }
+  
+  
   
 
 
