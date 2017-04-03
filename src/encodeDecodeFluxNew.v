@@ -188,12 +188,6 @@ Qed.
 (* Some proofs about cut32 and concatlistes *)
 
 
-(* Maybe not usefull but still think it's nice  (toolbox) *)
-
-Lemma cut32_check_length_32 : forall (l : list bool) (ll : list (list bool)),
-    cut32 l = Some ll -> check_length_32 ll = true.
-Admitted.
-
 
 
 (* good proofs *)  
@@ -209,7 +203,15 @@ Proof.
     Search ((_ + _) mod _).
     rewrite Nat.add_mod.    
     -{
-        admit.
+        Search (_ mod _ = 0).
+        rewrite Nat.mod_same.
+        -Search (0 + _).
+         rewrite plus_O_n.
+         unfold cut32 in H0.
+         destruct (length l2 mod 32).
+         +reflexivity.
+         +discriminate.
+        -auto.
      }
     -auto.
   }
@@ -225,23 +227,66 @@ Proof.
     rewrite Nat.mul_1_l in H2.
     apply H2.
     auto.    
-  }
-  
+  }  
   rewrite H2.
   unfold cut32_n.
-  assert (firstn 32 (l1 ++ l2) = l1) by admit.
+  assert (firstn 32 (l1 ++ l2) = l1).
+  {
+    Search (_ = _ -> _ <= _).
+    Search firstn.
+    Check firstn_app_2.
+    rewrite <- H.
+    Search (_ + 0).
+    specialize (plus_n_O (length l1)).
+    intros.
+    rewrite H3.
+    Check firstn_app_2.
+    specialize (firstn_app_2 0 l1 l2).
+    intros.
+    rewrite H4.
+    simpl.
+    Search (_ ++ []).
+    apply app_nil_r.
+  }
   rewrite H3.
   fold cut32_n.
   Search (_ :: _ = _ :: _).
-  assert (forall (l1 l2: list (list bool)), l1 = l2 -> Some l1 = Some l2) by admit.
+  assert (forall (l1 l2: list (list bool)), l1 = l2 -> Some l1 = Some l2).
+  {
+    intros.
+    rewrite H4.
+    reflexivity.
+  }
   apply H4.
   Check delete_concat.
-  assert (forall (lb : list bool) (ll1 ll2 : list (list bool)), ll1 = ll2 -> lb :: ll1 = lb :: ll2) by admit.
+  assert (forall (lb : list bool) (ll1 ll2 : list (list bool)), ll1 = ll2 -> lb :: ll1 = lb :: ll2).
+  {
+    intros.
+    rewrite H5.
+    reflexivity.
+  }
   apply H5.
   unfold cut32 in H0.
-  assert (length l2 mod 32 =? 0 = true) by admit.
+  assert (length l2 mod 32 =? 0 = true).
+  {
+    destruct (length l2 mod 32).
+    -reflexivity.
+    -simpl in H0.
+     discriminate.
+  }
   rewrite H6 in H0.
-  assert (skipn 32 (l1 ++ l2) = l2) by admit.
+  assert (skipn 32 (l1 ++ l2) = l2).
+  {
+    SearchAbout skipn.
+    assert (firstn 32 (l1 ++ l2) ++ skipn 32 (l1 ++ l2) = (l1 ++ l2)).
+    {
+      apply firstn_skipn.
+    }
+    rewrite H3 in H7.
+    Search (_ ++ _ = _ ++ _).
+    apply app_inv_head in H7.
+    auto.
+  }
   rewrite H7.
   inversion H0.
   assert (forall (n : nat), n / 32 = fst (Nat.divmod n 31 0 31)).
@@ -252,12 +297,8 @@ Proof.
   }
   rewrite H8.
   reflexivity.
-  Admitted.
+Qed.
   
-  
-
-
-
 Lemma concat_listes_cut32 : forall (ll : list (list bool)) (l : list bool) ,
     concat_listes_32 ll = Some l -> cut32 l = Some ll.
 Proof.
@@ -302,7 +343,8 @@ Qed.
 
 Lemma cut32_concat_listes : forall  (ll : list (list bool)) (l : list bool),
     cut32 l = Some ll -> concat_listes_32 ll = Some l.
-Admitted.
+Proof.
+  Admitted.
 
 
 
