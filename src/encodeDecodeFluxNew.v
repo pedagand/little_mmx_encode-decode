@@ -187,15 +187,46 @@ Qed.
 
 (* Some proofs about cut32 and concatlistes *)
 
-  
+
+(* Maybe not usefull but still think it's nice  (toolbox) *)
+
+Lemma cut32_check_length_32 : forall (l : list bool) (ll : list (list bool)),
+    cut32 l = Some ll -> check_length_32 ll = true.
+Admitted.
+
+
+
+(* good proofs *)  
 Lemma app_cut32 : forall (l1 l2 : list bool) (ll : list (list bool)), length l1 = 32 -> cut32 l2 = Some ll
                                                                       -> cut32 (l1 ++ l2) = Some (l1 :: ll).
 Proof.
   intros.
   unfold cut32.
-  assert (length (l1 ++ l2) mod 32 =? 0 = true) by admit.
+  assert (length (l1 ++ l2) mod 32 =? 0 = true).
+  {
+    rewrite app_length.
+    rewrite H.
+    Search ((_ + _) mod _).
+    rewrite Nat.add_mod.    
+    -{
+        admit.
+     }
+    -auto.
+  }
   rewrite H1.
-  assert(length (l1 ++ l2) / 32 = S (length l2 / 32)) by admit.
+  assert(length (l1 ++ l2) / 32 = S (length l2 / 32)).
+  {
+    rewrite app_length.
+    rewrite H.
+    Check Nat.div_add_l.
+    specialize (Nat.div_add_l 1 32 (length l2)).
+    intros.
+    Search (1 * _).
+    rewrite Nat.mul_1_l in H2.
+    apply H2.
+    auto.    
+  }
+  
   rewrite H2.
   unfold cut32_n.
   assert (firstn 32 (l1 ++ l2) = l1) by admit.
@@ -219,7 +250,9 @@ Proof.
     -reflexivity.
     -reflexivity.
   }
-  
+  rewrite H8.
+  reflexivity.
+  Admitted.
   
   
 
