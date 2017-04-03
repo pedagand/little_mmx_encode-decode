@@ -390,74 +390,77 @@ Proof.
    }
    rewrite H2.
    simpl.
-   
-   
+   unfold cut32_n.
 Admitted.
+   
+   (* la il me faut un truc du style vus que avec le modulo je montre que c'est plus grand alors je peux montrer que length lol / 32 
+est egale a S n ce qui me fait une étape de calcule et après après la truc de récurence ça devrait passer :p *)
 
-Fixpoint concat_listes' (l : list (list bool)) : option (list bool) :=
-  match l with
-  | [] => Some []
-  | [] :: tl => None
-  | h :: tl => let! res := (concat_listes' tl) in fun res => Some (h ++ res)
-  end.
+   
 
-(* need theese 2 lemma to make the final proof *)
-Lemma concat_listes'_cut32 : forall (l : list bool) (ll : list (list bool)),
-    concat_listes' ll = Some l -> cut32 l = Some ll.
-Proof.
-  induction l.
-  -intros.
-   assert (concat_listes' ll = Some [] -> ll = []).
-   {
-     destruct ll.
-     -reflexivity.
-     -simpl.
-      destruct l.
-      +discriminate.
-      +simpl in H.
-       apply bind_rewrite in H.
-       destruct H.
-       destruct H.
-       discriminate.
-   }
-   apply H0 in H.
-   rewrite H.
-   reflexivity.
-  -intros.
-   unfold cut32.
-Admitted.
+
+(* (* need theese 2 lemma to make the final proof *) *)
+(* Lemma concat_listes_cut32' : forall (l : list bool) (ll : list (list bool)), *)
+(*     concat_listes_32 ll = Some l -> cut32 l = Some ll. *)
+(* Proof. *)
+(*   induction l. *)
+(*   -intros. *)
+(*    assert (concat_listes_32 ll = Some [] -> ll = []). *)
+(*    { *)
+(*      destruct ll. *)
+(*      -reflexivity. *)
+(*      -simpl. *)
+(*       destruct l. *)
+(*       +discriminate. *)
+(*       +simpl in H. *)
+(*        apply bind_rewrite in H. *)
+(*        destruct H. *)
+(*        destruct H. *)
+(*        discriminate. *)
+(*    } *)
+(*    apply H0 in H. *)
+(*    rewrite H. *)
+(*    reflexivity. *)
+(*   -intros. *)
+(*    unfold cut32. *)
+(* Admitted. *)
 
 
 Lemma cut32_concat_listes : forall  (ll : list (list bool)) (l : list bool),
-    cut32 l = Some ll -> concat_listes ll = l.
+    cut32 l = Some ll -> concat_listes_32 ll = Some l.
 Proof.
-  induction ll.
-  -simpl.
-   intros.
-   assert (cut32 l = Some [] -> l = []).
-   {
-     induction l.
-     -reflexivity.
-     -intros.
-      unfold cut32 in H0.
-      destruct (length (a :: l)) eqn:H1.
-      +apply length_zero_iff_nil in H1.
-       rewrite H1.
-       reflexivity.
-      +destruct (S n mod 32 =? 0).
-       {
-         simpl in H0.
-         Search (_ = _ \/ _).
-         admit.
-       }
-       discriminate.
-   }
-   apply H0 in H.
-   rewrite H.
-   reflexivity.
+
 Admitted.
 
 
+Lemma concat_listes_check_length : forall (ll : list (list bool)) (l : list bool), concat_listes_32 ll = Some l -> check_length_32 ll = true.
+Proof.
+  induction ll.
+  -reflexivity.
+  -intros.
+   assert (keep : concat_listes_32 (a :: ll) = Some l) by auto.
+   unfold concat_listes_32 in H.
+   apply bind_rewrite in H.
+   destruct H.
+   Search concat_listes_32.
+   destruct (length a =? 32) eqn:H1.
+   +destruct H.
+    fold concat_listes_32 in H0.
+    specialize (IHll x).
+    simpl.
+    rewrite H1.
+    simpl.
+    apply IHll.
+    auto.
+   +destruct H.
+    discriminate.
+Qed.
+   
+
+
+
+  
+(* now theese are the real theorems *)
 Lemma encode_decode_flux_decoup : forall (lb : list bool) (l : list instruction),
     encode_flux_b l = Some lb -> decode_flux lb = Some l.
 Proof.
@@ -467,12 +470,12 @@ Proof.
   -Search (encode_flux).
    apply encode_decode_decoup_flux_decoup in H1.
    unfold decode_flux.
-   inversion H.
-   rewrite H2.
-   apply concat_listes_cut32 in H2.
-   rewrite H2.
-   simpl.
-   auto.          
+   Search concat_listes_32.
+   apply concat_listes_cut32 in H.
+   +rewrite H.
+    auto.
+   +apply concat_listes_check_length in H.
+    auto.  
   -discriminate.
 Qed.
 
