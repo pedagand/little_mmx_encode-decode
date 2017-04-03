@@ -437,6 +437,13 @@ Fixpoint concat_listes_32 (l : list (list bool)) : option (list bool) :=
 
 Compute cut32 [].
 Compute concat_listes_32 [].
+Definition test_liste := [true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true;true].
+Compute length test_liste.
+Definition test_liste2 := [false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false].
+Compute length test_liste2.
+Compute cut32 (test_liste2 ++ test_liste).
+Compute match test_concat_cut with | Some l => length l | None => 0 end.
+
 
 
 Fixpoint check_length_32 (l : list (list bool)) : bool :=
