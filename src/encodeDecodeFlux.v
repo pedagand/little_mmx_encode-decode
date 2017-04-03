@@ -436,11 +436,30 @@ Proof.
     apply H7.
     assert (skipn 32 (a ++ x) = x) by admit.
     rewrite H8.
-    assert (forall (n : nat), cut32 x = Some ll -> Some (cut32_n n x) = Some ll).
+    assert (forall (n' : nat),n' = (length x / 32) -> cut32 x = Some ll -> Some (cut32_n n' x) = Some ll).
     {
+      induction n'.
+      -intros.
+       unfold cut32 in H10.
+       destruct (length x mod 32 =? 0) eqn:tryH.
+       +rewrite H9.
+        auto.
+       +discriminate.
+      -intros.
+       assert (forall (ll ll2 : list (list bool)), ll = ll2 -> Some ll = Some ll2) by admit.
+       apply H11.
+       unfold cut32_n.
+       fold cut32_n.
+       destruct ll.
+       admit.
+       admit.
+    }
+    
+    apply H9.
+    {
+      simpl in test.
       admit.
     }
-    apply H9.
     apply IHll.
     assert (check_length_32 (a :: ll) = true -> check_length_32 ll = true).
     {
@@ -535,11 +554,6 @@ est egale a S n ce qui me fait une étape de calcule et après après la truc de
 (* Admitted. *)
 
 
-Lemma cut32_concat_listes : forall  (ll : list (list bool)) (l : list bool),
-    cut32 l = Some ll -> concat_listes_32 ll = Some l.
-Proof.
-
-Admitted.
 
 
 Lemma concat_listes_check_length : forall (ll : list (list bool)) (l : list bool), concat_listes_32 ll = Some l -> check_length_32 ll = true.
