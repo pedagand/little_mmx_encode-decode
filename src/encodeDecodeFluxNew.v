@@ -341,10 +341,47 @@ Proof.
 Qed.           
 
 
-Lemma cut32_concat_listes : forall  (ll : list (list bool)) (l : list bool),
+Lemma cut32_concat_listes : forall (l : list bool) (ll : list (list bool)),
     cut32 l = Some ll -> concat_listes_32 ll = Some l.
 Proof.
-  Admitted.
+  intros.
+  unfold cut32 in H.
+  destruct (length l mod 32) eqn:H1.
+  -simpl in H.
+   destruct (length l) eqn:H2.
+   +simpl in H.
+    inversion H.
+    Search (length _ = 0).
+    apply length_zero_iff_nil in H2.
+    rewrite H2.
+    reflexivity.
+   +assert ((* S n mod 32 = 0 -> *) 32 <= S n )by admit.
+    
+  
+
+  
+  induction l.
+  -assert(forall ll : list (list bool), cut32 [] = Some ll -> concat_listes_32 ll = Some []).
+   {
+     intros.
+     unfold cut32 in H.
+     simpl in H.
+     inversion H.
+     reflexivity.
+   }
+   auto.
+  -assert(forall ll : list (list bool), cut32 (a :: l) = Some ll -> concat_listes_32 ll = Some (a :: l)).
+   {
+     intros.
+     unfold cut32 in H.
+     destruct (length (a :: l) mod 32) eqn:H1.
+     -simpl in H.
+      
+      
+      (* destruct (fst (Nat.divmod (length l) 31 0 30)) eqn:H2. *)
+      (* + *)
+      
+   }
 
 
 
