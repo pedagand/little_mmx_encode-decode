@@ -352,15 +352,124 @@ Proof.
    +discriminate.
 Qed.
 
-Lemma concat_listes_cut32 : forall (l : list bool) (ll : list (list bool)),
+Lemma concat_listes_cut32 : forall (ll : list (list bool)) (l : list bool) ,
     check_length_32 ll = true -> concat_listes_32 ll = Some l -> cut32 l = Some ll.
 Proof.
-  intros.
+  induction ll.
+  -intros.
+   unfold concat_listes_32 in H0.
+   inversion H0.
+   reflexivity.
+  -intros.
+   simpl in H0.
+   apply bind_rewrite in H0.
+   destruct H0.
+   destruct H0.
+   Search check_length_32.
+   assert (length a = 32).
+   { apply check_length_true in H. auto. }
+   rewrite H2 in H0.
+   simpl in H0.
+   inversion H0.
+   unfold cut32.
+   assert (length (a ++ x) mod 32 = 0).
+   {
+     rewrite app_length.
+     assert (keep : check_length_32 (a :: ll) = true) by auto.
+     apply check_length_true in keep.
+     rewrite keep.
+     Search ((_ + _) mod _).
+     rewrite Nat.add_mod.
+     assert (32 mod 32 = 0).
+     { apply Nat.mod_same. auto. }
+     rewrite H3.
+     rewrite plus_O_n.     
+     apply commut_equal in H1.
+     Check concat_listes_prop.
+     apply concat_listes_prop in H1.
+     rewrite H1.
+     reflexivity.
+     auto.
+   }
+   rewrite H3.
+   simpl.
+   assert (32 <= length (a ++ x)).
+   {
+     admit.
+   }
+   destruct (length (a ++ x)) eqn:lol.
+   +Search (_ <= 0).
+    apply Nat.nle_succ_0 in H5.
+    inversion H5.
+   +destruct (fst (Nat.divmod (S n) 31 0 31)) eqn:test.
+    {
+      Search Nat.divmod.
+      assert (0 <= S n) by apply Peano.le_0_n.
+      Search Nat.divmod.    
+      Search (_ / _).
+      specialize (Nat.div_str_pos (S n) 32).
+      intros.
+      assert (0 < 32 <= S n).
+      {
+        Search (S _ <= _).
+        Search (0 < S _).
+        assert (0 < 32) by apply Nat.lt_0_succ.
+        assert (32 <= S n).
+        {
+          auto.
+        }
+        auto.    
+      }
+      apply H7 in H8.
+      assert (S n / 32 = fst (Nat.divmod (S n) 31 0 31)) by reflexivity.
+      rewrite H9 in H8.
+      rewrite test in H8.
+      Search (_  < 0).
+      apply Nat.nlt_0_r in H8.
+      inversion H8.
+    }
+    unfold cut32_n.
+    fold cut32_n.
+    assert (firstn 32 (a ++ x) = a) by admit.
+    rewrite H6.
+    assert (Some (cut32_n n0 (skipn 32 (a ++ x))) = Some ll -> Some (a :: cut32_n n0 (skipn 32 (a ++ x))) = Some (a :: ll)) by admit.
+    apply H7.
+    assert (skipn 32 (a ++ x) = x) by admit.
+    rewrite H8.
+    assert (forall (n : nat), cut32 x = Some ll -> Some (cut32_n n x) = Some ll).
+    {
+      admit.
+    }
+    apply H9.
+    apply IHll.
+    assert (check_length_32 (a :: ll) = true -> check_length_32 ll = true).
+    {
+      intros.
+      simpl in H.
+      rewrite H2 in H.
+      simpl.
+      auto.
+    }
+    apply H10 in H.
+    auto.
+    apply commut_equal in H1.
+    auto.
+    Admitted.
+    
+    
+
+    
+    
+   
+   
+  
+  intros.  
   unfold concat_listes_32 in H0.
   destruct ll eqn:HL1.
   -inversion H0.
    reflexivity.
   -assert (keep : check_length_32 (l0 :: l1) = true) by auto.
+   fold concat_listes_32 in H0.   
    apply bind_rewrite in H0.
    destruct H0.
    apply check_length_true in H.
