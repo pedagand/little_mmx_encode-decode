@@ -271,15 +271,36 @@ Proof.
     change (f (S n) = true) with ((fun n => f (S n)) n = true).
     apply IHk.
     {(* c'est donner par H0 et H mais faut trouver un théoreme pour reussir a exprimer ça *)
-      
-      admit.
+      assert (forall (k' : nat) (f' : nat -> bool) , f' (S k') = true -> forall_bounded k' f' = true -> forall_bounded k' (fun n0 : nat => f' (S n0)) = true).
+      {
+        induction k'.
+        -intros.
+         simpl.
+         auto.
+        -intros.
+         simpl.
+         rewrite H2.
+         simpl.
+         apply IHk'.
+         +unfold forall_bounded in H3.
+          fold forall_bounded in H3.
+          apply andb_true_iff in H3.
+          destruct H3.
+          auto.
+         +unfold forall_bounded in H3.
+          fold forall_bounded in H3.
+          apply andb_true_iff in H3.
+          destruct H3.
+          auto.
+      }
+      auto.       
     }
     {
       Search (S _ <= S _).
       apply le_S_n in H1.
       exact H1.
     }
-Admitted.
+Qed.
     
     
 
@@ -517,6 +538,7 @@ Proof.
    exact H2.
   -assert (exists m, n = 8 + m).
    {
+     (* not that simple *)
      Search (_ < _).
      admit.
    }
