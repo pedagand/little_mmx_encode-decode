@@ -187,9 +187,6 @@ Qed.
 
 (* Some proofs about cut32 and concatlistes *)
 
-
-
-
 (* good proofs *)  
 Lemma app_cut32 : forall (l1 l2 : list bool) (ll : list (list bool)), length l1 = 32 -> cut32 l2 = Some ll
                                                                       -> cut32 (l1 ++ l2) = Some (l1 :: ll).
@@ -340,12 +337,159 @@ Proof.
   auto.
 Qed.           
 
+(* i made separatly the two case proof *)
+Lemma cut32_concat_nil : forall (l : list bool),
+    cut32 l = Some [] -> concat_listes_32 [] = Some l.
+Proof.
+  intros.
+  assert (cut32 l = Some [] -> length l = 0).
+  {
+    destruct (length l) eqn:H1.
+    -reflexivity.
+    -intros.
+     unfold cut32 in H0.
+     destruct (length l mod 32 =? 0) eqn:H2.
+     +destruct (length l / 32) eqn:H3.
+      {
+        Search (_ / _ = 0).
+        specialize (Nat.div_small_iff (length l) 32).
+        intros.
+        assert (32 <> 0) by auto.
+        apply H4 in H5.
+        apply beq_nat_true in H2.
+        apply H5 in H3.
+        assert (forall (n' m': nat), n' = S m' -> n' < 32 -> n' mod 32 = n').
+        {
+          intros.
+          apply Nat.mod_small.
+          auto.
+        }
+        apply Nat.mod_small in H3.
+        rewrite H3 in H2.
+        rewrite H1 in H2.
+        discriminate.        
+      }
+      {
+        unfold cut32_n in H0.
+        fold cut32_n in H0.
+        inversion H0.
+      }
+     +discriminate.
+  }
+  apply H0 in H.
+  Search (length _ = 0).
+  apply length_zero_iff_nil in H.
+  rewrite H.
+  reflexivity.
+Qed.
+      
+      
+  }
+  unfold cut32 in H.
+  destruct (length l mod 32 =? 0) eqn:H1.
+  -assert (cut32_n (length l / 32) l = [] -> (length l / 32) = 0).
+   {
+     intros.
+     admit.
+   }
+   +inversion H.
+    rewrite H3.
+    assert ((fst (Nat.divmod (length l) 31 0 31)) = length l / 32) by reflexivity.
+    rewrite H2 in H3.
+    apply H0 in H3.
+    
+
+     Lemma cut32_concat_app : forall (l l2 : list bool) (ll : list (list bool)),
+    cut32 l = Some (l2 :: ll) -> concat_listes_32 (l2 :: ll) = Some l.
+  Admitted.
 
 Lemma cut32_concat_listes : forall (l : list bool) (ll : list (list bool)),
     cut32 l = Some ll -> concat_listes_32 ll = Some l.
 Proof.
+  destruct ll.
+  -apply cut32_concat_nil.
+  -apply cut32_concat_app.
+Qed.
+  
+
+Lemma cut32_concat_listes : forall (l : list bool) (ll : list (list bool)),
+    cut32 l = Some ll -> concat_listes_32 ll = Some l.
+Proof.  
+  induction l.
+  -intros.
+   unfold cut32 in H.
+   simpl in H.
+   inversion H.
+   reflexivity.
+  -{
+      intros.            
+      unfold cut32 in H. 
+      destruct (length (a :: l) mod 32 =? 0) eqn:H1.
+      -assert ((* length (a :: l) mod 32 =? 0 -> *) 32 <= length (a :: l)) by admit.
+       destruct (length (a :: l)).
+       +Search (_ <= 0).
+        apply le_n_0_eq in H0.
+        discriminate.
+       +{
+           destruct ((S n / 32)) eqn:H2.
+           -Search (_ / _ = 0).
+            (* this case as an hypothesis which is broken *)
+            admit.
+           -unfold cut32_n in H.
+            fold cut32_n in H.
+            unfold concat_listes_32.
+         }
+      
+      -destruct (length (a :: l) / 32) eqn:H2.
+       +simpl in H.        
+    }
+   
+
+  
   intros.
-  unfold cut32 in H.
+  -assert (cut32 l = Some [] -> l = []).
+   {
+     unfold cut32.
+     destruct (length l mod 32 =? 0) eqn:H1.
+     -admit.
+     -admit.      
+   }
+   rewrite H0.
+   reflexivity.
+   auto.
+  -fold concat_listes_32.
+   fold concat_listes_32 in IHll.
+   intros.
+   Check skipn.
+   assert (length a = 32).
+   {
+     admit.
+   }
+   assert (cut32 l = Some (a :: ll) -> cut32 (skipn 32 l) = Some ll) by admit.
+   rewrite H0.
+   simpl.
+   apply H0 in H.
+   specialize (IHll (skipn 32 l)).
+   rewrite IHll.
+   +
+   Search cut32.
+
+   
+   unfold cut32 in H.
+  destruct (length l mod 32) eqn:H1.
+  -simpl in H.
+   unfold concat_listes_32.
+   unfold cut32_n in H.
+
+    
+  induction l.
+  -intros. 
+   unfold cut32 in H.
+   simpl in H.
+   inversion H.
+   reflexivity.
+  -intros.
+  unfold concat_listes_32.
   destruct (length l mod 32) eqn:H1.
   -simpl in H.
    destruct (length l) eqn:H2.
