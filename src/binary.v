@@ -46,10 +46,53 @@ Proof.
    specialize (IHn (Nat.div2 k)).
    edestruct IHn.
    +Search Nat.div2.
-    admit.
+    {
+      assert (2 ^ S n = 2 * (2 ^ n)) by reflexivity.
+      rewrite H0 in H.
+      assert (forall (k' n' : nat), n' <> 0 -> k' < 2 * n' -> Nat.div2 k' < n').
+      {
+        induction n'.
+        -intros.
+         apply neq_0_lt in H1.
+         admit.
+        -intros.
+         admit.
+      }
+      apply H1.      
+      -assert (2 ^ n <> 0).
+       {
+         Check lt_0_neq.
+         Search (_ <> _ -> _ <> _).
+         apply not_eq_sym.
+         apply lt_0_neq.
+         Search (_ <  _ ^ _).
+         Check Nat.pow_lt_mono_l_iff.
+         assert (help : forall (n' : nat), 0 < 2 ^ n').
+         {
+           induction n'.
+           -simpl.
+            apply Nat.lt_0_1.
+           -simpl.
+            Search (_ < _ + _).
+            Check Nat.add_pos_nonneg.
+            Check Nat.add_pos_pos.
+            Check Nat.add_nonneg_pos.
+            rewrite <- plus_n_O.
+            apply Nat.add_pos_pos.
+            +auto.
+            +auto.
+              
+         }
+         auto.
+       }
+       auto.
+      -auto.
+    }
    +rewrite H0.
     eauto.
-Admitted.   
+Admitted.    
+
+    
 
 
 SearchAbout (_ mod _).
