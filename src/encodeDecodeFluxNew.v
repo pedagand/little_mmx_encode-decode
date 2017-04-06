@@ -434,7 +434,20 @@ Qed.
 
 Lemma skipn_length : forall (l : list bool), 32 <= length l -> length (skipn 32 l) = length l - 32.
 Proof.
-Admitted.
+  Search skipn.
+  intros.
+  specialize (firstn_skipn 32 l).
+  intros.
+  rewrite <- H0.
+  rewrite app_length.
+  Search firstn.
+  rewrite firstn_length_le.
+  -rewrite minus_plus.
+   rewrite H0.
+   reflexivity.
+  -auto.
+Qed.  
+  
 
 Lemma mod_sub : forall (n : nat), n mod 32 = 0 -> (n - 32) mod 32 = 0.
 Proof.
