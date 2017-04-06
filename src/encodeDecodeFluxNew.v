@@ -382,34 +382,36 @@ Proof.
   rewrite H.
   reflexivity.
 Qed.
-      
-      
-  }
-  unfold cut32 in H.
-  destruct (length l mod 32 =? 0) eqn:H1.
-  -assert (cut32_n (length l / 32) l = [] -> (length l / 32) = 0).
-   {
-     intros.
-     admit.
-   }
-   +inversion H.
-    rewrite H3.
-    assert ((fst (Nat.divmod (length l) 31 0 31)) = length l / 32) by reflexivity.
-    rewrite H2 in H3.
-    apply H0 in H3.
-    
 
-     Lemma cut32_concat_app : forall (l l2 : list bool) (ll : list (list bool)),
-    cut32 l = Some (l2 :: ll) -> concat_listes_32 (l2 :: ll) = Some l.
-  Admitted.
 
-Lemma cut32_concat_listes : forall (l : list bool) (ll : list (list bool)),
+Lemma cut32_concat_listes : forall (ll : list (list bool)) (l : list bool),
     cut32 l = Some ll -> concat_listes_32 ll = Some l.
 Proof.
-  destruct ll.
+  induction ll.
   -apply cut32_concat_nil.
-  -apply cut32_concat_app.
+  -intros.
+   assert (cut32 (skipn 32 l) = Some ll).
+   {
+     
+   }
+   simpl.
+   specialize (IHll (skipn 32 l)).
+   rewrite IHll.
+   +assert (length a =? 32 = true) by admit.
+    rewrite H1.
+    assert (l = firstn 32 l ++ skipn 32 l) by admit.
+    assert (a = firstn 32 l) by admit.
+    rewrite H3.
+    unfold bind.
+    rewrite <- H2.
+    reflexivity.
 Qed.
+
+
+Lemma cut32_concat_listes' : forall (l : list bool) (ll : list (list bool)),
+    cut32 l = Some ll -> concat_listes_32 ll = Some l.
+Proof.
+  
   
 
 Lemma cut32_concat_listes : forall (l : list bool) (ll : list (list bool)),
