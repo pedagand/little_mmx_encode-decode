@@ -5,8 +5,6 @@ Require Import Mmx.ast_instructions Mmx.binary Mmx.association_list.
 Require Import Mmx.ast_instructions.
 Require Import Mmx.binary.
 
-Check n_bit_dont_fail.
-
 (* (* functions to encode decode instructions *) *)
 (* (* TODO :: Here this function can't be call for immediate *) *)
 Definition operand_to_bin (o : operande) : option (list bool) :=
@@ -442,7 +440,6 @@ Compute length test_liste.
 Definition test_liste2 := [false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false;false].
 Compute length test_liste2.
 Compute cut32 (test_liste2 ++ test_liste).
-Compute match test_concat_cut with | Some l => length l | None => 0 end.
 
 
 
