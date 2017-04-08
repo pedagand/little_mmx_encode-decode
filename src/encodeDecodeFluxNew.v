@@ -474,14 +474,38 @@ Proof.
    auto.
 Qed.
 
-
-
 Lemma equal_succ_diff_0 : forall (n' m' : nat), n' = S m' -> 0 < n'.
 Proof.
-  Admitted.
+  intros.
+  rewrite H.
+  Search (0 < S _).
+  apply Nat.lt_0_succ.
+Qed.
 
-Lemma div_sub : forall (n m k : nat), n / m = S k -> (n - m) / m = k.
-  Admitted.
+Lemma div_sub : forall (n m k : nat), n <> 0 -> n / m = S k -> (n - m) / m = k.
+Proof.
+  induction n.
+  -intros.
+   Search (_ <> _).
+   apply not_eq in H.
+   destruct H.
+   Search (_ < 0).
+   apply Nat.nlt_0_r in H.
+   inversion H.
+   apply Nat.nlt_0_r in H.
+   inversion H.
+  -intros.
+Admitted.
+
+Lemma diff_zero : forall (n : nat), 32 <= n -> n <> 0.
+Proof.
+  destruct n.
+  -Search (_ <= 0).
+   intros.
+   apply Nat.nle_succ_0 in H.
+   inversion H.
+  -auto.
+Qed.
 
 Lemma cut32_concat_listes : forall (ll : list (list bool)) (l : list bool),
     cut32 l = Some ll -> concat_listes_32 ll = Some l.
@@ -547,6 +571,12 @@ Proof.
          Check skipn_length.
          rewrite skipn_length.
          -apply div_sub in H1.
+          auto.
+          assert (length l <> 0).
+          {
+            apply diff_zero in H4.
+            auto.
+          }
           auto.
          -auto.         
        }
