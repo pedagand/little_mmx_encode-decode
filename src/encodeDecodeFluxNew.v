@@ -448,8 +448,18 @@ Proof.
   -auto.
 Qed.  
 Search (_ mod _ = 0).
-Lemma mod_zero : forall (n m : nat), n mod m = 0 -> n = 0 \/ exists (a : nat),  a * n = m.
-  Admitted.
+
+(* Lemma mod_zero : forall (n m : nat), n mod m = 0 -> n = 0 \/ exists (a : nat),  a * n = m. *)
+(* Proof. *)
+(*   intros. *)
+(*   Search (_ mod _ = 0). *)
+(*   apply Nat.div_exact in H. *)
+(*   -right. *)
+(*    rewrite H. *)
+(*    Search (_ * (_ / _)). *)
+(*    admit. *)
+(*   - *)
+   
 
 Lemma mod_sub : forall (n : nat), n mod 32 = 0 -> (n - 32) mod 32 = 0.
 Proof. 
@@ -484,7 +494,9 @@ Qed.
 
 Lemma div_sub : forall (n m k : nat), n <> 0 -> n / m = S k -> (n - m) / m = k.
 Proof.
-  Admitted.  
+Admitted.
+  
+    
    
 
 Lemma diff_zero : forall (n : nat), 32 <= n -> n <> 0.
