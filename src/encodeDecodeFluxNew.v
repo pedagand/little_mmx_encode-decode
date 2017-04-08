@@ -447,13 +447,33 @@ Proof.
    reflexivity.
   -auto.
 Qed.  
-  
+Search (_ mod _ = 0).
+Lemma mod_zero : forall (n m : nat), n mod m = 0 -> n = 0 \/ exists (a : nat),  a * n = m.
+  Admitted.
 
 Lemma mod_sub : forall (n : nat), n mod 32 = 0 -> (n - 32) mod 32 = 0.
-Proof.
-  induction n.
+Proof. 
+  intros.
+  specialize (Nat.mod_divides n 32).
+  intros.
+  assert (32 <> 0) by auto.
+  apply H0 in H1.
+  apply H1 in H.
+  destruct H.
+  rewrite H.
+  Search (_ * _ - _).
+  rewrite <- Nat.mul_pred_r.
+  induction x.
   -reflexivity.
-Admitted.
+  -Search (Nat.pred (S _)).
+   rewrite <- pred_Sn.
+   Search (_ * _ mod _ = 0).
+   Search (_ * _ = _ * _).
+   rewrite Nat.mul_comm.
+   apply Nat.mod_mul.
+   auto.
+Qed.
+
 
 
 Lemma equal_succ_diff_0 : forall (n' m' : nat), n' = S m' -> 0 < n'.
