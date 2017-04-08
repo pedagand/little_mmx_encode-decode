@@ -8,3 +8,4 @@ src/binary.v
 src/encode.v
 src/encodeProof.v
 src/decodeProof.v
+src/encodeDecodeFluxNew.v
