@@ -484,18 +484,8 @@ Qed.
 
 Lemma div_sub : forall (n m k : nat), n <> 0 -> n / m = S k -> (n - m) / m = k.
 Proof.
-  induction n.
-  -intros.
-   Search (_ <> _).
-   apply not_eq in H.
-   destruct H.
-   Search (_ < 0).
-   apply Nat.nlt_0_r in H.
-   inversion H.
-   apply Nat.nlt_0_r in H.
-   inversion H.
-  -intros.
-Admitted.
+  Admitted.  
+   
 
 Lemma diff_zero : forall (n : nat), 32 <= n -> n <> 0.
 Proof.
