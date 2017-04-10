@@ -68,6 +68,12 @@ Proof.
     compute. reflexivity.
   }
   rewrite H16.
+  repeat rewrite app_length.
+  rewrite H5.
+  rewrite H10.
+  rewrite H12.
+  rewrite H14.
+  simpl.  
   reflexivity.
 Qed.
  
@@ -136,6 +142,12 @@ Proof.
     compute. reflexivity.
   }
   rewrite H16.
+  repeat rewrite app_length.
+  rewrite H5.
+  rewrite H10.
+  rewrite H12.
+  rewrite H14.
+  simpl.  
   reflexivity.
 Qed.
 
@@ -196,6 +208,11 @@ Proof.
     compute. reflexivity.
   }
   rewrite H13.
+  repeat rewrite app_length.
+  rewrite H4.
+  rewrite H9.
+  rewrite H11.
+  simpl.  
   reflexivity.
 Qed.
 
@@ -255,6 +272,10 @@ Proof.
     compute. reflexivity.
   }
   rewrite H13.
+  repeat rewrite app_length.
+  rewrite H4.
+  rewrite H9.
+  rewrite H11.
   reflexivity.
 Qed.
 
