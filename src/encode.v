@@ -356,6 +356,8 @@ Definition encode (i : instruction) : option binary_instruction :=
 
 (* this is the decode function (with this one we only need one general function) *)
 Definition decode (bi : binary_instruction) : option instruction :=
+  if length bi =? 32
+  then
   match get_first_n_bit bi 8 with
   | (li,next) => let! t := lookdown (bit_n li) encdec in
                  fun t => match get_first_n_bit next 8 with
@@ -397,9 +399,8 @@ Definition decode (bi : binary_instruction) : option instruction :=
                                                           end
                             end
                           end
-  end.
-
-
+  end
+  else None.
                             
 
 
