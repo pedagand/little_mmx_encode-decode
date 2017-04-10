@@ -1,0 +1,2 @@
+src/encodeDecodeFluxNew.vo src/encodeDecodeFluxNew.glob src/encodeDecodeFluxNew.v.beautified: src/encodeDecodeFluxNew.v src/ast_instructions.vo src/binary.vo src/association_list.vo src/encodeProof.vo src/decodeProof.vo src/encode.vo
+src/encodeDecodeFluxNew.vio: src/encodeDecodeFluxNew.v src/ast_instructions.vio src/binary.vio src/association_list.vio src/encodeProof.vio src/decodeProof.vio src/encode.vio

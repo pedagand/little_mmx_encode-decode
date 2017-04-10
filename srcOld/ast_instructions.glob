@@ -1,0 +1,134 @@
+DIGEST d7f13c64452eaf227a25648caa8f3dd3
+FMmx.ast_instructions
+R15:18 Coq.Lists.List <> <> lib
+ind 53:66 <> tag_ter_normal
+constr 73:75 <> ADD
+constr 96:98 <> AND
+R79:92 Mmx.ast_instructions <> tag_ter_normal ind
+R102:115 Mmx.ast_instructions <> tag_ter_normal ind
+ind 129:145 <> tag_ter_immediate
+constr 152:156 <> ADD_I
+constr 180:184 <> AND_I
+R160:176 Mmx.ast_instructions <> tag_ter_immediate ind
+R188:204 Mmx.ast_instructions <> tag_ter_immediate ind
+ind 218:234 <> tag_duo_immediate
+constr 241:246 <> JUMP_I
+constr 270:276 <> JUMP_IC
+R250:266 Mmx.ast_instructions <> tag_duo_immediate ind
+R280:296 Mmx.ast_instructions <> tag_duo_immediate ind
+ind 310:323 <> tag_duo_normal
+constr 330:333 <> JUMP
+constr 354:358 <> JUMPC
+R337:350 Mmx.ast_instructions <> tag_duo_normal ind
+R362:375 Mmx.ast_instructions <> tag_duo_normal ind
+ind 390:392 <> tag
+constr 399:405 <> tag_t_n
+constr 433:439 <> tag_t_i
+constr 470:476 <> tag_d_i
+constr 507:513 <> tag_d_n
+R423:426 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R427:429 Mmx.ast_instructions <> tag ind
+R409:422 Mmx.ast_instructions <> tag_ter_normal ind
+R460:463 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R464:466 Mmx.ast_instructions <> tag ind
+R443:459 Mmx.ast_instructions <> tag_ter_immediate ind
+R497:500 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R501:503 Mmx.ast_instructions <> tag ind
+R480:496 Mmx.ast_instructions <> tag_duo_immediate ind
+R531:534 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R535:537 Mmx.ast_instructions <> tag ind
+R517:530 Mmx.ast_instructions <> tag_duo_normal ind
+R561:563 Mmx.ast_instructions <> tag ind
+prf 574:592 <> tag_beq_reflexivity
+R607:609 Mmx.ast_instructions <> tag ind
+R624:626 Coq.Init.Logic <> :type_scope:x_'='_x not
+R613:619 Mmx.ast_instructions <> tag_beq scheme
+R623:623 Mmx.ast_instructions <> t var
+R621:621 Mmx.ast_instructions <> t var
+R627:630 Coq.Init.Datatypes <> true constr
+prf 863:879 <> tag_beq_different
+R899:901 Mmx.ast_instructions <> tag ind
+R925:928 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R931:933 Coq.Init.Logic <> :type_scope:x_'='_x not
+R929:930 Mmx.ast_instructions <> t1 var
+R934:935 Mmx.ast_instructions <> t2 var
+R918:920 Coq.Init.Logic <> :type_scope:x_'='_x not
+R905:911 Mmx.ast_instructions <> tag_beq scheme
+R916:917 Mmx.ast_instructions <> t2 var
+R913:914 Mmx.ast_instructions <> t1 var
+R921:924 Coq.Init.Datatypes <> true constr
+ind 4361:4368 <> imediate
+constr 4375:4377 <> imm
+R4384:4387 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R4388:4395 Mmx.ast_instructions <> imediate ind
+R4381:4383 Coq.Init.Datatypes <> nat ind
+ind 4408:4415 <> register
+constr 4422:4424 <> reg
+R4431:4434 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R4435:4442 Mmx.ast_instructions <> register ind
+R4428:4430 Coq.Init.Datatypes <> nat ind
+ind 4456:4463 <> operande
+constr 4472:4476 <> imm_o
+constr 4505:4509 <> reg_o
+R4488:4491 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R4492:4499 Mmx.ast_instructions <> operande ind
+R4480:4487 Mmx.ast_instructions <> imediate ind
+R4521:4524 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R4525:4532 Mmx.ast_instructions <> operande ind
+R4513:4520 Mmx.ast_instructions <> register ind
+constr 4598:4609 <> mk_instr_t_n
+rec 4574:4591 <> instruction_tern_n
+proj 4613:4628 <> instr_opcode_t_n
+proj 4662:4680 <> instr_operande1_t_n
+proj 4709:4727 <> instr_operande2_t_n
+proj 4756:4774 <> instr_operande3_t_n
+R4632:4645 Mmx.ast_instructions <> tag_ter_normal ind
+R4684:4691 Mmx.ast_instructions <> register ind
+R4731:4738 Mmx.ast_instructions <> register ind
+R4778:4785 Mmx.ast_instructions <> register ind
+constr 4822:4833 <> mk_instr_t_i
+rec 4798:4815 <> instruction_tern_i
+proj 4837:4852 <> instr_opcode_t_i
+proj 4889:4907 <> instr_operande1_t_i
+proj 4936:4954 <> instr_operande2_t_i
+proj 4983:5001 <> instr_operande3_t_i
+R4856:4872 Mmx.ast_instructions <> tag_ter_immediate ind
+R4911:4918 Mmx.ast_instructions <> register ind
+R4958:4965 Mmx.ast_instructions <> register ind
+R5005:5012 Mmx.ast_instructions <> imediate ind
+constr 5048:5059 <> mk_instr_d_n
+rec 5025:5041 <> instruction_duo_n
+proj 5063:5078 <> instr_opcode_d_n
+proj 5112:5130 <> instr_operande1_d_n
+proj 5159:5177 <> instr_operande2_d_n
+R5082:5095 Mmx.ast_instructions <> tag_duo_normal ind
+R5134:5141 Mmx.ast_instructions <> register ind
+R5181:5188 Mmx.ast_instructions <> register ind
+constr 5224:5235 <> mk_instr_d_i
+rec 5201:5217 <> instruction_duo_i
+proj 5239:5254 <> instr_opcode_d_i
+proj 5291:5309 <> instr_operande1_d_i
+proj 5338:5356 <> instr_operande2_d_i
+R5258:5274 Mmx.ast_instructions <> tag_duo_immediate ind
+R5313:5320 Mmx.ast_instructions <> register ind
+R5360:5367 Mmx.ast_instructions <> imediate ind
+ind 5383:5393 <> instruction
+constr 5400:5408 <> instr_t_n
+constr 5448:5456 <> instr_t_i
+constr 5496:5504 <> instr_d_n
+constr 5543:5551 <> instr_d_i
+R5430:5433 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R5434:5444 Mmx.ast_instructions <> instruction ind
+R5412:5429 Mmx.ast_instructions <> instruction_tern_n rec
+R5478:5481 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R5482:5492 Mmx.ast_instructions <> instruction ind
+R5460:5477 Mmx.ast_instructions <> instruction_tern_i rec
+R5525:5528 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R5529:5539 Mmx.ast_instructions <> instruction ind
+R5508:5524 Mmx.ast_instructions <> instruction_duo_n rec
+R5572:5575 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R5576:5586 Mmx.ast_instructions <> instruction ind
+R5555:5571 Mmx.ast_instructions <> instruction_duo_i rec
+def 5636:5653 <> binary_instruction
+R5658:5661 Coq.Init.Datatypes <> list ind
+R5663:5666 Coq.Init.Datatypes <> bool ind
