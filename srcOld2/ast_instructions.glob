@@ -1,0 +1,716 @@
+DIGEST f938b9d737332d4ec8f0de0f92cd3aa0
+FMmx.ast_instructions
+R15:18 Coq.Lists.List <> <> lib
+ind 54:67 <> tag_ter_normal
+constr 99:101 <> ADD
+constr 122:124 <> SUB
+constr 145:147 <> MUL
+constr 168:170 <> DIV
+constr 217:220 <> ADDU
+constr 241:244 <> SUBU
+constr 265:268 <> MULU
+constr 289:292 <> DIVU
+constr 340:342 <> CMP
+constr 363:366 <> CMPU
+constr 419:422 <> FADD
+constr 443:446 <> FSUB
+constr 467:470 <> FMUL
+constr 491:494 <> FDIV
+constr 515:518 <> FREM
+constr 539:543 <> FSQRT
+constr 564:567 <> FINT
+constr 617:620 <> FCMP
+constr 641:644 <> FEQL
+constr 665:667 <> FUN
+constr 688:692 <> FCMPE
+constr 713:717 <> FEQLE
+constr 738:741 <> FUNE
+constr 783:785 <> AND
+constr 806:807 <> OR
+constr 828:830 <> XOR
+constr 851:854 <> ANDN
+constr 875:877 <> ORN
+constr 898:901 <> NAND
+constr 922:924 <> NOR
+constr 945:948 <> NXOR
+constr 997:998 <> SL
+constr 1019:1021 <> SLU
+constr 1042:1043 <> SR
+constr 1064:1066 <> SRU
+constr 1107:1109 <> MOR
+constr 1130:1133 <> MXOR
+constr 1179:1182 <> BDIF
+constr 1203:1206 <> WDIF
+constr 1227:1230 <> TDIF
+constr 1251:1254 <> ODIF
+constr 1302:1305 <> SADD
+constr 1352:1354 <> MUX
+constr 1413:1417 <> ADDU2
+constr 1438:1442 <> ADDU4
+constr 1463:1467 <> ADDU8
+constr 1488:1493 <> ADDU16
+constr 1535:1537 <> LDB
+constr 1558:1560 <> LDW
+constr 1581:1583 <> LDT
+constr 1604:1606 <> LDO
+constr 1666:1668 <> STB
+constr 1689:1691 <> STW
+constr 1712:1714 <> STT
+constr 1735:1737 <> STO
+constr 1797:1800 <> LDBU
+constr 1821:1824 <> LDWU
+constr 1845:1848 <> LDTU
+constr 1869:1872 <> LDOU
+constr 1922:1925 <> STBU
+constr 1946:1949 <> STWU
+constr 1970:1973 <> STTU
+constr 1994:1997 <> STOU
+constr 2052:2055 <> LDTH
+constr 2123:2126 <> STHT
+constr 2196:2199 <> LDSF
+constr 2220:2223 <> STSF
+constr 2289:2290 <> GO
+constr 2349:2351 <> CSZ
+constr 2372:2375 <> CSNZ
+constr 2396:2398 <> CSN
+constr 2419:2422 <> CSNN
+constr 2443:2445 <> CSP
+constr 2466:2469 <> CSNP
+constr 2490:2493 <> CSOD
+constr 2514:2517 <> CSEV
+constr 2538:2540 <> ZSZ
+constr 2561:2564 <> ZSNZ
+constr 2585:2587 <> ZSN
+constr 2608:2611 <> ZSNN
+constr 2632:2634 <> ZSP
+constr 2655:2658 <> ZSNP
+constr 2679:2682 <> ZSOD
+constr 2703:2706 <> ZSEV
+constr 2750:2754 <> CSWAP
+constr 2810:2814 <> LDUNC
+constr 2835:2839 <> STUNC
+constr 2896:2900 <> PREST
+constr 2945:2949 <> LDTVS
+R105:118 Mmx.ast_instructions <> tag_ter_normal ind
+R128:141 Mmx.ast_instructions <> tag_ter_normal ind
+R151:164 Mmx.ast_instructions <> tag_ter_normal ind
+R174:187 Mmx.ast_instructions <> tag_ter_normal ind
+R224:237 Mmx.ast_instructions <> tag_ter_normal ind
+R248:261 Mmx.ast_instructions <> tag_ter_normal ind
+R272:285 Mmx.ast_instructions <> tag_ter_normal ind
+R296:309 Mmx.ast_instructions <> tag_ter_normal ind
+R346:359 Mmx.ast_instructions <> tag_ter_normal ind
+R370:383 Mmx.ast_instructions <> tag_ter_normal ind
+R426:439 Mmx.ast_instructions <> tag_ter_normal ind
+R450:463 Mmx.ast_instructions <> tag_ter_normal ind
+R474:487 Mmx.ast_instructions <> tag_ter_normal ind
+R498:511 Mmx.ast_instructions <> tag_ter_normal ind
+R522:535 Mmx.ast_instructions <> tag_ter_normal ind
+R547:560 Mmx.ast_instructions <> tag_ter_normal ind
+R571:584 Mmx.ast_instructions <> tag_ter_normal ind
+R624:637 Mmx.ast_instructions <> tag_ter_normal ind
+R648:661 Mmx.ast_instructions <> tag_ter_normal ind
+R671:684 Mmx.ast_instructions <> tag_ter_normal ind
+R696:709 Mmx.ast_instructions <> tag_ter_normal ind
+R721:734 Mmx.ast_instructions <> tag_ter_normal ind
+R745:758 Mmx.ast_instructions <> tag_ter_normal ind
+R789:802 Mmx.ast_instructions <> tag_ter_normal ind
+R811:824 Mmx.ast_instructions <> tag_ter_normal ind
+R834:847 Mmx.ast_instructions <> tag_ter_normal ind
+R858:871 Mmx.ast_instructions <> tag_ter_normal ind
+R881:894 Mmx.ast_instructions <> tag_ter_normal ind
+R905:918 Mmx.ast_instructions <> tag_ter_normal ind
+R928:941 Mmx.ast_instructions <> tag_ter_normal ind
+R952:965 Mmx.ast_instructions <> tag_ter_normal ind
+R1002:1015 Mmx.ast_instructions <> tag_ter_normal ind
+R1025:1038 Mmx.ast_instructions <> tag_ter_normal ind
+R1047:1060 Mmx.ast_instructions <> tag_ter_normal ind
+R1070:1083 Mmx.ast_instructions <> tag_ter_normal ind
+R1113:1126 Mmx.ast_instructions <> tag_ter_normal ind
+R1137:1150 Mmx.ast_instructions <> tag_ter_normal ind
+R1186:1199 Mmx.ast_instructions <> tag_ter_normal ind
+R1210:1223 Mmx.ast_instructions <> tag_ter_normal ind
+R1234:1247 Mmx.ast_instructions <> tag_ter_normal ind
+R1258:1271 Mmx.ast_instructions <> tag_ter_normal ind
+R1309:1322 Mmx.ast_instructions <> tag_ter_normal ind
+R1358:1371 Mmx.ast_instructions <> tag_ter_normal ind
+R1421:1434 Mmx.ast_instructions <> tag_ter_normal ind
+R1446:1459 Mmx.ast_instructions <> tag_ter_normal ind
+R1471:1484 Mmx.ast_instructions <> tag_ter_normal ind
+R1497:1510 Mmx.ast_instructions <> tag_ter_normal ind
+R1541:1554 Mmx.ast_instructions <> tag_ter_normal ind
+R1564:1577 Mmx.ast_instructions <> tag_ter_normal ind
+R1587:1600 Mmx.ast_instructions <> tag_ter_normal ind
+R1610:1623 Mmx.ast_instructions <> tag_ter_normal ind
+R1672:1685 Mmx.ast_instructions <> tag_ter_normal ind
+R1695:1708 Mmx.ast_instructions <> tag_ter_normal ind
+R1718:1731 Mmx.ast_instructions <> tag_ter_normal ind
+R1741:1754 Mmx.ast_instructions <> tag_ter_normal ind
+R1804:1817 Mmx.ast_instructions <> tag_ter_normal ind
+R1828:1841 Mmx.ast_instructions <> tag_ter_normal ind
+R1852:1865 Mmx.ast_instructions <> tag_ter_normal ind
+R1876:1889 Mmx.ast_instructions <> tag_ter_normal ind
+R1929:1942 Mmx.ast_instructions <> tag_ter_normal ind
+R1953:1966 Mmx.ast_instructions <> tag_ter_normal ind
+R1977:1990 Mmx.ast_instructions <> tag_ter_normal ind
+R2001:2014 Mmx.ast_instructions <> tag_ter_normal ind
+R2059:2072 Mmx.ast_instructions <> tag_ter_normal ind
+R2130:2143 Mmx.ast_instructions <> tag_ter_normal ind
+R2203:2216 Mmx.ast_instructions <> tag_ter_normal ind
+R2227:2240 Mmx.ast_instructions <> tag_ter_normal ind
+R2294:2307 Mmx.ast_instructions <> tag_ter_normal ind
+R2355:2368 Mmx.ast_instructions <> tag_ter_normal ind
+R2379:2392 Mmx.ast_instructions <> tag_ter_normal ind
+R2402:2415 Mmx.ast_instructions <> tag_ter_normal ind
+R2426:2439 Mmx.ast_instructions <> tag_ter_normal ind
+R2449:2462 Mmx.ast_instructions <> tag_ter_normal ind
+R2473:2486 Mmx.ast_instructions <> tag_ter_normal ind
+R2497:2510 Mmx.ast_instructions <> tag_ter_normal ind
+R2521:2534 Mmx.ast_instructions <> tag_ter_normal ind
+R2544:2557 Mmx.ast_instructions <> tag_ter_normal ind
+R2568:2581 Mmx.ast_instructions <> tag_ter_normal ind
+R2591:2604 Mmx.ast_instructions <> tag_ter_normal ind
+R2615:2628 Mmx.ast_instructions <> tag_ter_normal ind
+R2638:2651 Mmx.ast_instructions <> tag_ter_normal ind
+R2662:2675 Mmx.ast_instructions <> tag_ter_normal ind
+R2686:2699 Mmx.ast_instructions <> tag_ter_normal ind
+R2710:2723 Mmx.ast_instructions <> tag_ter_normal ind
+R2758:2771 Mmx.ast_instructions <> tag_ter_normal ind
+R2818:2831 Mmx.ast_instructions <> tag_ter_normal ind
+R2843:2856 Mmx.ast_instructions <> tag_ter_normal ind
+R2904:2917 Mmx.ast_instructions <> tag_ter_normal ind
+R2953:2966 Mmx.ast_instructions <> tag_ter_normal ind
+ind 3060:3076 <> tag_ter_immediate
+constr 3108:3112 <> ADD_I
+constr 3136:3140 <> SUB_I
+constr 3164:3168 <> MUL_I
+constr 3192:3196 <> DIV_I
+constr 3246:3251 <> ADDU_I
+constr 3275:3280 <> SUBU_I
+constr 3304:3309 <> MULU_I
+constr 3333:3338 <> DIVU_I
+constr 3389:3393 <> CMP_I
+constr 3417:3422 <> CMPU_I
+constr 3467:3471 <> AND_I
+constr 3495:3498 <> OR_I
+constr 3522:3526 <> XOR_I
+constr 3550:3555 <> ANDN_I
+constr 3579:3583 <> ORN_I
+constr 3607:3612 <> NAND_I
+constr 3636:3640 <> NOR_I
+constr 3664:3669 <> NXOR_I
+constr 3721:3724 <> SL_I
+constr 3748:3752 <> SLU_I
+constr 3776:3779 <> SR_I
+constr 3803:3807 <> SRU_I
+constr 3869:3874 <> BDIF_I
+constr 3898:3903 <> WDIF_I
+constr 3927:3932 <> TDIF_I
+constr 3956:3961 <> ODIF_I
+constr 4036:4040 <> LDA_I
+constr 4091:4096 <> GETA_I
+constr 4169:4175 <> ADDU2_I
+constr 4199:4205 <> ADDU4_I
+constr 4229:4235 <> ADDU8_I
+constr 4259:4266 <> ADDU16_I
+constr 4324:4328 <> LDB_I
+constr 4352:4356 <> LDW_I
+constr 4380:4384 <> LDT_I
+constr 4408:4412 <> LDO_I
+constr 4475:4479 <> STB_I
+constr 4503:4507 <> STW_I
+constr 4531:4535 <> STT_I
+constr 4559:4563 <> STO_I
+constr 4626:4631 <> LDBU_I
+constr 4655:4660 <> LDWU_I
+constr 4684:4689 <> LDTU_I
+constr 4713:4718 <> LDOU_I
+constr 4781:4786 <> STBU_I
+constr 4810:4815 <> STWU_I
+constr 4839:4844 <> STTU_I
+constr 4868:4873 <> STOU_I
+constr 4931:4936 <> LDTH_I
+constr 4996:5001 <> STHT_I
+constr 5074:5079 <> LDSF_I
+constr 5103:5108 <> STSF_I
+constr 5177:5180 <> GO_I
+constr 5242:5246 <> CSZ_I
+constr 5270:5275 <> CSNZ_I
+constr 5299:5303 <> CSN_I
+constr 5327:5332 <> CSNN_I
+constr 5356:5360 <> CSP_I
+constr 5384:5389 <> CSNP_I
+constr 5413:5418 <> CSOD_I
+constr 5442:5447 <> CSEV_I
+constr 5471:5475 <> ZSZ_I
+constr 5499:5504 <> ZSNZ_I
+constr 5528:5532 <> ZSN_I
+constr 5556:5561 <> ZSNN_I
+constr 5585:5589 <> ZSP_I
+constr 5613:5618 <> ZSNP_I
+constr 5642:5647 <> ZSOD_I
+constr 5671:5676 <> ZSEV_I
+constr 5723:5729 <> PUSHJ_I
+constr 5753:5760 <> PUSHGO_I
+constr 5808:5814 <> LDTVS_I
+R3116:3132 Mmx.ast_instructions <> tag_ter_immediate ind
+R3144:3160 Mmx.ast_instructions <> tag_ter_immediate ind
+R3172:3188 Mmx.ast_instructions <> tag_ter_immediate ind
+R3200:3216 Mmx.ast_instructions <> tag_ter_immediate ind
+R3255:3271 Mmx.ast_instructions <> tag_ter_immediate ind
+R3284:3300 Mmx.ast_instructions <> tag_ter_immediate ind
+R3313:3329 Mmx.ast_instructions <> tag_ter_immediate ind
+R3342:3358 Mmx.ast_instructions <> tag_ter_immediate ind
+R3397:3413 Mmx.ast_instructions <> tag_ter_immediate ind
+R3426:3442 Mmx.ast_instructions <> tag_ter_immediate ind
+R3475:3491 Mmx.ast_instructions <> tag_ter_immediate ind
+R3502:3518 Mmx.ast_instructions <> tag_ter_immediate ind
+R3530:3546 Mmx.ast_instructions <> tag_ter_immediate ind
+R3559:3575 Mmx.ast_instructions <> tag_ter_immediate ind
+R3587:3603 Mmx.ast_instructions <> tag_ter_immediate ind
+R3616:3632 Mmx.ast_instructions <> tag_ter_immediate ind
+R3644:3660 Mmx.ast_instructions <> tag_ter_immediate ind
+R3673:3689 Mmx.ast_instructions <> tag_ter_immediate ind
+R3728:3744 Mmx.ast_instructions <> tag_ter_immediate ind
+R3756:3772 Mmx.ast_instructions <> tag_ter_immediate ind
+R3783:3799 Mmx.ast_instructions <> tag_ter_immediate ind
+R3811:3827 Mmx.ast_instructions <> tag_ter_immediate ind
+R3878:3894 Mmx.ast_instructions <> tag_ter_immediate ind
+R3907:3923 Mmx.ast_instructions <> tag_ter_immediate ind
+R3936:3952 Mmx.ast_instructions <> tag_ter_immediate ind
+R3965:3981 Mmx.ast_instructions <> tag_ter_immediate ind
+R4044:4060 Mmx.ast_instructions <> tag_ter_immediate ind
+R4100:4116 Mmx.ast_instructions <> tag_ter_immediate ind
+R4179:4195 Mmx.ast_instructions <> tag_ter_immediate ind
+R4209:4225 Mmx.ast_instructions <> tag_ter_immediate ind
+R4239:4255 Mmx.ast_instructions <> tag_ter_immediate ind
+R4270:4286 Mmx.ast_instructions <> tag_ter_immediate ind
+R4332:4348 Mmx.ast_instructions <> tag_ter_immediate ind
+R4360:4376 Mmx.ast_instructions <> tag_ter_immediate ind
+R4388:4404 Mmx.ast_instructions <> tag_ter_immediate ind
+R4416:4432 Mmx.ast_instructions <> tag_ter_immediate ind
+R4483:4499 Mmx.ast_instructions <> tag_ter_immediate ind
+R4511:4527 Mmx.ast_instructions <> tag_ter_immediate ind
+R4539:4555 Mmx.ast_instructions <> tag_ter_immediate ind
+R4567:4583 Mmx.ast_instructions <> tag_ter_immediate ind
+R4635:4651 Mmx.ast_instructions <> tag_ter_immediate ind
+R4664:4680 Mmx.ast_instructions <> tag_ter_immediate ind
+R4693:4709 Mmx.ast_instructions <> tag_ter_immediate ind
+R4722:4738 Mmx.ast_instructions <> tag_ter_immediate ind
+R4790:4806 Mmx.ast_instructions <> tag_ter_immediate ind
+R4819:4835 Mmx.ast_instructions <> tag_ter_immediate ind
+R4848:4864 Mmx.ast_instructions <> tag_ter_immediate ind
+R4877:4893 Mmx.ast_instructions <> tag_ter_immediate ind
+R4940:4956 Mmx.ast_instructions <> tag_ter_immediate ind
+R5005:5021 Mmx.ast_instructions <> tag_ter_immediate ind
+R5083:5099 Mmx.ast_instructions <> tag_ter_immediate ind
+R5112:5128 Mmx.ast_instructions <> tag_ter_immediate ind
+R5184:5200 Mmx.ast_instructions <> tag_ter_immediate ind
+R5250:5266 Mmx.ast_instructions <> tag_ter_immediate ind
+R5279:5295 Mmx.ast_instructions <> tag_ter_immediate ind
+R5307:5323 Mmx.ast_instructions <> tag_ter_immediate ind
+R5336:5352 Mmx.ast_instructions <> tag_ter_immediate ind
+R5364:5380 Mmx.ast_instructions <> tag_ter_immediate ind
+R5393:5409 Mmx.ast_instructions <> tag_ter_immediate ind
+R5422:5438 Mmx.ast_instructions <> tag_ter_immediate ind
+R5451:5467 Mmx.ast_instructions <> tag_ter_immediate ind
+R5479:5495 Mmx.ast_instructions <> tag_ter_immediate ind
+R5508:5524 Mmx.ast_instructions <> tag_ter_immediate ind
+R5536:5552 Mmx.ast_instructions <> tag_ter_immediate ind
+R5565:5581 Mmx.ast_instructions <> tag_ter_immediate ind
+R5593:5609 Mmx.ast_instructions <> tag_ter_immediate ind
+R5622:5638 Mmx.ast_instructions <> tag_ter_immediate ind
+R5651:5667 Mmx.ast_instructions <> tag_ter_immediate ind
+R5680:5696 Mmx.ast_instructions <> tag_ter_immediate ind
+R5733:5749 Mmx.ast_instructions <> tag_ter_immediate ind
+R5764:5780 Mmx.ast_instructions <> tag_ter_immediate ind
+R5818:5834 Mmx.ast_instructions <> tag_ter_immediate ind
+ind 5931:5948 <> tag_ter_immediate2
+constr 5974:5976 <> NEG
+constr 6001:6004 <> NEGU
+R5980:5997 Mmx.ast_instructions <> tag_ter_immediate2 ind
+R6008:6025 Mmx.ast_instructions <> tag_ter_immediate2 ind
+ind 6107:6124 <> tag_ter_immediate3
+constr 6155:6159 <> PRELD
+constr 6184:6188 <> PREGO
+constr 6226:6231 <> SYNCID
+constr 6268:6272 <> SYNCD
+constr 6333:6336 <> STCO
+R6163:6180 Mmx.ast_instructions <> tag_ter_immediate3 ind
+R6192:6209 Mmx.ast_instructions <> tag_ter_immediate3 ind
+R6235:6252 Mmx.ast_instructions <> tag_ter_immediate3 ind
+R6276:6293 Mmx.ast_instructions <> tag_ter_immediate3 ind
+R6340:6357 Mmx.ast_instructions <> tag_ter_immediate3 ind
+ind 6439:6456 <> tag_ter_immediate4
+constr 6482:6486 <> NEG_I
+constr 6511:6516 <> NEGU_I
+R6490:6507 Mmx.ast_instructions <> tag_ter_immediate4 ind
+R6520:6537 Mmx.ast_instructions <> tag_ter_immediate4 ind
+ind 6619:6636 <> tag_ter_immediate5
+constr 6656:6659 <> TRIP
+constr 6695:6698 <> TRAP
+constr 6734:6737 <> SWYM
+R6663:6680 Mmx.ast_instructions <> tag_ter_immediate5 ind
+R6702:6719 Mmx.ast_instructions <> tag_ter_immediate5 ind
+R6741:6758 Mmx.ast_instructions <> tag_ter_immediate5 ind
+ind 6840:6857 <> tag_ter_immediate6
+constr 6875:6881 <> STCO_I2
+constr 6906:6911 <> STCO_I
+R6885:6902 Mmx.ast_instructions <> tag_ter_immediate6 ind
+R6915:6932 Mmx.ast_instructions <> tag_ter_immediate6 ind
+ind 7016:7032 <> tag_duo_immediate
+constr 7071:7076 <> FLOT_I
+constr 7100:7106 <> FLOTU_I
+constr 7163:7169 <> SFLOT_I
+constr 7193:7200 <> SFLOTU_I
+constr 7277:7281 <> ORH_I
+constr 7305:7310 <> ORMH_I
+constr 7334:7339 <> ORML_I
+constr 7363:7367 <> ORL_I
+constr 7391:7397 <> ANDNH_I
+constr 7421:7428 <> ANDNMH_I
+constr 7452:7459 <> ANDNML_I
+constr 7483:7489 <> ANDNL_I
+constr 7530:7535 <> SETH_i
+constr 7559:7565 <> SETMH_i
+constr 7589:7595 <> SETML_i
+constr 7619:7624 <> SETL_i
+constr 7665:7670 <> INCH_i
+constr 7694:7700 <> INCMH_i
+constr 7724:7730 <> INCML_i
+constr 7754:7759 <> INCL_i
+constr 7798:7801 <> BZ_i
+constr 7825:7829 <> BNZ_i
+constr 7862:7865 <> BN_i
+constr 7889:7893 <> BNN_i
+constr 7917:7920 <> BP_i
+constr 7944:7948 <> BNP_i
+constr 7972:7976 <> BOD_i
+constr 8000:8004 <> BEV_i
+constr 8028:8032 <> PBZ_i
+constr 8056:8061 <> PBNZ_i
+constr 8094:8098 <> PBN_i
+constr 8122:8127 <> PBNN_i
+constr 8151:8155 <> PBP_i
+constr 8179:8184 <> PBNP_i
+constr 8208:8213 <> PBOD_i
+constr 8237:8242 <> PBEV_i
+constr 8284:8288 <> GET_i
+R7080:7096 Mmx.ast_instructions <> tag_duo_immediate ind
+R7110:7126 Mmx.ast_instructions <> tag_duo_immediate ind
+R7173:7189 Mmx.ast_instructions <> tag_duo_immediate ind
+R7204:7220 Mmx.ast_instructions <> tag_duo_immediate ind
+R7285:7301 Mmx.ast_instructions <> tag_duo_immediate ind
+R7314:7330 Mmx.ast_instructions <> tag_duo_immediate ind
+R7343:7359 Mmx.ast_instructions <> tag_duo_immediate ind
+R7371:7387 Mmx.ast_instructions <> tag_duo_immediate ind
+R7401:7417 Mmx.ast_instructions <> tag_duo_immediate ind
+R7432:7448 Mmx.ast_instructions <> tag_duo_immediate ind
+R7463:7479 Mmx.ast_instructions <> tag_duo_immediate ind
+R7493:7509 Mmx.ast_instructions <> tag_duo_immediate ind
+R7539:7555 Mmx.ast_instructions <> tag_duo_immediate ind
+R7569:7585 Mmx.ast_instructions <> tag_duo_immediate ind
+R7599:7615 Mmx.ast_instructions <> tag_duo_immediate ind
+R7628:7644 Mmx.ast_instructions <> tag_duo_immediate ind
+R7674:7690 Mmx.ast_instructions <> tag_duo_immediate ind
+R7704:7720 Mmx.ast_instructions <> tag_duo_immediate ind
+R7734:7750 Mmx.ast_instructions <> tag_duo_immediate ind
+R7763:7779 Mmx.ast_instructions <> tag_duo_immediate ind
+R7805:7821 Mmx.ast_instructions <> tag_duo_immediate ind
+R7833:7849 Mmx.ast_instructions <> tag_duo_immediate ind
+R7869:7885 Mmx.ast_instructions <> tag_duo_immediate ind
+R7897:7913 Mmx.ast_instructions <> tag_duo_immediate ind
+R7924:7940 Mmx.ast_instructions <> tag_duo_immediate ind
+R7952:7968 Mmx.ast_instructions <> tag_duo_immediate ind
+R7980:7996 Mmx.ast_instructions <> tag_duo_immediate ind
+R8008:8024 Mmx.ast_instructions <> tag_duo_immediate ind
+R8036:8052 Mmx.ast_instructions <> tag_duo_immediate ind
+R8065:8081 Mmx.ast_instructions <> tag_duo_immediate ind
+R8102:8118 Mmx.ast_instructions <> tag_duo_immediate ind
+R8131:8147 Mmx.ast_instructions <> tag_duo_immediate ind
+R8159:8175 Mmx.ast_instructions <> tag_duo_immediate ind
+R8188:8204 Mmx.ast_instructions <> tag_duo_immediate ind
+R8217:8233 Mmx.ast_instructions <> tag_duo_immediate ind
+R8246:8262 Mmx.ast_instructions <> tag_duo_immediate ind
+R8292:8308 Mmx.ast_instructions <> tag_duo_immediate ind
+ind 8478:8495 <> tag_duo_immediate2
+constr 8520:8524 <> PUT_I
+constr 8549:8554 <> PUT_I2
+R8528:8545 Mmx.ast_instructions <> tag_duo_immediate2 ind
+R8558:8575 Mmx.ast_instructions <> tag_duo_immediate2 ind
+ind 8653:8670 <> tag_duo_immediate3
+constr 8677:8679 <> POP
+constr 8732:8737 <> PUT_II
+R8683:8700 Mmx.ast_instructions <> tag_duo_immediate3 ind
+R8741:8758 Mmx.ast_instructions <> tag_duo_immediate3 ind
+ind 8838:8851 <> tag_duo_normal
+constr 8890:8893 <> FLOT
+constr 8914:8918 <> FLOTU
+constr 8939:8941 <> FIX
+constr 8962:8965 <> FIXU
+constr 9019:9023 <> SFLOT
+constr 9044:9049 <> SFLOTU
+R8897:8910 Mmx.ast_instructions <> tag_duo_normal ind
+R8922:8935 Mmx.ast_instructions <> tag_duo_normal ind
+R8945:8958 Mmx.ast_instructions <> tag_duo_normal ind
+R8969:8982 Mmx.ast_instructions <> tag_duo_normal ind
+R9027:9040 Mmx.ast_instructions <> tag_duo_normal ind
+R9053:9066 Mmx.ast_instructions <> tag_duo_normal ind
+ind 9081:9087 <> tag_uno
+constr 9129:9131 <> JMP
+constr 9173:9176 <> SAVE
+constr 9190:9195 <> UNSAVE
+constr 9235:9240 <> RESUME
+constr 9265:9268 <> SYNC
+R9135:9141 Mmx.ast_instructions <> tag_uno ind
+R9180:9186 Mmx.ast_instructions <> tag_uno ind
+R9199:9205 Mmx.ast_instructions <> tag_uno ind
+R9244:9250 Mmx.ast_instructions <> tag_uno ind
+R9272:9278 Mmx.ast_instructions <> tag_uno ind
+ind 9302:9304 <> tag
+constr 9311:9317 <> tag_t_n
+constr 9345:9351 <> tag_t_i
+constr 9382:9389 <> tag_t_i2
+constr 9421:9428 <> tag_t_i3
+constr 9460:9467 <> tag_t_i4
+constr 9499:9506 <> tag_t_i5
+constr 9538:9545 <> tag_t_i6
+constr 9614:9620 <> tag_d_i
+constr 9651:9658 <> tag_d_i2
+constr 9690:9697 <> tag_d_i3
+constr 9729:9735 <> tag_d_n
+constr 9763:9767 <> tag_u
+R9335:9338 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R9339:9341 Mmx.ast_instructions <> tag ind
+R9321:9334 Mmx.ast_instructions <> tag_ter_normal ind
+R9372:9375 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R9376:9378 Mmx.ast_instructions <> tag ind
+R9355:9371 Mmx.ast_instructions <> tag_ter_immediate ind
+R9411:9414 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R9415:9417 Mmx.ast_instructions <> tag ind
+R9393:9410 Mmx.ast_instructions <> tag_ter_immediate2 ind
+R9450:9453 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R9454:9456 Mmx.ast_instructions <> tag ind
+R9432:9449 Mmx.ast_instructions <> tag_ter_immediate3 ind
+R9489:9492 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R9493:9495 Mmx.ast_instructions <> tag ind
+R9471:9488 Mmx.ast_instructions <> tag_ter_immediate4 ind
+R9528:9531 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R9532:9534 Mmx.ast_instructions <> tag ind
+R9510:9527 Mmx.ast_instructions <> tag_ter_immediate5 ind
+R9567:9570 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R9571:9573 Mmx.ast_instructions <> tag ind
+R9549:9566 Mmx.ast_instructions <> tag_ter_immediate6 ind
+R9641:9644 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R9645:9647 Mmx.ast_instructions <> tag ind
+R9624:9640 Mmx.ast_instructions <> tag_duo_immediate ind
+R9680:9683 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R9684:9686 Mmx.ast_instructions <> tag ind
+R9662:9679 Mmx.ast_instructions <> tag_duo_immediate2 ind
+R9719:9722 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R9723:9725 Mmx.ast_instructions <> tag ind
+R9701:9718 Mmx.ast_instructions <> tag_duo_immediate3 ind
+R9753:9756 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R9757:9759 Mmx.ast_instructions <> tag ind
+R9739:9752 Mmx.ast_instructions <> tag_duo_normal ind
+R9778:9781 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R9782:9784 Mmx.ast_instructions <> tag ind
+R9771:9777 Mmx.ast_instructions <> tag_uno ind
+R9809:9811 Mmx.ast_instructions <> tag ind
+prf 9822:9840 <> tag_beq_reflexivity
+R9855:9857 Mmx.ast_instructions <> tag ind
+R9872:9874 Coq.Init.Logic <> :type_scope:x_'='_x not
+R9861:9867 Mmx.ast_instructions <> tag_beq scheme
+R9871:9871 Mmx.ast_instructions <> t var
+R9869:9869 Mmx.ast_instructions <> t var
+R9875:9878 Coq.Init.Datatypes <> true constr
+prf 9943:9959 <> tag_beq_different
+R9979:9981 Mmx.ast_instructions <> tag ind
+R10005:10008 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R10011:10013 Coq.Init.Logic <> :type_scope:x_'='_x not
+R10009:10010 Mmx.ast_instructions <> t1 var
+R10014:10015 Mmx.ast_instructions <> t2 var
+R9998:10000 Coq.Init.Logic <> :type_scope:x_'='_x not
+R9985:9991 Mmx.ast_instructions <> tag_beq scheme
+R9996:9997 Mmx.ast_instructions <> t2 var
+R9993:9994 Mmx.ast_instructions <> t1 var
+R10001:10004 Coq.Init.Datatypes <> true constr
+ind 10207:10214 <> imediate
+constr 10221:10223 <> imm
+R10230:10233 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R10234:10241 Mmx.ast_instructions <> imediate ind
+R10227:10229 Coq.Init.Datatypes <> nat ind
+ind 10254:10261 <> register
+constr 10268:10270 <> reg
+R10277:10280 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R10281:10288 Mmx.ast_instructions <> register ind
+R10274:10276 Coq.Init.Datatypes <> nat ind
+ind 10302:10309 <> operande
+constr 10318:10322 <> imm_o
+constr 10351:10355 <> reg_o
+R10334:10337 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R10338:10345 Mmx.ast_instructions <> operande ind
+R10326:10333 Mmx.ast_instructions <> imediate ind
+R10367:10370 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R10371:10378 Mmx.ast_instructions <> operande ind
+R10359:10366 Mmx.ast_instructions <> register ind
+constr 10444:10455 <> mk_instr_t_n
+rec 10420:10437 <> instruction_tern_n
+proj 10459:10474 <> instr_opcode_t_n
+proj 10508:10526 <> instr_operande1_t_n
+proj 10555:10573 <> instr_operande2_t_n
+proj 10602:10620 <> instr_operande3_t_n
+R10478:10491 Mmx.ast_instructions <> tag_ter_normal ind
+R10530:10537 Mmx.ast_instructions <> register ind
+R10577:10584 Mmx.ast_instructions <> register ind
+R10624:10631 Mmx.ast_instructions <> register ind
+constr 10668:10679 <> mk_instr_t_i
+rec 10644:10661 <> instruction_tern_i
+proj 10683:10698 <> instr_opcode_t_i
+proj 10735:10753 <> instr_operande1_t_i
+proj 10782:10800 <> instr_operande2_t_i
+proj 10829:10847 <> instr_operande3_t_i
+R10702:10718 Mmx.ast_instructions <> tag_ter_immediate ind
+R10757:10764 Mmx.ast_instructions <> register ind
+R10804:10811 Mmx.ast_instructions <> register ind
+R10851:10858 Mmx.ast_instructions <> imediate ind
+constr 10896:10908 <> mk_instr_t_i2
+rec 10871:10889 <> instruction_tern_i2
+proj 10912:10928 <> instr_opcode_t_i2
+proj 10966:10985 <> instr_operande1_t_i2
+proj 11014:11033 <> instr_operande2_t_i2
+proj 11062:11081 <> instr_operande3_t_i2
+R10932:10949 Mmx.ast_instructions <> tag_ter_immediate2 ind
+R10989:10996 Mmx.ast_instructions <> register ind
+R11037:11044 Mmx.ast_instructions <> imediate ind
+R11085:11092 Mmx.ast_instructions <> register ind
+constr 11130:11142 <> mk_instr_t_i3
+rec 11105:11123 <> instruction_tern_i3
+proj 11146:11162 <> instr_opcode_t_i3
+proj 11200:11219 <> instr_operande1_t_i3
+proj 11248:11267 <> instr_operande2_t_i3
+proj 11296:11315 <> instr_operande3_t_i3
+R11166:11183 Mmx.ast_instructions <> tag_ter_immediate3 ind
+R11223:11230 Mmx.ast_instructions <> imediate ind
+R11271:11278 Mmx.ast_instructions <> register ind
+R11319:11326 Mmx.ast_instructions <> register ind
+constr 11364:11376 <> mk_instr_t_i4
+rec 11339:11357 <> instruction_tern_i4
+proj 11380:11396 <> instr_opcode_t_i4
+proj 11434:11453 <> instr_operande1_t_i4
+proj 11482:11501 <> instr_operande2_t_i4
+proj 11530:11549 <> instr_operande3_t_i4
+R11400:11417 Mmx.ast_instructions <> tag_ter_immediate4 ind
+R11457:11464 Mmx.ast_instructions <> register ind
+R11505:11512 Mmx.ast_instructions <> imediate ind
+R11553:11560 Mmx.ast_instructions <> imediate ind
+constr 11598:11610 <> mk_instr_t_i5
+rec 11573:11591 <> instruction_tern_i5
+proj 11614:11630 <> instr_opcode_t_i5
+proj 11668:11687 <> instr_operande1_t_i5
+proj 11716:11735 <> instr_operande2_t_i5
+proj 11764:11783 <> instr_operande3_t_i5
+R11634:11651 Mmx.ast_instructions <> tag_ter_immediate5 ind
+R11691:11698 Mmx.ast_instructions <> imediate ind
+R11739:11746 Mmx.ast_instructions <> imediate ind
+R11787:11794 Mmx.ast_instructions <> imediate ind
+constr 11832:11844 <> mk_instr_t_i6
+rec 11807:11825 <> instruction_tern_i6
+proj 11848:11864 <> instr_opcode_t_i6
+proj 11902:11921 <> instr_operande1_t_i6
+proj 11950:11969 <> instr_operande2_t_i6
+proj 11998:12017 <> instr_operande3_t_i6
+R11868:11885 Mmx.ast_instructions <> tag_ter_immediate6 ind
+R11925:11932 Mmx.ast_instructions <> imediate ind
+R11973:11980 Mmx.ast_instructions <> register ind
+R12021:12028 Mmx.ast_instructions <> imediate ind
+constr 12065:12076 <> mk_instr_d_n
+rec 12042:12058 <> instruction_duo_n
+proj 12080:12095 <> instr_opcode_d_n
+proj 12129:12147 <> instr_operande1_d_n
+proj 12176:12194 <> instr_operande2_d_n
+R12099:12112 Mmx.ast_instructions <> tag_duo_normal ind
+R12151:12158 Mmx.ast_instructions <> register ind
+R12198:12205 Mmx.ast_instructions <> register ind
+constr 12241:12252 <> mk_instr_d_i
+rec 12218:12234 <> instruction_duo_i
+proj 12256:12271 <> instr_opcode_d_i
+proj 12308:12326 <> instr_operande1_d_i
+proj 12355:12373 <> instr_operande2_d_i
+R12275:12291 Mmx.ast_instructions <> tag_duo_immediate ind
+R12330:12337 Mmx.ast_instructions <> register ind
+R12377:12384 Mmx.ast_instructions <> imediate ind
+constr 12421:12433 <> mk_instr_d_i2
+rec 12397:12414 <> instruction_duo_i2
+proj 12437:12453 <> instr_opcode_d_i2
+proj 12491:12510 <> instr_operande1_d_i2
+proj 12539:12558 <> instr_operande2_d_i2
+R12457:12474 Mmx.ast_instructions <> tag_duo_immediate2 ind
+R12514:12521 Mmx.ast_instructions <> imediate ind
+R12562:12569 Mmx.ast_instructions <> register ind
+constr 12606:12618 <> mk_instr_d_i3
+rec 12582:12599 <> instruction_duo_i3
+proj 12622:12638 <> instr_opcode_d_i3
+proj 12676:12695 <> instr_operande1_d_i3
+proj 12724:12743 <> instr_operande2_d_i3
+R12642:12659 Mmx.ast_instructions <> tag_duo_immediate3 ind
+R12699:12706 Mmx.ast_instructions <> imediate ind
+R12747:12754 Mmx.ast_instructions <> imediate ind
+constr 12788:12799 <> mk_instr_uno
+rec 12767:12781 <> instruction_uno
+proj 12803:12816 <> instr_opcode_s
+proj 12846:12859 <> instr_operande
+R12820:12826 Mmx.ast_instructions <> tag_uno ind
+R12863:12870 Mmx.ast_instructions <> imediate ind
+ind 12889:12899 <> instruction
+constr 12906:12914 <> instr_t_n
+constr 12954:12962 <> instr_t_i
+constr 13002:13011 <> instr_t_i2
+constr 13052:13061 <> instr_t_i3
+constr 13102:13111 <> instr_t_i4
+constr 13152:13161 <> instr_t_i5
+constr 13202:13211 <> instr_t_i6
+constr 13252:13260 <> instr_d_n
+constr 13299:13307 <> instr_d_i
+constr 13346:13355 <> instr_d_n2
+constr 13395:13404 <> instr_d_n3
+constr 13444:13450 <> instr_u
+R12936:12939 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R12940:12950 Mmx.ast_instructions <> instruction ind
+R12918:12935 Mmx.ast_instructions <> instruction_tern_n rec
+R12984:12987 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R12988:12998 Mmx.ast_instructions <> instruction ind
+R12966:12983 Mmx.ast_instructions <> instruction_tern_i rec
+R13034:13037 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R13038:13048 Mmx.ast_instructions <> instruction ind
+R13015:13033 Mmx.ast_instructions <> instruction_tern_i2 rec
+R13084:13087 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R13088:13098 Mmx.ast_instructions <> instruction ind
+R13065:13083 Mmx.ast_instructions <> instruction_tern_i3 rec
+R13134:13137 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R13138:13148 Mmx.ast_instructions <> instruction ind
+R13115:13133 Mmx.ast_instructions <> instruction_tern_i4 rec
+R13184:13187 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R13188:13198 Mmx.ast_instructions <> instruction ind
+R13165:13183 Mmx.ast_instructions <> instruction_tern_i5 rec
+R13234:13237 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R13238:13248 Mmx.ast_instructions <> instruction ind
+R13215:13233 Mmx.ast_instructions <> instruction_tern_i6 rec
+R13281:13284 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R13285:13295 Mmx.ast_instructions <> instruction ind
+R13264:13280 Mmx.ast_instructions <> instruction_duo_n rec
+R13328:13331 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R13332:13342 Mmx.ast_instructions <> instruction ind
+R13311:13327 Mmx.ast_instructions <> instruction_duo_i rec
+R13377:13380 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R13381:13391 Mmx.ast_instructions <> instruction ind
+R13359:13376 Mmx.ast_instructions <> instruction_duo_i2 rec
+R13426:13429 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R13430:13440 Mmx.ast_instructions <> instruction ind
+R13408:13425 Mmx.ast_instructions <> instruction_duo_i3 rec
+R13469:13472 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R13473:13483 Mmx.ast_instructions <> instruction ind
+R13454:13468 Mmx.ast_instructions <> instruction_uno rec
+def 13533:13550 <> binary_instruction
+R13555:13558 Coq.Init.Datatypes <> list ind
+R13560:13563 Coq.Init.Datatypes <> bool ind

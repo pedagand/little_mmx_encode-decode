@@ -1,0 +1,9 @@
+Require Import Bool List Arith Nat.
+Import ListNotations.
+Require Import Mmx.ast_instructions Mmx.binary Mmx.association_list Mmx.encode.
+
+Lemma encode_decode_t_n : forall (i : instruction_tern_n) (bi : binary_instruction),
+    encode_t_n i = Some bi -> decode bi = Some (instr_t_n i).
+
+  Lemma decode_encode : forall (bi : binary_instruction) (i : instruction),
+    decode bi = Some i -> 

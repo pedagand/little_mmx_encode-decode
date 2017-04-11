@@ -1,0 +1,3 @@
+Require Import Bool List Arith Nat.
+Import ListNotations.
+Require Import Mmx.ast_instructions Mmx.binary Mmx.association_list.
