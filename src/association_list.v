@@ -1103,61 +1103,14 @@ Proof.
   intros. simpl in H. discriminate.
 Qed.
   
-  
-  
-  
-  repeat (destruct n ; intros ; repeat (apply le_n_S) ; apply Peano.le_0_n).
-  -intros.
-   apply Peano.le_0_n.
-  -{destruct n.    
-    -intros.      
-     Search (S _ <= S _).
-     apply le_n_S.
-     apply Peano.le_0_n.
-    -{
-        destruct n.
-        -intros.
-         repeat (apply le_n_S).
-         apply Peano.le_0_n.
-        -{
-            destruct n.
-            -intros.
-             repeat (apply le_n_S).
-             apply Peano.le_0_n.
-            -{destruct n.    
-              -intros.      
-               Search (S _ <= S _).
-               repeat apply le_n_S.
-               apply Peano.le_0_n.
-              -{destruct n.    
-                -intros.      
-                 Search (S _ <= S _).
-                 repeat apply le_n_S.
-                 apply Peano.le_0_n.
-                -{destruct n.    
-                  -intros.      
-                   Search (S _ <= S _).
-                   repeat apply le_n_S.
-                   apply Peano.le_0_n.
-                  -{destruct n.    
-                    -intros.      
-                     Search (S _ <= S _).
-                     repeat apply le_n_S.
-                     apply Peano.le_0_n.
-                    -discriminate.
-                   }
-                 }
-               }
-             }
-          }
-      }
-   }
-Qed.
+
+
+
 
 Theorem lookdown_encdec : forall (n : nat) (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n.
 Proof.
   SearchAbout (_ < _ \/ _).
-  assert (reflect (forall (n : nat), n <= 7 -> forall
+  assert (reflect (forall (n : nat), n <= 226 -> forall
                        (t : tag), lookdown n encdec = Some t -> lookup t encdec = Some n)
                   lookdown_encdecP).
   {
@@ -1202,20 +1155,21 @@ Proof.
        exact H.
     }
     exact H.
-  }  
-  assert (H': lookdown_encdecP = true) by reflexivity.
+  }
+  (* i admit this only because computing is too long *)
+  assert (H': lookdown_encdecP = true) by admit. 
   rewrite H' in H.
   inversion H.
   intros n.
   Search (_ <= _ \/ _).
   Check Nat.le_gt_cases.
-  specialize (Nat.le_gt_cases n 7).
+  specialize (Nat.le_gt_cases n 226).
   intros.
   destruct H1.
   -apply H0.
    exact H1.
    exact H2.
-  -assert (exists m, n = 8 + m).
+  -assert (exists m, n = 227 + m).
    {
      (* not that simple *)
      Search (_ < _).
@@ -1228,10 +1182,16 @@ Proof.
   Admitted.
 
 
+(* need to find how to refactor the proof *)
+Lemma lookup_val : forall (n : nat) (t : tag), lookup t encdec = Some n -> n <= 226.
+Proof.
+Admitted.
+
+
 Theorem lookup_encdecP : forall (n : nat) (t : tag) , lookup t encdec = Some n -> lookdown n encdec = Some t.
 Proof.
   SearchAbout reflect.
-  assert (reflect (forall (n : nat), n <= 7 -> forall (t : tag), lookup t encdec = Some n -> lookdown n encdec = Some t) lookdown_encdecP').
+  assert (reflect (forall (n : nat), n <= 226 -> forall (t : tag), lookup t encdec = Some n -> lookdown n encdec = Some t) lookdown_encdecP').
   {
     unfold lookdown_encdecP.
     SearchAbout reflect.
@@ -1272,27 +1232,33 @@ Proof.
         exact H.
      }
      exact H.
-  }  
-  assert (lookdown_encdecP' = true) by reflexivity.
+  }
+  (* same as previously *)
+  assert (lookdown_encdecP' = true) by admit.
   rewrite H0 in H.
   inversion H.
   intros n.
   Search (_ <= _ \/ _).
   Check Nat.le_gt_cases.
-  specialize (Nat.le_gt_cases n 7).
+  specialize (Nat.le_gt_cases n 226).
   intros.
   destruct H2.
   -apply H1.
    exact H2.
    exact H3.
-  -assert (exists m, n = 8 + m).
+  -assert (exists m, n = 227 + m).
    {
      admit.
    }   
    destruct H4.
    subst n.
-   Check lookdown_n_inf_7.
+   apply lookup_val in H3.
    simpl in H3.
+   Search (S _ <= _).
+   repeat apply le_S_n in H3.
+   Search (S _ <= 0).
+   apply Nat.nle_succ_0 in H3.
+   inversion H3.
 Admitted.
 
 
