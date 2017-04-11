@@ -255,7 +255,6 @@ Inductive tag_ter_immediate6 :=
 
 
 
-
 (* this is tag for instructions with the form (tag reg imm) *) 
 Inductive tag_duo_immediate :=
 (* floating point arithmetic *)
@@ -346,9 +345,9 @@ Inductive tag :=
 | tag_t_i : tag_ter_immediate -> tag
 | tag_t_i2 : tag_ter_immediate2 -> tag
 | tag_t_i3 : tag_ter_immediate3 -> tag
-| tag_t_i4 : tag_ter_immediate3 -> tag
-| tag_t_i5 : tag_ter_immediate3 -> tag
-| tag_t_i6 : tag_ter_immediate3 -> tag                                     
+| tag_t_i4 : tag_ter_immediate4 -> tag
+| tag_t_i5 : tag_ter_immediate5 -> tag
+| tag_t_i6 : tag_ter_immediate6 -> tag                                     
 | tag_d_i : tag_duo_immediate -> tag
 | tag_d_i2 : tag_duo_immediate2 -> tag
 | tag_d_i3 : tag_duo_immediate3 -> tag
