@@ -44,6 +44,28 @@ Proof.
   reflexivity.
 Qed.
 
+Lemma operand_to_bin_double_hypothesis_reg : forall (l : list bool) (r : register),
+    operand_to_bin_double (reg_o r) = Some l -> reg (bit_n l) = r.
+Proof.
+  intros.
+  unfold operand_to_bin_double in H.
+  destruct r.
+  apply n_bit_n in H.
+  rewrite H.
+  reflexivity.
+Qed.
+
+Lemma operand_to_bin_double_hypothesis_imm : forall (l : list bool) (i : imediate),
+    operand_to_bin_double (imm_o i) = Some l -> imm (bit_n l) = i.
+Proof.
+  intros.
+  unfold operand_to_bin_double in H.
+  destruct i.
+  apply n_bit_n in H.
+  rewrite H.
+  reflexivity.
+Qed.
+
 
 (* -----------------------------------Other operand_to_bin lemma ----------------------------------*)
 Lemma operand_to_bin_size : forall (o : operande) (l : list bool),
