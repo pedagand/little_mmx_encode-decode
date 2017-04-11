@@ -21,113 +21,24 @@ Definition operand_to_bin_double (o : operande) : option (list bool) :=
 
 
 (* -----------------------------------now for instr_operande_t_n ----------------------------------*)
-Lemma operand_to_bin_hypothesis1_t_n : forall (l : list bool) (i : instruction_tern_n),
-    operand_to_bin (reg_o (instr_operande1_t_n i)) = Some l -> reg (bit_n l) = i.(instr_operande1_t_n).
+Lemma operand_to_bin_hypothesis_reg : forall (l : list bool) (r : register),
+    operand_to_bin (reg_o r) = Some l -> reg (bit_n l) = r.
 Proof.
   intros.
   unfold operand_to_bin in H.
-  destruct (instr_operande1_t_n i).
+  destruct r.
+  Search (n_bit).
   apply n_bit_n in H.
   rewrite H.
   reflexivity.
 Qed.
-Lemma operand_to_bin_hypothesis2_t_n : forall (l : list bool) (i : instruction_tern_n),
-    operand_to_bin (reg_o (instr_operande2_t_n i)) = Some l -> reg (bit_n l) = i.(instr_operande2_t_n).
+
+Lemma operand_to_bin_hypothesis_imm : forall (l : list bool) (i : imediate),
+    operand_to_bin (imm_o i) = Some l -> imm (bit_n l) = i.
 Proof.
   intros.
   unfold operand_to_bin in H.
-  destruct (instr_operande2_t_n i).
-  apply n_bit_n in H.
-  rewrite H.
-  reflexivity.
-Qed.
-Lemma operand_to_bin_hypothesis3_t_n : forall (l : list bool) (i : instruction_tern_n),
-    operand_to_bin (reg_o (instr_operande3_t_n i)) = Some l -> reg (bit_n l) = i.(instr_operande3_t_n).
-  intros.
-  unfold operand_to_bin in H.
-  destruct (instr_operande3_t_n i).
-  apply n_bit_n in H.
-  rewrite H.
-  reflexivity.
-Qed.
-
-
-
-
-(* -----------------------------------now for instr_operande_t_i ----------------------------------*)
-Lemma operand_to_bin_hypothesis1_t_i : forall (l : list bool) (i : instruction_tern_i),
-    operand_to_bin (reg_o (instr_operande1_t_i i)) = Some l -> reg (bit_n l) = i.(instr_operande1_t_i).
-Proof.
-  intros.
-  unfold operand_to_bin in H.
-  destruct (instr_operande1_t_i i).
-  apply n_bit_n in H.
-  rewrite H.
-  reflexivity.
-Qed.
-Lemma operand_to_bin_hypothesis2_t_i : forall (l : list bool) (i : instruction_tern_i),
-    operand_to_bin (reg_o (instr_operande2_t_i i)) = Some l -> reg (bit_n l) = i.(instr_operande2_t_i).
-Proof.
-  intros.
-  unfold operand_to_bin in H.
-  destruct (instr_operande2_t_i i).
-  apply n_bit_n in H.
-  rewrite H.
-  reflexivity.
-Qed.
-Lemma operand_to_bin_hypothesis3_t_i : forall (l : list bool) (i : instruction_tern_i),
-    operand_to_bin (imm_o (instr_operande3_t_i i)) = Some l -> imm (bit_n l) = i.(instr_operande3_t_i).
-  intros.
-  unfold operand_to_bin in H.
-  destruct (instr_operande3_t_i i).
-  apply n_bit_n in H.
-  rewrite H.
-  reflexivity.
-Qed.
-
-
-
-(* -----------------------------------now for instr_operande_d_n ----------------------------------*)
-Lemma operand_to_bin_hypothesis1_d_n : forall (l : list bool) (i : instruction_duo_n),
-    operand_to_bin (reg_o (instr_operande1_d_n i)) = Some l -> reg (bit_n l) = i.(instr_operande1_d_n).
-Proof.
-  intros.
-  unfold operand_to_bin in H.
-  destruct (instr_operande1_d_n i).
-  apply n_bit_n in H.
-  rewrite H.
-  reflexivity.
-Qed.
-Lemma operand_to_bin_double_hypothesis2_d_n : forall (l : list bool) (i : instruction_duo_n),
-    operand_to_bin_double (reg_o (instr_operande2_d_n i)) = Some l -> reg (bit_n l) = i.(instr_operande2_d_n).
-Proof.
-  intros.
-  unfold operand_to_bin in H.
-  destruct (instr_operande2_d_n i).
-  apply n_bit_n in H.
-  rewrite H.
-  reflexivity.
-Qed.
-
-
-
-(* -----------------------------------now for instr_operande_d_i ----------------------------------*)
-Lemma operand_to_bin_hypothesis1_d_i : forall (l : list bool) (i : instruction_duo_i),
-    operand_to_bin (reg_o (instr_operande1_d_i i)) = Some l -> reg (bit_n l) = i.(instr_operande1_d_i).
-Proof.
-  intros.
-  unfold operand_to_bin in H.
-  destruct (instr_operande1_d_i i).
-  apply n_bit_n in H.
-  rewrite H.
-  reflexivity.
-Qed.
-Lemma operand_to_bin_double_hypothesis2_d_i : forall (l : list bool) (i : instruction_duo_i),
-    operand_to_bin_double (imm_o (instr_operande2_d_i i)) = Some l -> imm (bit_n l) = i.(instr_operande2_d_i).
-Proof.
-  intros.
-  unfold operand_to_bin in H.
-  destruct (instr_operande2_d_i i).
+  destruct i.
   apply n_bit_n in H.
   rewrite H.
   reflexivity.
