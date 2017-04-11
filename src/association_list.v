@@ -296,18 +296,30 @@ Theorem lookup_encdec : forall (t : tag), exists n,
                           lookup t encdec = Some n.
 Proof.
   destruct t.
-  -destruct t.
-   +simpl. exists 0. reflexivity.
-   +simpl. exists 1. reflexivity.
-  -destruct t.
-   +simpl. exists 2. reflexivity.
-   +simpl. exists 3. reflexivity.
-  -destruct t.
-   +simpl. exists 6. reflexivity.
-   +simpl. exists 7. reflexivity.
-  -destruct t.
-   +simpl. exists 4. reflexivity.
-   +simpl. exists 5. reflexivity.
+  -destruct t;
+     simpl; eexists; auto.
+  -destruct t;
+     simpl; eexists; auto.
+  -destruct t;
+     simpl; eexists; auto.
+  -destruct t;
+     simpl; eexists; auto.
+  -destruct t;
+     simpl; eexists; auto.
+  -destruct t;
+     simpl; eexists; auto.
+  -destruct t;
+     simpl; eexists; auto.
+  -destruct t;
+     simpl; eexists; auto.
+  -destruct t;
+     simpl; eexists; auto.
+  -destruct t;
+     simpl; eexists; auto.
+  -destruct t;
+     simpl; eexists; auto.
+  -destruct t;
+     simpl; eexists; auto.   
 Qed.
 
 
@@ -316,23 +328,263 @@ Require Import Bool.
 Print tag.
 
 Definition forall_tag_ter_n (p : tag_ter_normal -> bool): bool :=
-  andb (p ADD) (p AND).
+(p ADD) &&
+(p SUB) &&
+(p MUL) &&
+(p DIV) &&
+(p ADDU) &&
+(p SUBU) &&
+(p MULU) &&
+(p DIVU) &&
+(p CMP) &&
+(p CMPU) &&
+(p FADD) &&
+(p FSUB) &&
+(p FMUL) &&
+(p FDIV) &&
+(p FREM) &&
+(p FSQRT) &&
+(p FINT) &&
+(p FCMP) &&
+(p FEQL) &&
+(p FUN) &&
+(p FCMPE) &&
+(p FEQLE) &&
+(p FUNE) &&
+(p AND) &&
+(p OR) &&
+(p XOR) &&
+(p ANDN) &&
+(p ORN) &&
+(p NAND) &&
+(p NOR) &&
+(p NXOR) &&
+(p SL) &&
+(p SLU) &&
+(p SR) &&
+(p SRU) &&
+(p MOR) &&
+(p MXOR) &&
+(p BDIF) &&
+(p WDIF) &&
+(p TDIF) &&
+(p ODIF) &&
+(p SADD) &&
+(p MUX) &&
+(p ADDU2) &&
+(p ADDU4) &&
+(p ADDU8) &&
+(p ADDU16) &&
+(p LDB) &&
+(p LDW) &&
+(p LDT) &&
+(p LDO) &&
+(p STB) &&
+(p STW) &&
+(p STT) &&
+(p STO) &&
+(p LDBU) &&
+(p LDWU) &&
+(p LDTU) &&
+(p LDOU) &&
+(p STBU) &&
+(p STWU) &&
+(p STTU) &&
+(p STOU) &&
+(p LDTH) &&
+(p STHT) &&
+(p LDSF) &&
+(p STSF) &&
+(p GO) &&
+(p CSZ) &&
+(p CSNZ) &&
+(p CSN) &&
+(p CSNN) &&
+(p CSP) &&
+(p CSNP) &&
+(p CSOD) &&
+(p CSEV) &&
+(p ZSZ) &&
+(p ZSNZ) &&
+(p ZSN) &&
+(p ZSNN) &&
+(p ZSP) &&
+(p ZSNP) &&
+(p ZSOD) &&
+(p ZSEV) &&
+(p CSWAP) &&
+(p LDUNC) &&
+(p STUNC) &&
+(p PREST) &&
+(p LDTVS).
+
 
 Definition forall_tag_ter_i (p : tag_ter_immediate -> bool): bool :=
-  andb (p ADD_I) (p AND_I).
+(p ADD_I) && 
+(p SUB_I) && 
+(p MUL_I) && 
+(p DIV_I) && 
+(p ADDU_I) && 
+(p SUBU_I) && 
+(p MULU_I) && 
+(p DIVU_I) && 
+(p CMP_I) && 
+(p CMPU_I) && 
+(p AND_I) && 
+(p OR_I) && 
+(p XOR_I) && 
+(p ANDN_I) && 
+(p ORN_I) && 
+(p NAND_I) && 
+(p NOR_I) && 
+(p NXOR_I) && 
+(p SL_I) && 
+(p SLU_I) && 
+(p SR_I) && 
+(p SRU_I) && 
+(p BDIF_I) && 
+(p WDIF_I) && 
+(p TDIF_I) && 
+(p ODIF_I) && 
+(p LDA_I) && 
+(p GETA_I) && 
+(p ADDU2_I) && 
+(p ADDU4_I) && 
+(p ADDU8_I) && 
+(p ADDU16_I) && 
+(p LDB_I) && 
+(p LDW_I) && 
+(p LDT_I) && 
+(p LDO_I) && 
+(p STB_I) && 
+(p STW_I) && 
+(p STT_I) && 
+(p STO_I) && 
+(p LDBU_I) && 
+(p LDWU_I) && 
+(p LDTU_I) && 
+(p LDOU_I) && 
+(p STBU_I) && 
+(p STWU_I) && 
+(p STTU_I) && 
+(p STOU_I) && 
+(p LDTH_I) && 
+(p STHT_I) && 
+(p LDSF_I) && 
+(p STSF_I) && 
+(p GO_I) && 
+(p CSZ_I) && 
+(p CSNZ_I) && 
+(p CSN_I) && 
+(p CSNN_I) && 
+(p CSP_I) && 
+(p CSNP_I) && 
+(p CSOD_I) && 
+(p CSEV_I) && 
+(p ZSZ_I) && 
+(p ZSNZ_I) && 
+(p ZSN_I) && 
+(p ZSNN_I) && 
+(p ZSP_I) && 
+(p ZSNP_I) && 
+(p ZSOD_I) && 
+(p ZSEV_I) && 
+(p PUSHJ_I) && 
+(p PUSHGO_I) && 
+(p LDTVS_I).
 
-Definition forall_tag_duo_n (p : tag_duo_normal -> bool): bool :=
-  andb (p JUMP) (p JUMPC).
+Definition forall_tag_ter_i2 (p : tag_ter_immediate2 -> bool): bool :=
+  (p NEG) && (p NEGU).
+
+Definition forall_tag_ter_i3 (p : tag_ter_immediate3 -> bool): bool :=
+  (p PRELD) && (p PREGO) && (p SYNCID) && (p SYNCD) && (p STCO).
+
+Definition forall_tag_ter_i4 (p : tag_ter_immediate4 -> bool): bool :=
+  (p NEG_I) && (p NEGU_I).
+
+Definition forall_tag_ter_i5 (p : tag_ter_immediate5 -> bool): bool :=
+  (p TRIP) && (p TRAP) && (p SWYM).
+
+Definition forall_tag_ter_i6 (p : tag_ter_immediate6 -> bool): bool :=
+  (p STCO_I2) && (p STCO_I).
+
 
 Definition forall_tag_duo_i (p : tag_duo_immediate -> bool): bool :=
-  andb (p JUMP_I) (p JUMP_IC).
+(p FLOT_I) && 
+(p FLOTU_I) && 
+(p SFLOT_I) && 
+(p SFLOTU_I) && 
+(p ORH_I) && 
+(p ORMH_I) && 
+(p ORML_I) && 
+(p ORL_I) && 
+(p ANDNH_I) && 
+(p ANDNMH_I) && 
+(p ANDNML_I) && 
+(p ANDNL_I) && 
+(p SETH_i) && 
+(p SETMH_i) && 
+(p SETML_i) && 
+(p SETL_i) && 
+(p INCH_i) && 
+(p INCMH_i) && 
+(p INCML_i) && 
+(p INCL_i) && 
+(p BZ_i) && 
+(p BNZ_i) && 
+(p BN_i) && 
+(p BNN_i) && 
+(p BP_i) && 
+(p BNP_i) && 
+(p BOD_i) && 
+(p BEV_i) && 
+(p PBZ_i) && 
+(p PBNZ_i) && 
+(p PBN_i) && 
+(p PBNN_i) && 
+(p PBP_i) && 
+(p PBNP_i) && 
+(p PBOD_i) && 
+(p PBEV_i) && 
+(p GET_i).
+
+Definition forall_tag_duo_i2 (p : tag_duo_immediate2 -> bool): bool :=
+  (p PUT_I) && (p PUT_I2).
+
+Definition forall_tag_duo_i3 (p : tag_duo_immediate3 -> bool): bool :=
+  (p POP) && (p PUT_II).
+
+
+Definition forall_tag_duo_n (p : tag_duo_normal -> bool): bool :=
+(p FLOT) &&
+(p FLOTU) &&
+(p FIX) &&
+(p FIXU) &&
+(p SFLOT) &&
+(p SFLOTU).
+
+Definition forall_tag_uno (p : tag_uno -> bool): bool :=
+  (p JMP) &&          
+  (p SAVE) &&
+  (p UNSAVE) &&
+  (p RESUME) &&
+  (p SYNC).
+
 
 
 Definition forall_tag (p : tag -> bool): bool :=
-  andb (andb (forall_tag_ter_n (fun (x : tag_ter_normal) => p (tag_t_n x)))
-             (forall_tag_ter_i (fun (x : tag_ter_immediate) => p (tag_t_i x))))
-       (andb (forall_tag_duo_n (fun (x : tag_duo_normal) => p (tag_d_n x)))
-             (forall_tag_duo_i (fun (x : tag_duo_immediate) => p (tag_d_i x)))).
+  (forall_tag_ter_n (fun x => p (tag_t_n x))) &&
+                                              (forall_tag_ter_i (fun x => p (tag_t_i x))) &&
+                                              (forall_tag_ter_i2 (fun x => p (tag_t_i2 x))) &&
+                                              (forall_tag_ter_i3 (fun x => p (tag_t_i3 x))) &&
+                                              (forall_tag_ter_i4 (fun x => p (tag_t_i4 x))) &&
+                                              (forall_tag_ter_i5 (fun x => p (tag_t_i5 x))) &&
+                                              (forall_tag_ter_i6 (fun x => p (tag_t_i6 x))) &&
+                                              (forall_tag_duo_n (fun x => p (tag_d_n x))) &&
+                                              (forall_tag_duo_i (fun x => p (tag_d_i x))) &&
+                                              (forall_tag_duo_i2 (fun x => p (tag_d_i2 x))) &&
+                                              (forall_tag_duo_i3 (fun x => p (tag_d_i3 x))) &&
+                                              (forall_tag_uno (fun x => p (tag_u x))).
 
 
 Print reflect.
@@ -349,60 +601,23 @@ Qed.
 
 
 Lemma helpBefore1 : forall (f : tag -> bool), forall_tag f = true -> (forall (t: tag), f t = true).
-Proof.  
+Proof.
   intros f.
   unfold forall_tag.
   intros H.
-  Search (_ && _ = true).
-  apply andb_prop in H.
-  unfold forall_tag_ter_n in H.
-  unfold forall_tag_ter_i in H.
-  unfold forall_tag_duo_n in H.
-  unfold forall_tag_duo_i in H.
-  destruct H.  
-  apply andb_prop in H.
-  destruct H.
-  apply andb_prop in H0.
-  destruct H0.  
-  apply andb_prop in H.
-  destruct H.
-  apply andb_prop in H1.
-  destruct H1.
-  apply andb_prop in H0.
-  destruct H0.
-  apply andb_prop in H2.
-  destruct H2.
-  destruct t.
-  {
-    -destruct t.
-     +rewrite H.
-      reflexivity.
-     +rewrite H3.
-      reflexivity.         
-  }  
-  {
-     -destruct t.
-      +rewrite H1.
-       reflexivity.
-      +rewrite H4.
-       reflexivity.
-  }
-  {
-    -destruct t.
-     +rewrite H2.
-      reflexivity.
-     +rewrite H6.
-      reflexivity.
-  }
-  {
-      {
-    -destruct t.
-     +rewrite H0.
-      reflexivity.
-     +rewrite H5.
-      reflexivity.
-  }
-  }
+  repeat (apply andb_prop in H; destruct H).
+  repeat (apply andb_prop in H10; destruct H10).
+  repeat (apply andb_prop in H9; destruct H9).
+  repeat (apply andb_prop in H8; destruct H8).
+  repeat (apply andb_prop in H7; destruct H7).
+  repeat (apply andb_prop in H6; destruct H6).
+  repeat (apply andb_prop in H5; destruct H5).
+  repeat (apply andb_prop in H4; destruct H4).
+  repeat (apply andb_prop in H3; destruct H3).
+  repeat (apply andb_prop in H2; destruct H2).
+  repeat (apply andb_prop in H1; destruct H1).
+  repeat (apply andb_prop in H0; destruct H0).     
+  destruct t; destruct t; auto.
 Qed.
 
 Lemma helpBefore2 : forall (f : tag -> bool), (forall (t: tag), f t = true) -> forall_tag f = true.
