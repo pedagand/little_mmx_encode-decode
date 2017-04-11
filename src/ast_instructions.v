@@ -1,5 +1,5 @@
 Require Import List.
-
+ 
 (* tag definition *)
 Inductive tag_ter_normal :=
 (* Integer arithmetic *)
@@ -408,13 +408,13 @@ Record instruction_tern_i3 :=
              instr_operande3_t_i3 : register }.
 
 Record instruction_tern_i4 :=
-  mk_instr_t_i4 { instr_opcode_t_i4 : tag_ter_immediate3; 
+  mk_instr_t_i4 { instr_opcode_t_i4 : tag_ter_immediate4; 
              instr_operande1_t_i4 : register ; 
              instr_operande2_t_i4 : imediate ; 
              instr_operande3_t_i4 : imediate }.
 
 Record instruction_tern_i5 :=
-  mk_instr_t_i5 { instr_opcode_t_i5 : tag_ter_immediate3; 
+  mk_instr_t_i5 { instr_opcode_t_i5 : tag_ter_immediate5; 
              instr_operande1_t_i5 : imediate ; 
              instr_operande2_t_i5 : imediate ; 
              instr_operande3_t_i5 : imediate }.
