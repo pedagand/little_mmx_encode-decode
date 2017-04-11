@@ -19,6 +19,7 @@ Definition operand_to_bin_double (o : operande) : option (list bool) :=
   | reg_o (reg k) => n_bit 16 k
   end.
 
+
 (* -----------------------------------now for instr_operande_t_n ----------------------------------*)
 Lemma operand_to_bin_hypothesis1_t_n : forall (l : list bool) (i : instruction_tern_n),
     operand_to_bin (reg_o (instr_operande1_t_n i)) = Some l -> reg (bit_n l) = i.(instr_operande1_t_n).
@@ -323,6 +324,46 @@ Definition encode_t_i (i : instruction_tern_i) : option binary_instruction :=
                        fun o1 => let! o2 := operand_to_bin (reg_o i.(instr_operande2_t_i)) in
                                  fun o2 => let! o3 := operand_to_bin (imm_o i.(instr_operande3_t_i)) in
                                            fun o3 => ret (code ++ o1 ++ o2 ++ o3).
+Definition encode_t_i2 (i : instruction_tern_i2) : option binary_instruction :=
+  let! k := lookup (tag_t_i2 (i.(instr_opcode_t_i2))) encdec in
+  fun k => let! code := n_bit 8 k in
+           fun code => let! o1 := operand_to_bin (reg_o i.(instr_operande1_t_i2)) in 
+                       fun o1 => let! o2 := operand_to_bin (imm_o i.(instr_operande2_t_i2)) in
+                                 fun o2 => let! o3 := operand_to_bin (reg_o i.(instr_operande3_t_i2)) in
+                                           fun o3 => ret (code ++ o1 ++ o2 ++ o3).
+
+Definition encode_t_i3 (i : instruction_tern_i3) : option binary_instruction :=
+  let! k := lookup (tag_t_i3 (i.(instr_opcode_t_i3))) encdec in
+  fun k => let! code := n_bit 8 k in
+           fun code => let! o1 := operand_to_bin (imm_o i.(instr_operande1_t_i3)) in 
+                       fun o1 => let! o2 := operand_to_bin (reg_o i.(instr_operande2_t_i3)) in
+                                 fun o2 => let! o3 := operand_to_bin (reg_o i.(instr_operande3_t_i3)) in
+                                           fun o3 => ret (code ++ o1 ++ o2 ++ o3).
+
+Definition encode_t_i4 (i : instruction_tern_i4) : option binary_instruction :=
+  let! k := lookup (tag_t_i4 (i.(instr_opcode_t_i4))) encdec in
+  fun k => let! code := n_bit 8 k in
+           fun code => let! o1 := operand_to_bin (reg_o i.(instr_operande1_t_i4)) in 
+                       fun o1 => let! o2 := operand_to_bin (imm_o i.(instr_operande2_t_i4)) in
+                                 fun o2 => let! o3 := operand_to_bin (imm_o i.(instr_operande3_t_i4)) in
+                                           fun o3 => ret (code ++ o1 ++ o2 ++ o3).
+
+Definition encode_t_i5 (i : instruction_tern_i5) : option binary_instruction :=
+  let! k := lookup (tag_t_i5 (i.(instr_opcode_t_i5))) encdec in
+  fun k => let! code := n_bit 8 k in
+           fun code => let! o1 := operand_to_bin (imm_o i.(instr_operande1_t_i5)) in 
+                       fun o1 => let! o2 := operand_to_bin (imm_o i.(instr_operande2_t_i5)) in
+                                 fun o2 => let! o3 := operand_to_bin (imm_o i.(instr_operande3_t_i5)) in
+                                           fun o3 => ret (code ++ o1 ++ o2 ++ o3).
+
+Definition encode_t_i6 (i : instruction_tern_i6) : option binary_instruction :=
+  let! k := lookup (tag_t_i6 (i.(instr_opcode_t_i6))) encdec in
+  fun k => let! code := n_bit 8 k in
+           fun code => let! o1 := operand_to_bin (imm_o i.(instr_operande1_t_i6)) in 
+                       fun o1 => let! o2 := operand_to_bin (reg_o i.(instr_operande2_t_i6)) in
+                                 fun o2 => let! o3 := operand_to_bin (imm_o i.(instr_operande3_t_i6)) in
+                                           fun o3 => ret (code ++ o1 ++ o2 ++ o3).
+
 
 Definition encode_d_n (i : instruction_duo_n) : option binary_instruction :=
   let! k := lookup (tag_d_n (i.(instr_opcode_d_n))) encdec in
@@ -338,7 +379,28 @@ Definition encode_d_i (i : instruction_duo_i) : option binary_instruction :=
                        fun o1 => let! o2 := operand_to_bin_double (imm_o i.(instr_operande2_d_i)) in
                                  fun o2 => ret (code ++ o1 ++ o2).
 
+Definition encode_d_i2 (i : instruction_duo_i2) : option binary_instruction :=
+  let! k := lookup (tag_d_i2 (i.(instr_opcode_d_i2))) encdec in
+  fun k => let! code := n_bit 8 k in
+           fun code => let! o1 := operand_to_bin (imm_o i.(instr_operande1_d_i2)) in 
+                       fun o1 => let! o2 := operand_to_bin_double (reg_o i.(instr_operande2_d_i2)) in
+                                 fun o2 => ret (code ++ o1 ++ o2).
 
+Definition encode_d_i3 (i : instruction_duo_i3) : option binary_instruction :=
+  let! k := lookup (tag_d_i3 (i.(instr_opcode_d_i3))) encdec in
+  fun k => let! code := n_bit 8 k in
+           fun code => let! o1 := operand_to_bin (imm_o i.(instr_operande1_d_i3)) in 
+                       fun o1 => let! o2 := operand_to_bin_double (imm_o i.(instr_operande2_d_i3)) in
+                                 fun o2 => ret (code ++ o1 ++ o2).
+Print operand_to_bin.
+
+Definition encode_u (i : instruction_uno) : option binary_instruction :=
+  let! k := lookup (tag_u (i.(instr_opcode_s))) encdec in
+  fun k => let! code := n_bit 8 k in
+           fun code => match (i.(instr_operande)) with
+                         | imm im => let! o := n_bit 24 im in
+                                     fun o => ret (code ++ o)
+                       end.
 
 (* now the general encode function which take a general instruction *)
 
@@ -346,8 +408,16 @@ Definition encode (i : instruction) : option binary_instruction :=
   match i with
   | instr_t_n t => encode_t_n t
   | instr_t_i t => encode_t_i t
+  | instr_t_i2 t => encode_t_i2 t
+  | instr_t_i3 t => encode_t_i3 t
+  | instr_t_i4 t => encode_t_i4 t
+  | instr_t_i5 t => encode_t_i5 t
+  | instr_t_i6 t => encode_t_i6 t
   | instr_d_n t => encode_d_n t
   | instr_d_i t => encode_d_i t
+  | instr_d_n2 t => encode_d_i2 t
+  | instr_d_n3 t => encode_d_i3 t
+  | instr_u t => encode_u t
   end.
   
 
