@@ -1913,8 +1913,7 @@ Proof.
      discriminate.
 
     (* case u *)
-    -destruct (get_first_n_bit l2 16) eqn:Hl3.
-     assert (length l0 = 24).
+    -assert (length l0 = 24).
      { Search (get_first_n_bit). apply get_first_n_bit_size_out in Hl1.
        -destruct Hl1. rewrite H in H3. simpl in H3. auto.
        -rewrite H. repeat apply le_n_S. Search (0 <= _). apply Peano.le_0_n. }
@@ -1924,7 +1923,6 @@ Proof.
      rewrite H3 in H0.     
      rewrite  ret_rewrite in H0.
      unfold encode.
-     destruct l4.
      (* inversion H0. *)
      unfold encode_u.
      apply commut_equal in H1.
@@ -1972,54 +1970,24 @@ Proof.
                  instr_operande := imm (bit_n l0); |} = imm (bit_n l0)) by reflexivity.
      rewrite H12.
      Search operand_to_bin.
-     assert (operand_to_bin (imm_o (imm (bit_n l0))) = Some l0).
-     {
-       unfold operand_to_bin.
-       apply bit_n_bit.     
-       apply get_first_n_bit_size_out in Hl2.
-       -destruct Hl2.
-        auto.
-       -auto.
-     }   
+     assert (n_bit 24 (bit_n l0) = Some l0).
+     { apply bit_n_bit. rewrite H8. reflexivity. }
      rewrite H13.
-     assert (forall (f : list bool -> option binary_instruction), bind (Some l1) f = f l1) by reflexivity.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l0) f = f l0) by reflexivity.
      rewrite H14.
-     assert (instr_operande2_d_n
-               {|
-                 instr_opcode_d_n := t;
-                 instr_operande1_d_n := reg (bit_n l1);
-                 instr_operande2_d_n := reg (bit_n l3) |} = reg (bit_n l3)) by reflexivity.
-     rewrite H15.   
-     assert (operand_to_bin_double (reg_o (reg (bit_n l3))) = Some l3).
+     assert (bi = (l ++ l0)). 
      {
-       unfold operand_to_bin.
-       apply bit_n_bit.
-       apply get_first_n_bit_size_out in Hl3.
-       -destruct Hl3.
-        auto.
-       -rewrite H8. auto.
-     }   
-     rewrite H16.
-     assert (forall (f : list bool -> option binary_instruction), bind (Some l3) f = f l3) by reflexivity.
-     rewrite H17.
-     assert (bi = (l ++ l1 ++ l3)). 
-     {
+       Search get_first_n_bit.
        apply get_first_n_bit_res_8 in Hl1.
-       apply get_first_n_bit_res_8 in Hl2.
-       apply get_first_n_bit_res_16 in Hl3.
        rewrite Hl1.
-       rewrite Hl2.
-       rewrite Hl3.
-       rewrite app_nil_r.
        reflexivity.
-     }
-     rewrite H18.
+     }     
+     rewrite H15.
      rewrite ret_rewrite.
      reflexivity.
-     discriminate.
      
-    
   }
+  
   discriminate.
 Qed.
    
