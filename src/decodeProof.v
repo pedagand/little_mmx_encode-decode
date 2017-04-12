@@ -608,6 +608,807 @@ Proof.
      reflexivity.
      discriminate.
 
+     (* case instruction t_i2 *)
+    -destruct (get_first_n_bit l2 8) eqn:Hl3.
+     destruct (get_first_n_bit l4 8) eqn:Hl4.
+     destruct l6.
+     rewrite  ret_rewrite in H0.
+     unfold encode.
+     (* inversion H0. *)
+     unfold encode_t_i2.
+     apply commut_equal in H1.
+     apply lookdown_encdec in H1.
+     inversion H0.
+     unfold encode_t_i.
+     assert (instr_opcode_t_i2
+               {|
+                 instr_opcode_t_i2 := t;
+                 instr_operande1_t_i2 := reg (bit_n l1);
+                 instr_operande2_t_i2 := imm (bit_n l3);
+                 instr_operande3_t_i2 := reg (bit_n l5) |} = t) by reflexivity.
+     rewrite H2.
+     rewrite H1.
+     assert (forall (f : nat -> option binary_instruction), bind (Some (bit_n l)) f = f (bit_n l)) by reflexivity.
+     rewrite H4.
+     (* these are premliminare assertion to refactor a little bit the code *)
+     assert (8 <= length bi) by (rewrite H; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l0 = 24).
+     {
+       apply get_first_n_bit_size_out in Hl1.
+       -destruct Hl1.
+        rewrite H in H7.
+        simpl in H7.
+        auto.
+       -auto.
+     }
+     assert (8 <= length l0) by (rewrite H6; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l2 = 16).
+     {
+       apply get_first_n_bit_size_out in Hl1.
+       -destruct Hl1.
+        rewrite H in H9.
+        simpl in H9.
+        apply get_first_n_bit_size_out in Hl2.
+        +destruct Hl2.
+         rewrite H11.
+         rewrite H6.
+         reflexivity.
+        +auto.
+       -auto.
+     }
+     assert (8 <= length l2) by (rewrite H8; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l4 = 8).
+     {
+       apply get_first_n_bit_size_out in Hl3.
+       destruct Hl3.
+       rewrite H11.
+       rewrite H8.
+       reflexivity.
+       exact H9.
+     }
+     assert (8 <= length l4) by (rewrite H10; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (n_bit 8 (bit_n l) = Some l).
+     {
+       Check get_first_n_bit_size_out.
+       apply get_first_n_bit_size_out in Hl1.
+       apply bit_n_bit.
+       -destruct Hl1.
+        auto.
+       -rewrite H.
+        repeat apply le_n_S.
+        Search (0 <= _).
+        apply Peano.le_0_n.
+     }
+     rewrite H12.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l) f = f l) by reflexivity.
+     rewrite H13.
+     assert (instr_operande1_t_i2
+               {|
+                 instr_opcode_t_i2 := t;
+                 instr_operande1_t_i2 := reg (bit_n l1);
+                 instr_operande2_t_i2 := imm (bit_n l3);
+                 instr_operande3_t_i2 := reg (bit_n l5) |} = reg (bit_n l1)) by reflexivity.
+     rewrite H14.
+     Search operand_to_bin.
+     assert (operand_to_bin (reg_o (reg (bit_n l1))) = Some l1).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.     
+       apply get_first_n_bit_size_out in Hl2.
+       -destruct Hl2.
+        auto.
+       -auto.
+     }   
+     rewrite H15.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l1) f = f l1) by reflexivity.
+     rewrite H16.
+     assert (instr_operande2_t_i2
+               {|
+                 instr_opcode_t_i2 := t;
+                 instr_operande1_t_i2 := reg (bit_n l1);
+                 instr_operande2_t_i2 := imm (bit_n l3);
+                 instr_operande3_t_i2 := reg (bit_n l5) |} = imm (bit_n l3)) by reflexivity.
+     rewrite H17.   
+     assert (operand_to_bin (imm_o (imm (bit_n l3))) = Some l3).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.
+       apply get_first_n_bit_size_out in Hl3.
+       -destruct Hl3.
+        auto.
+       -auto.
+     }   
+     rewrite H18.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l3) f = f l3) by reflexivity.
+     rewrite H19.
+     assert (instr_operande3_t_i2
+               {|
+                 instr_opcode_t_i2 := t;
+                 instr_operande1_t_i2 := reg (bit_n l1);
+                 instr_operande2_t_i2 := imm (bit_n l3);
+                 instr_operande3_t_i2 := reg (bit_n l5) |} = reg (bit_n l5)) by reflexivity.
+     rewrite H20.
+     assert (operand_to_bin (reg_o (reg (bit_n l5))) = Some l5).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.
+       apply get_first_n_bit_size_out in Hl4.
+       destruct Hl4.
+       auto.
+       auto.
+     }   
+     rewrite H21.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l5) f = f l5) by reflexivity.
+     rewrite H22.
+     assert (bi = (l ++ l1 ++ l3 ++ l5 ++ [])). 
+     {
+       apply get_first_n_bit_res_8 in Hl1.
+       apply get_first_n_bit_res_8 in Hl2.
+       apply get_first_n_bit_res_8 in Hl3.
+       apply get_first_n_bit_res_8 in Hl4.
+       rewrite Hl1.
+       rewrite Hl2.
+       rewrite Hl3.
+       rewrite Hl4.
+       reflexivity.
+     }
+     (* assert (length l6 = 0). *)
+     (* { *)
+     (*   apply get_first_n_bit_size_out in Hl4. *)
+     (*   -destruct Hl4. *)
+     (*    rewrite H25. rewrite H10. reflexivity. *)
+     (*   -auto.            *)
+     (* } *)
+     rewrite H23.
+     rewrite ret_rewrite.
+     Search (_ ++ []).
+     rewrite app_nil_r.
+     reflexivity.
+     discriminate.
+
+
+     
+     (* case instruction t_i3 *)
+    -destruct (get_first_n_bit l2 8) eqn:Hl3.
+     destruct (get_first_n_bit l4 8) eqn:Hl4.
+     destruct l6.
+     rewrite  ret_rewrite in H0.
+     unfold encode.
+     (* inversion H0. *)
+     unfold encode_t_i2.
+     apply commut_equal in H1.
+     apply lookdown_encdec in H1.
+     inversion H0.
+     unfold encode_t_i3.
+     assert (instr_opcode_t_i3
+               {|
+                 instr_opcode_t_i3 := t;
+                 instr_operande1_t_i3 := imm (bit_n l1);
+                 instr_operande2_t_i3 := reg (bit_n l3);
+                 instr_operande3_t_i3 := reg (bit_n l5) |} = t) by reflexivity.
+     rewrite H2.
+     rewrite H1.
+     assert (forall (f : nat -> option binary_instruction), bind (Some (bit_n l)) f = f (bit_n l)) by reflexivity.
+     rewrite H4.
+     (* these are premliminare assertion to refactor a little bit the code *)
+     assert (8 <= length bi) by (rewrite H; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l0 = 24).
+     {
+       apply get_first_n_bit_size_out in Hl1.
+       -destruct Hl1.
+        rewrite H in H7.
+        simpl in H7.
+        auto.
+       -auto.
+     }
+     assert (8 <= length l0) by (rewrite H6; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l2 = 16).
+     {
+       apply get_first_n_bit_size_out in Hl1.
+       -destruct Hl1.
+        rewrite H in H9.
+        simpl in H9.
+        apply get_first_n_bit_size_out in Hl2.
+        +destruct Hl2.
+         rewrite H11.
+         rewrite H6.
+         reflexivity.
+        +auto.
+       -auto.
+     }
+     assert (8 <= length l2) by (rewrite H8; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l4 = 8).
+     {
+       apply get_first_n_bit_size_out in Hl3.
+       destruct Hl3.
+       rewrite H11.
+       rewrite H8.
+       reflexivity.
+       exact H9.
+     }
+     assert (8 <= length l4) by (rewrite H10; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (n_bit 8 (bit_n l) = Some l).
+     {
+       Check get_first_n_bit_size_out.
+       apply get_first_n_bit_size_out in Hl1.
+       apply bit_n_bit.
+       -destruct Hl1.
+        auto.
+       -rewrite H.
+        repeat apply le_n_S.
+        Search (0 <= _).
+        apply Peano.le_0_n.
+     }
+     rewrite H12.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l) f = f l) by reflexivity.
+     rewrite H13.
+     assert (instr_operande1_t_i3
+               {|
+                 instr_opcode_t_i3 := t;
+                 instr_operande1_t_i3 := imm (bit_n l1);
+                 instr_operande2_t_i3 := reg (bit_n l3);
+                 instr_operande3_t_i3 := reg (bit_n l5) |} = imm (bit_n l1)) by reflexivity.
+     rewrite H14.
+     Search operand_to_bin.
+     assert (operand_to_bin (imm_o (imm (bit_n l1))) = Some l1).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.     
+       apply get_first_n_bit_size_out in Hl2.
+       -destruct Hl2.
+        auto.
+       -auto.
+     }   
+     rewrite H15.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l1) f = f l1) by reflexivity.
+     rewrite H16.
+     assert (instr_operande2_t_i3
+               {|
+                 instr_opcode_t_i3 := t;
+                 instr_operande1_t_i3 := imm (bit_n l1);
+                 instr_operande2_t_i3 := reg (bit_n l3);
+                 instr_operande3_t_i3 := reg (bit_n l5) |} = reg (bit_n l3)) by reflexivity.
+     rewrite H17.   
+     assert (operand_to_bin (reg_o (reg (bit_n l3))) = Some l3).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.
+       apply get_first_n_bit_size_out in Hl3.
+       -destruct Hl3.
+        auto.
+       -auto.
+     }   
+     rewrite H18.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l3) f = f l3) by reflexivity.
+     rewrite H19.
+     assert (instr_operande3_t_i3
+               {|
+                 instr_opcode_t_i3 := t;
+                 instr_operande1_t_i3 := imm (bit_n l1);
+                 instr_operande2_t_i3 := reg (bit_n l3);
+                 instr_operande3_t_i3 := reg (bit_n l5) |} = reg (bit_n l5)) by reflexivity.
+     rewrite H20.
+     assert (operand_to_bin (reg_o (reg (bit_n l5))) = Some l5).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.
+       apply get_first_n_bit_size_out in Hl4.
+       destruct Hl4.
+       auto.
+       auto.
+     }   
+     rewrite H21.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l5) f = f l5) by reflexivity.
+     rewrite H22.
+     assert (bi = (l ++ l1 ++ l3 ++ l5 ++ [])). 
+     {
+       apply get_first_n_bit_res_8 in Hl1.
+       apply get_first_n_bit_res_8 in Hl2.
+       apply get_first_n_bit_res_8 in Hl3.
+       apply get_first_n_bit_res_8 in Hl4.
+       rewrite Hl1.
+       rewrite Hl2.
+       rewrite Hl3.
+       rewrite Hl4.
+       reflexivity.
+     }
+     (* assert (length l6 = 0). *)
+     (* { *)
+     (*   apply get_first_n_bit_size_out in Hl4. *)
+     (*   -destruct Hl4. *)
+     (*    rewrite H25. rewrite H10. reflexivity. *)
+     (*   -auto.            *)
+     (* } *)
+     rewrite H23.
+     rewrite ret_rewrite.
+     Search (_ ++ []).
+     rewrite app_nil_r.
+     reflexivity.
+     discriminate.
+
+
+     
+     (* case instruction t_i4 *)
+    -destruct (get_first_n_bit l2 8) eqn:Hl3.
+     destruct (get_first_n_bit l4 8) eqn:Hl4.
+     destruct l6.
+     rewrite  ret_rewrite in H0.
+     unfold encode.
+     (* inversion H0. *)
+     unfold encode_t_i2.
+     apply commut_equal in H1.
+     apply lookdown_encdec in H1.
+     inversion H0.
+     unfold encode_t_i4.
+     assert (instr_opcode_t_i4
+               {|
+                 instr_opcode_t_i4 := t;
+                 instr_operande1_t_i4 := reg (bit_n l1);
+                 instr_operande2_t_i4 := imm (bit_n l3);
+                 instr_operande3_t_i4 := imm (bit_n l5) |} = t) by reflexivity.
+     rewrite H2.
+     rewrite H1.
+     assert (forall (f : nat -> option binary_instruction), bind (Some (bit_n l)) f = f (bit_n l)) by reflexivity.
+     rewrite H4.
+     (* these are premliminare assertion to refactor a little bit the code *)
+     assert (8 <= length bi) by (rewrite H; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l0 = 24).
+     {
+       apply get_first_n_bit_size_out in Hl1.
+       -destruct Hl1.
+        rewrite H in H7.
+        simpl in H7.
+        auto.
+       -auto.
+     }
+     assert (8 <= length l0) by (rewrite H6; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l2 = 16).
+     {
+       apply get_first_n_bit_size_out in Hl1.
+       -destruct Hl1.
+        rewrite H in H9.
+        simpl in H9.
+        apply get_first_n_bit_size_out in Hl2.
+        +destruct Hl2.
+         rewrite H11.
+         rewrite H6.
+         reflexivity.
+        +auto.
+       -auto.
+     }
+     assert (8 <= length l2) by (rewrite H8; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l4 = 8).
+     {
+       apply get_first_n_bit_size_out in Hl3.
+       destruct Hl3.
+       rewrite H11.
+       rewrite H8.
+       reflexivity.
+       exact H9.
+     }
+     assert (8 <= length l4) by (rewrite H10; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (n_bit 8 (bit_n l) = Some l).
+     {
+       Check get_first_n_bit_size_out.
+       apply get_first_n_bit_size_out in Hl1.
+       apply bit_n_bit.
+       -destruct Hl1.
+        auto.
+       -rewrite H.
+        repeat apply le_n_S.
+        Search (0 <= _).
+        apply Peano.le_0_n.
+     }
+     rewrite H12.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l) f = f l) by reflexivity.
+     rewrite H13.
+     assert (instr_operande1_t_i4
+               {|
+                 instr_opcode_t_i4 := t;
+                 instr_operande1_t_i4 := reg (bit_n l1);
+                 instr_operande2_t_i4 := imm (bit_n l3);
+                 instr_operande3_t_i4 := imm (bit_n l5) |} = reg (bit_n l1)) by reflexivity.
+     rewrite H14.
+     Search operand_to_bin.
+     assert (operand_to_bin (reg_o (reg (bit_n l1))) = Some l1).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.     
+       apply get_first_n_bit_size_out in Hl2.
+       -destruct Hl2.
+        auto.
+       -auto.
+     }   
+     rewrite H15.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l1) f = f l1) by reflexivity.
+     rewrite H16.
+     assert (instr_operande2_t_i4
+               {|
+                 instr_opcode_t_i4 := t;
+                 instr_operande1_t_i4 := reg (bit_n l1);
+                 instr_operande2_t_i4 := imm (bit_n l3);
+                 instr_operande3_t_i4 := imm (bit_n l5) |} = imm (bit_n l3)) by reflexivity.
+     rewrite H17.   
+     assert (operand_to_bin (imm_o (imm (bit_n l3))) = Some l3).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.
+       apply get_first_n_bit_size_out in Hl3.
+       -destruct Hl3.
+        auto.
+       -auto.
+     }   
+     rewrite H18.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l3) f = f l3) by reflexivity.
+     rewrite H19.
+     assert (instr_operande3_t_i4
+               {|
+                 instr_opcode_t_i4 := t;
+                 instr_operande1_t_i4 := reg (bit_n l1);
+                 instr_operande2_t_i4 := imm (bit_n l3);
+                 instr_operande3_t_i4 := imm (bit_n l5) |} = imm (bit_n l5)) by reflexivity.
+     rewrite H20.
+     assert (operand_to_bin (imm_o (imm (bit_n l5))) = Some l5).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.
+       apply get_first_n_bit_size_out in Hl4.
+       destruct Hl4.
+       auto.
+       auto.
+     }   
+     rewrite H21.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l5) f = f l5) by reflexivity.
+     rewrite H22.
+     assert (bi = (l ++ l1 ++ l3 ++ l5 ++ [])). 
+     {
+       apply get_first_n_bit_res_8 in Hl1.
+       apply get_first_n_bit_res_8 in Hl2.
+       apply get_first_n_bit_res_8 in Hl3.
+       apply get_first_n_bit_res_8 in Hl4.
+       rewrite Hl1.
+       rewrite Hl2.
+       rewrite Hl3.
+       rewrite Hl4.
+       reflexivity.
+     }
+     (* assert (length l6 = 0). *)
+     (* { *)
+     (*   apply get_first_n_bit_size_out in Hl4. *)
+     (*   -destruct Hl4. *)
+     (*    rewrite H25. rewrite H10. reflexivity. *)
+     (*   -auto.            *)
+     (* } *)
+     rewrite H23.
+     rewrite ret_rewrite.
+     Search (_ ++ []).
+     rewrite app_nil_r.
+     reflexivity.
+     discriminate.
+
+
+
+    (* case instruction t_i5 *)
+    -destruct (get_first_n_bit l2 8) eqn:Hl3.
+     destruct (get_first_n_bit l4 8) eqn:Hl4.
+     destruct l6.
+     rewrite  ret_rewrite in H0.
+     unfold encode.
+     (* inversion H0. *)
+     unfold encode_t_i2.
+     apply commut_equal in H1.
+     apply lookdown_encdec in H1.
+     inversion H0.
+     unfold encode_t_i5.
+     assert (instr_opcode_t_i5
+               {|
+                 instr_opcode_t_i5 := t;
+                 instr_operande1_t_i5 := imm (bit_n l1);
+                 instr_operande2_t_i5 := imm (bit_n l3);
+                 instr_operande3_t_i5 := imm (bit_n l5) |} = t) by reflexivity.
+     rewrite H2.
+     rewrite H1.
+     assert (forall (f : nat -> option binary_instruction), bind (Some (bit_n l)) f = f (bit_n l)) by reflexivity.
+     rewrite H4.
+     (* these are premliminare assertion to refactor a little bit the code *)
+     assert (8 <= length bi) by (rewrite H; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l0 = 24).
+     {
+       apply get_first_n_bit_size_out in Hl1.
+       -destruct Hl1.
+        rewrite H in H7.
+        simpl in H7.
+        auto.
+       -auto.
+     }
+     assert (8 <= length l0) by (rewrite H6; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l2 = 16).
+     {
+       apply get_first_n_bit_size_out in Hl1.
+       -destruct Hl1.
+        rewrite H in H9.
+        simpl in H9.
+        apply get_first_n_bit_size_out in Hl2.
+        +destruct Hl2.
+         rewrite H11.
+         rewrite H6.
+         reflexivity.
+        +auto.
+       -auto.
+     }
+     assert (8 <= length l2) by (rewrite H8; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l4 = 8).
+     {
+       apply get_first_n_bit_size_out in Hl3.
+       destruct Hl3.
+       rewrite H11.
+       rewrite H8.
+       reflexivity.
+       exact H9.
+     }
+     assert (8 <= length l4) by (rewrite H10; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (n_bit 8 (bit_n l) = Some l).
+     {
+       Check get_first_n_bit_size_out.
+       apply get_first_n_bit_size_out in Hl1.
+       apply bit_n_bit.
+       -destruct Hl1.
+        auto.
+       -rewrite H.
+        repeat apply le_n_S.
+        Search (0 <= _).
+        apply Peano.le_0_n.
+     }
+     rewrite H12.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l) f = f l) by reflexivity.
+     rewrite H13.
+     assert (instr_operande1_t_i5
+               {|
+                 instr_opcode_t_i5 := t;
+                 instr_operande1_t_i5 := imm (bit_n l1);
+                 instr_operande2_t_i5 := imm (bit_n l3);
+                 instr_operande3_t_i5 := imm (bit_n l5) |} = imm (bit_n l1)) by reflexivity.
+     rewrite H14.
+     Search operand_to_bin.
+     assert (operand_to_bin (imm_o (imm (bit_n l1))) = Some l1).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.     
+       apply get_first_n_bit_size_out in Hl2.
+       -destruct Hl2.
+        auto.
+       -auto.
+     }   
+     rewrite H15.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l1) f = f l1) by reflexivity.
+     rewrite H16.
+     assert (instr_operande2_t_i5
+               {|
+                 instr_opcode_t_i5 := t;
+                 instr_operande1_t_i5 := imm (bit_n l1);
+                 instr_operande2_t_i5 := imm (bit_n l3);
+                 instr_operande3_t_i5 := imm (bit_n l5) |} = imm (bit_n l3)) by reflexivity.
+     rewrite H17.   
+     assert (operand_to_bin (imm_o (imm (bit_n l3))) = Some l3).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.
+       apply get_first_n_bit_size_out in Hl3.
+       -destruct Hl3.
+        auto.
+       -auto.
+     }   
+     rewrite H18.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l3) f = f l3) by reflexivity.
+     rewrite H19.
+     assert (instr_operande3_t_i5
+               {|
+                 instr_opcode_t_i5 := t;
+                 instr_operande1_t_i5 := imm (bit_n l1);
+                 instr_operande2_t_i5 := imm (bit_n l3);
+                 instr_operande3_t_i5 := imm (bit_n l5) |} = imm (bit_n l5)) by reflexivity.
+     rewrite H20.
+     assert (operand_to_bin (imm_o (imm (bit_n l5))) = Some l5).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.
+       apply get_first_n_bit_size_out in Hl4.
+       destruct Hl4.
+       auto.
+       auto.
+     }   
+     rewrite H21.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l5) f = f l5) by reflexivity.
+     rewrite H22.
+     assert (bi = (l ++ l1 ++ l3 ++ l5 ++ [])). 
+     {
+       apply get_first_n_bit_res_8 in Hl1.
+       apply get_first_n_bit_res_8 in Hl2.
+       apply get_first_n_bit_res_8 in Hl3.
+       apply get_first_n_bit_res_8 in Hl4.
+       rewrite Hl1.
+       rewrite Hl2.
+       rewrite Hl3.
+       rewrite Hl4.
+       reflexivity.
+     }
+     (* assert (length l6 = 0). *)
+     (* { *)
+     (*   apply get_first_n_bit_size_out in Hl4. *)
+     (*   -destruct Hl4. *)
+     (*    rewrite H25. rewrite H10. reflexivity. *)
+     (*   -auto.            *)
+     (* } *)
+     rewrite H23.
+     rewrite ret_rewrite.
+     Search (_ ++ []).
+     rewrite app_nil_r.
+     reflexivity.
+     discriminate.
+
+
+     
+    (* case instruction t_i6 *)
+    -destruct (get_first_n_bit l2 8) eqn:Hl3.
+     destruct (get_first_n_bit l4 8) eqn:Hl4.
+     destruct l6.
+     rewrite  ret_rewrite in H0.
+     unfold encode.
+     (* inversion H0. *)
+     unfold encode_t_i2.
+     apply commut_equal in H1.
+     apply lookdown_encdec in H1.
+     inversion H0.
+     unfold encode_t_i6.
+     assert (instr_opcode_t_i6
+               {|
+                 instr_opcode_t_i6 := t;
+                 instr_operande1_t_i6 := imm (bit_n l1);
+                 instr_operande2_t_i6 := reg (bit_n l3);
+                 instr_operande3_t_i6 := imm (bit_n l5) |} = t) by reflexivity.
+     rewrite H2.
+     rewrite H1.
+     assert (forall (f : nat -> option binary_instruction), bind (Some (bit_n l)) f = f (bit_n l)) by reflexivity.
+     rewrite H4.
+     (* these are premliminare assertion to refactor a little bit the code *)
+     assert (8 <= length bi) by (rewrite H; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l0 = 24).
+     {
+       apply get_first_n_bit_size_out in Hl1.
+       -destruct Hl1.
+        rewrite H in H7.
+        simpl in H7.
+        auto.
+       -auto.
+     }
+     assert (8 <= length l0) by (rewrite H6; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l2 = 16).
+     {
+       apply get_first_n_bit_size_out in Hl1.
+       -destruct Hl1.
+        rewrite H in H9.
+        simpl in H9.
+        apply get_first_n_bit_size_out in Hl2.
+        +destruct Hl2.
+         rewrite H11.
+         rewrite H6.
+         reflexivity.
+        +auto.
+       -auto.
+     }
+     assert (8 <= length l2) by (rewrite H8; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l4 = 8).
+     {
+       apply get_first_n_bit_size_out in Hl3.
+       destruct Hl3.
+       rewrite H11.
+       rewrite H8.
+       reflexivity.
+       exact H9.
+     }
+     assert (8 <= length l4) by (rewrite H10; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (n_bit 8 (bit_n l) = Some l).
+     {
+       Check get_first_n_bit_size_out.
+       apply get_first_n_bit_size_out in Hl1.
+       apply bit_n_bit.
+       -destruct Hl1.
+        auto.
+       -rewrite H.
+        repeat apply le_n_S.
+        Search (0 <= _).
+        apply Peano.le_0_n.
+     }
+     rewrite H12.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l) f = f l) by reflexivity.
+     rewrite H13.
+     assert (instr_operande1_t_i6
+               {|
+                 instr_opcode_t_i6 := t;
+                 instr_operande1_t_i6 := imm (bit_n l1);
+                 instr_operande2_t_i6 := reg (bit_n l3);
+                 instr_operande3_t_i6 := imm (bit_n l5) |} = imm (bit_n l1)) by reflexivity.
+     rewrite H14.
+     Search operand_to_bin.
+     assert (operand_to_bin (imm_o (imm (bit_n l1))) = Some l1).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.     
+       apply get_first_n_bit_size_out in Hl2.
+       -destruct Hl2.
+        auto.
+       -auto.
+     }   
+     rewrite H15.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l1) f = f l1) by reflexivity.
+     rewrite H16.
+     assert (instr_operande2_t_i6
+               {|
+                 instr_opcode_t_i6 := t;
+                 instr_operande1_t_i6 := imm (bit_n l1);
+                 instr_operande2_t_i6 := reg (bit_n l3);
+                 instr_operande3_t_i6 := imm (bit_n l5) |} = reg (bit_n l3)) by reflexivity.
+     rewrite H17.   
+     assert (operand_to_bin (reg_o (reg (bit_n l3))) = Some l3).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.
+       apply get_first_n_bit_size_out in Hl3.
+       -destruct Hl3.
+        auto.
+       -auto.
+     }   
+     rewrite H18.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l3) f = f l3) by reflexivity.
+     rewrite H19.
+     assert (instr_operande3_t_i6
+               {|
+                 instr_opcode_t_i6 := t;
+                 instr_operande1_t_i6 := imm (bit_n l1);
+                 instr_operande2_t_i6 := reg (bit_n l3);
+                 instr_operande3_t_i6 := imm (bit_n l5) |} = imm (bit_n l5)) by reflexivity.
+     rewrite H20.
+     assert (operand_to_bin (imm_o (imm (bit_n l5))) = Some l5).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.
+       apply get_first_n_bit_size_out in Hl4.
+       destruct Hl4.
+       auto.
+       auto.
+     }   
+     rewrite H21.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l5) f = f l5) by reflexivity.
+     rewrite H22.
+     assert (bi = (l ++ l1 ++ l3 ++ l5 ++ [])). 
+     {
+       apply get_first_n_bit_res_8 in Hl1.
+       apply get_first_n_bit_res_8 in Hl2.
+       apply get_first_n_bit_res_8 in Hl3.
+       apply get_first_n_bit_res_8 in Hl4.
+       rewrite Hl1.
+       rewrite Hl2.
+       rewrite Hl3.
+       rewrite Hl4.
+       reflexivity.
+     }
+     (* assert (length l6 = 0). *)
+     (* { *)
+     (*   apply get_first_n_bit_size_out in Hl4. *)
+     (*   -destruct Hl4. *)
+     (*    rewrite H25. rewrite H10. reflexivity. *)
+     (*   -auto.            *)
+     (* } *)
+     rewrite H23.
+     rewrite ret_rewrite.
+     Search (_ ++ []).
+     rewrite app_nil_r.
+     reflexivity.
+     discriminate.
+
+     
+     
+     
      
     (* case d_i *)
     -destruct (get_first_n_bit l2 16) eqn:Hl3.
@@ -734,6 +1535,258 @@ Proof.
      reflexivity.
      discriminate.
 
+     
+    (* case d_i2 *)
+    -destruct (get_first_n_bit l2 16) eqn:Hl3.
+     rewrite  ret_rewrite in H0.
+     unfold encode.
+     destruct l4.
+     (* inversion H0. *)
+     unfold encode_t_n.
+     apply commut_equal in H1.
+     apply lookdown_encdec in H1.
+     inversion H0.
+     unfold encode_d_i2.
+     assert (instr_opcode_d_i2
+               {|
+                 instr_opcode_d_i2 := t;
+                 instr_operande1_d_i2 := imm (bit_n l1);
+                 instr_operande2_d_i2 := reg (bit_n l3) |} = t) by reflexivity.   
+     rewrite H2.
+     rewrite H1.
+     assert (forall (f : nat -> option binary_instruction), bind (Some (bit_n l)) f = f (bit_n l)) by reflexivity.
+     rewrite H4.
+     (* these are premliminare assertion to refactor a little bit the code *)
+     assert (8 <= length bi) by (rewrite H; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l0 = 24).
+     {
+       apply get_first_n_bit_size_out in Hl1.
+       -destruct Hl1.
+        rewrite H in H7.
+        simpl in H7.
+        auto.
+       -auto.
+     }
+     assert (8 <= length l0) by (rewrite H6; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l2 = 16).
+     {
+       apply get_first_n_bit_size_out in Hl1.
+       -destruct Hl1.
+        rewrite H in H9.
+        simpl in H9.
+        apply get_first_n_bit_size_out in Hl2.
+        +destruct Hl2.
+         rewrite H11.
+         rewrite H6.
+         reflexivity.
+        +auto.
+       -auto.
+     }
+     assert (8 <= length l2) by (rewrite H8; repeat apply le_n_S; apply Peano.le_0_n).
+     (* assert (length l4 = 0). *)
+     (* { *)
+     (*   apply get_first_n_bit_size_out in Hl3. *)
+     (*   destruct Hl3. *)
+     (*   rewrite H11. *)
+     (*   rewrite H8. *)
+     (*   reflexivity. *)
+     (*   rewrite H8. *)
+     (*   reflexivity. *)
+     (* } *)
+     assert (n_bit 8 (bit_n l) = Some l).
+     {
+       Check get_first_n_bit_size_out.
+       apply get_first_n_bit_size_out in Hl1.
+       apply bit_n_bit.
+       -destruct Hl1.
+        auto.
+       -rewrite H.
+        repeat apply le_n_S.
+        Search (0 <= _).
+        apply Peano.le_0_n.
+     }
+     rewrite H10.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l) f = f l) by reflexivity.
+     rewrite H11.
+     assert (instr_operande1_d_i2
+               {|
+                 instr_opcode_d_i2 := t;
+                 instr_operande1_d_i2 := imm (bit_n l1);
+                 instr_operande2_d_i2 := reg (bit_n l3) |} = imm (bit_n l1)) by reflexivity.
+     rewrite H12.
+     Search operand_to_bin.
+     assert (operand_to_bin (imm_o (imm (bit_n l1))) = Some l1).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.     
+       apply get_first_n_bit_size_out in Hl2.
+       -destruct Hl2.
+        auto.
+       -auto.
+     }   
+     rewrite H13.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l1) f = f l1) by reflexivity.
+     rewrite H14.
+     assert (instr_operande2_d_i2
+               {|
+                 instr_opcode_d_i2 := t;
+                 instr_operande1_d_i2 := imm (bit_n l1);
+                 instr_operande2_d_i2 := reg (bit_n l3) |} = reg (bit_n l3)) by reflexivity.
+     rewrite H15.   
+     assert (operand_to_bin_double (reg_o (reg (bit_n l3))) = Some l3).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.
+       apply get_first_n_bit_size_out in Hl3.
+       -destruct Hl3.
+        auto.
+       -rewrite H8. auto.
+     }   
+     rewrite H16.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l3) f = f l3) by reflexivity.
+     rewrite H17.
+     assert (bi = (l ++ l1 ++ l3)). 
+     {
+       apply get_first_n_bit_res_8 in Hl1.
+       apply get_first_n_bit_res_8 in Hl2.
+       apply get_first_n_bit_res_16 in Hl3.
+       rewrite Hl1.
+       rewrite Hl2.
+       rewrite Hl3.
+       rewrite app_nil_r.
+       reflexivity.
+     }
+     rewrite H18.
+     rewrite ret_rewrite.
+     reflexivity.
+     discriminate.
+
+     (* case d_i3 *)
+    -destruct (get_first_n_bit l2 16) eqn:Hl3.
+     rewrite  ret_rewrite in H0.
+     unfold encode.
+     destruct l4.
+     (* inversion H0. *)
+     unfold encode_t_n.
+     apply commut_equal in H1.
+     apply lookdown_encdec in H1.
+     inversion H0.
+     unfold encode_d_i3.
+     assert (instr_opcode_d_i3
+               {|
+                 instr_opcode_d_i3 := t;
+                 instr_operande1_d_i3 := imm (bit_n l1);
+                 instr_operande2_d_i3 := imm (bit_n l3) |} = t) by reflexivity.   
+     rewrite H2.
+     rewrite H1.
+     assert (forall (f : nat -> option binary_instruction), bind (Some (bit_n l)) f = f (bit_n l)) by reflexivity.
+     rewrite H4.
+     (* these are premliminare assertion to refactor a little bit the code *)
+     assert (8 <= length bi) by (rewrite H; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l0 = 24).
+     {
+       apply get_first_n_bit_size_out in Hl1.
+       -destruct Hl1.
+        rewrite H in H7.
+        simpl in H7.
+        auto.
+       -auto.
+     }
+     assert (8 <= length l0) by (rewrite H6; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l2 = 16).
+     {
+       apply get_first_n_bit_size_out in Hl1.
+       -destruct Hl1.
+        rewrite H in H9.
+        simpl in H9.
+        apply get_first_n_bit_size_out in Hl2.
+        +destruct Hl2.
+         rewrite H11.
+         rewrite H6.
+         reflexivity.
+        +auto.
+       -auto.
+     }
+     assert (8 <= length l2) by (rewrite H8; repeat apply le_n_S; apply Peano.le_0_n).
+     (* assert (length l4 = 0). *)
+     (* { *)
+     (*   apply get_first_n_bit_size_out in Hl3. *)
+     (*   destruct Hl3. *)
+     (*   rewrite H11. *)
+     (*   rewrite H8. *)
+     (*   reflexivity. *)
+     (*   rewrite H8. *)
+     (*   reflexivity. *)
+     (* } *)
+     assert (n_bit 8 (bit_n l) = Some l).
+     {
+       Check get_first_n_bit_size_out.
+       apply get_first_n_bit_size_out in Hl1.
+       apply bit_n_bit.
+       -destruct Hl1.
+        auto.
+       -rewrite H.
+        repeat apply le_n_S.
+        Search (0 <= _).
+        apply Peano.le_0_n.
+     }
+     rewrite H10.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l) f = f l) by reflexivity.
+     rewrite H11.
+     assert (instr_operande1_d_i3
+               {|
+                 instr_opcode_d_i3 := t;
+                 instr_operande1_d_i3 := imm (bit_n l1);
+                 instr_operande2_d_i3 := imm (bit_n l3) |} = imm (bit_n l1)) by reflexivity.
+     rewrite H12.
+     Search operand_to_bin.
+     assert (operand_to_bin (imm_o (imm (bit_n l1))) = Some l1).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.     
+       apply get_first_n_bit_size_out in Hl2.
+       -destruct Hl2.
+        auto.
+       -auto.
+     }   
+     rewrite H13.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l1) f = f l1) by reflexivity.
+     rewrite H14.
+     assert (instr_operande2_d_i3
+               {|
+                 instr_opcode_d_i3 := t;
+                 instr_operande1_d_i3 := imm (bit_n l1);
+                 instr_operande2_d_i3 := imm (bit_n l3) |} = imm (bit_n l3)) by reflexivity.
+     rewrite H15.   
+     assert (operand_to_bin_double (imm_o (imm (bit_n l3))) = Some l3).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.
+       apply get_first_n_bit_size_out in Hl3.
+       -destruct Hl3.
+        auto.
+       -rewrite H8. auto.
+     }   
+     rewrite H16.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l3) f = f l3) by reflexivity.
+     rewrite H17.
+     assert (bi = (l ++ l1 ++ l3)). 
+     {
+       apply get_first_n_bit_res_8 in Hl1.
+       apply get_first_n_bit_res_8 in Hl2.
+       apply get_first_n_bit_res_16 in Hl3.
+       rewrite Hl1.
+       rewrite Hl2.
+       rewrite Hl3.
+       rewrite app_nil_r.
+       reflexivity.
+     }
+     rewrite H18.
+     rewrite ret_rewrite.
+     reflexivity.
+     discriminate.
+
+          
     (* case d_n *)
     -destruct (get_first_n_bit l2 16) eqn:Hl3.
      rewrite  ret_rewrite in H0.
@@ -858,6 +1911,114 @@ Proof.
      rewrite ret_rewrite.
      reflexivity.
      discriminate.
+
+    (* case u *)
+    -destruct (get_first_n_bit l2 16) eqn:Hl3.
+     assert (length l0 = 24).
+     { Search (get_first_n_bit). apply get_first_n_bit_size_out in Hl1.
+       -destruct Hl1. rewrite H in H3. simpl in H3. auto.
+       -rewrite H. repeat apply le_n_S. Search (0 <= _). apply Peano.le_0_n. }
+     Search get_first_n_bit.
+     assert (get_first_n_bit l0 24 = (l0,[])).
+     { apply get_first_n_bit_size_nil_n in H2. auto. }
+     rewrite H3 in H0.     
+     rewrite  ret_rewrite in H0.
+     unfold encode.
+     destruct l4.
+     (* inversion H0. *)
+     unfold encode_u.
+     apply commut_equal in H1.
+     apply lookdown_encdec in H1.
+     inversion H0.
+     unfold encode_d_n.
+     assert (instr_opcode_s
+               {|
+                 instr_opcode_s := t;
+                 instr_operande := imm (bit_n l0); |} = t) by reflexivity.   
+     rewrite H4.
+     rewrite H1.
+     assert (forall (f : nat -> option binary_instruction), bind (Some (bit_n l)) f = f (bit_n l)) by reflexivity.
+     rewrite H6.
+     (* these are premliminare assertion to refactor a little bit the code *)
+     assert (8 <= length bi) by (rewrite H; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (length l0 = 24).
+     {
+       apply get_first_n_bit_size_out in Hl1.
+       -destruct Hl1.
+        rewrite H in H7.
+        simpl in H7.
+        auto.
+       -auto.
+     }
+     assert (8 <= length l0) by (rewrite H8; repeat apply le_n_S; apply Peano.le_0_n).
+     assert (n_bit 8 (bit_n l) = Some l).
+     {
+       Check get_first_n_bit_size_out.
+       apply get_first_n_bit_size_out in Hl1.
+       apply bit_n_bit.
+       -destruct Hl1.
+        auto.
+       -rewrite H.
+        repeat apply le_n_S.
+        Search (0 <= _).
+        apply Peano.le_0_n.
+     }
+     rewrite H10.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l) f = f l) by reflexivity.
+     rewrite H11.
+     assert (instr_operande
+               {|
+                 instr_opcode_s := t;
+                 instr_operande := imm (bit_n l0); |} = imm (bit_n l0)) by reflexivity.
+     rewrite H12.
+     Search operand_to_bin.
+     assert (operand_to_bin (imm_o (imm (bit_n l0))) = Some l0).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.     
+       apply get_first_n_bit_size_out in Hl2.
+       -destruct Hl2.
+        auto.
+       -auto.
+     }   
+     rewrite H13.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l1) f = f l1) by reflexivity.
+     rewrite H14.
+     assert (instr_operande2_d_n
+               {|
+                 instr_opcode_d_n := t;
+                 instr_operande1_d_n := reg (bit_n l1);
+                 instr_operande2_d_n := reg (bit_n l3) |} = reg (bit_n l3)) by reflexivity.
+     rewrite H15.   
+     assert (operand_to_bin_double (reg_o (reg (bit_n l3))) = Some l3).
+     {
+       unfold operand_to_bin.
+       apply bit_n_bit.
+       apply get_first_n_bit_size_out in Hl3.
+       -destruct Hl3.
+        auto.
+       -rewrite H8. auto.
+     }   
+     rewrite H16.
+     assert (forall (f : list bool -> option binary_instruction), bind (Some l3) f = f l3) by reflexivity.
+     rewrite H17.
+     assert (bi = (l ++ l1 ++ l3)). 
+     {
+       apply get_first_n_bit_res_8 in Hl1.
+       apply get_first_n_bit_res_8 in Hl2.
+       apply get_first_n_bit_res_16 in Hl3.
+       rewrite Hl1.
+       rewrite Hl2.
+       rewrite Hl3.
+       rewrite app_nil_r.
+       reflexivity.
+     }
+     rewrite H18.
+     rewrite ret_rewrite.
+     reflexivity.
+     discriminate.
+     
+    
   }
   discriminate.
 Qed.
