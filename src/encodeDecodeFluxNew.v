@@ -494,7 +494,7 @@ Qed.
 
 Lemma div_sub : forall (n m k : nat), n <> 0 -> n / m = S k -> (n - m) / m = k.
 Proof.
-Admitted.
+  Admitted.
   
     
    
