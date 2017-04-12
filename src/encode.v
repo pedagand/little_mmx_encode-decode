@@ -362,117 +362,120 @@ Definition decode (bi : binary_instruction) : option instruction :=
   if length bi =? 32
   then
   match get_first_n_bit bi 8 with
-  | (li,next) => let! t := lookdown (bit_n li) encdec in
-                 fun t => match get_first_n_bit next 8 with
-                          | (op1,next) =>
-                            match t with
-                            | tag_t_n tn => match get_first_n_bit next 8 with
-                                            | (op2,next) => match get_first_n_bit next 8 with
-                                                            | (op3,[]) => 
-                                                              ret (instr_t_n (mk_instr_t_n tn
-                                                                                           (reg (bit_n op1))
-                                                                                           (reg (bit_n op2))
-                                                                                           (reg (bit_n op3))))
-                                                            | _ => None
-                                                            end
-                                            end
-                            | tag_t_i ti => match get_first_n_bit next 8 with
-                                          | (op2,next) => match get_first_n_bit next 8 with
-                                                          | (op3,[]) => 
-                                                            ret (instr_t_i (mk_instr_t_i ti
-                                                                                         (reg (bit_n op1))
-                                                                                         (reg (bit_n op2))
-                                                                                         (imm (bit_n op3))))
-                                                          | _ => None
-                                                          end
-                                                            
-                                            end
-                            | tag_t_i2 ti => match get_first_n_bit next 8 with
-                                            | (op2,next) => match get_first_n_bit next 8 with
-                                                            | (op3,[]) => 
-                                                              ret (instr_t_i2 (mk_instr_t_i2 ti
-                                                                                         (reg (bit_n op1))
-                                                                                         (imm (bit_n op2))
-                                                                                         (reg (bit_n op3))))
-                                                            | _ => None
-                                                            end
-                                             end
-                            | tag_t_i3 ti => match get_first_n_bit next 8 with
-                                             | (op2,next) => match get_first_n_bit next 8 with
-                                                             | (op3,[]) => 
-                                                               ret (instr_t_i3 (mk_instr_t_i3 ti
-                                                                                            (imm (bit_n op1))
-                                                                                            (reg (bit_n op2))
-                                                                                            (reg (bit_n op3))))
-                                                             | _ => None
-                                                             end
-                                             end
-                            | tag_t_i4 ti => match get_first_n_bit next 8 with
-                                             | (op2,next) => match get_first_n_bit next 8 with
-                                                             | (op3,[]) => 
-                                                               ret (instr_t_i4 (mk_instr_t_i4 ti
-                                                                                            (reg (bit_n op1))
-                                                                                            (imm (bit_n op2))
-                                                                                            (imm (bit_n op3))))
-                                                             | _ => None
-                                                             end
-                                                               
-                                             end
-                            | tag_t_i5 ti => match get_first_n_bit next 8 with
-                                             | (op2,next) => match get_first_n_bit next 8 with
-                                                             | (op3,[]) => 
-                                                               ret (instr_t_i5 (mk_instr_t_i5 ti
-                                                                                            (imm (bit_n op1))
-                                                                                            (imm (bit_n op2))
-                                                                                            (imm (bit_n op3))))
-                                                             | _ => None
-                                                             end
-                                             end
-                            | tag_t_i6 ti => match get_first_n_bit next 8 with
-                                             | (op2,next) => match get_first_n_bit next 8 with
-                                                             | (op3,[]) => 
-                                                               ret (instr_t_i6 (mk_instr_t_i6 ti
-                                                                                            (imm (bit_n op1))
-                                                                                            (reg (bit_n op2))
-                                                                                            (imm (bit_n op3))))
-                                                             | _ => None
-                                                             end
-                                             end
-                            | tag_d_i di => match get_first_n_bit next 16 with
-                                            | (op2,[]) => 
-                                              ret (instr_d_i (mk_instr_d_i di
-                                                                           (reg (bit_n op1))
-                                                                           (imm (bit_n op2))))
-                                            | _ => None
-                                            end
-                            | tag_d_i2 di => match get_first_n_bit next 16 with
-                                            | (op2,[]) => 
-                                              ret (instr_d_n2 (mk_instr_d_i2 di
-                                                                           (imm (bit_n op1))
-                                                                           (reg (bit_n op2))))
-                                            | _ => None
-                                             end
-                            | tag_d_i3 di => match get_first_n_bit next 16 with
-                                            | (op2,[]) => 
-                                              ret (instr_d_n3 (mk_instr_d_i3 di
-                                                                           (imm (bit_n op1))
-                                                                           (imm (bit_n op2))))
-                                            | _ => None
-                                            end
-                            | tag_d_n dn => match get_first_n_bit next 16 with
-                                            | (op2,[]) => 
-                                              ret (instr_d_n (mk_instr_d_n dn
-                                                                           (reg (bit_n op1))
-                                                                           (reg (bit_n op2))))
-                                            | _ => None
-                                            end
-                            | tag_u u => match get_first_n_bit next 24 with
-                                         | (op,[]) =>
-                                           ret (instr_u (mk_instr_uno u (imm (bit_n op))))
-                                         | _ => None
-                                         end
+  | (li,next) => let! t := lookdown (bit_n li) encdec in                 
+                 fun t => match t with
+                          | tag_u u => match get_first_n_bit next 24 with
+                                       | (op,[]) =>
+                                         ret (instr_u (mk_instr_uno u (imm (bit_n op))))
+                                       | _ => None
+                                       end
+                          | _ => 
+                            match get_first_n_bit next 8 with
+                            | (op1,next) =>
+                              match t with
+                              | tag_t_n tn => match get_first_n_bit next 8 with
+                                              | (op2,next) => match get_first_n_bit next 8 with
+                                                              | (op3,[]) => 
+                                                                ret (instr_t_n (mk_instr_t_n tn
+                                                                                             (reg (bit_n op1))
+                                                                                             (reg (bit_n op2))
+                                                                                             (reg (bit_n op3))))
+                                                              | _ => None
+                                                              end
+                                              end
+                              | tag_t_i ti => match get_first_n_bit next 8 with
+                                              | (op2,next) => match get_first_n_bit next 8 with
+                                                              | (op3,[]) => 
+                                                                ret (instr_t_i (mk_instr_t_i ti
+                                                                                             (reg (bit_n op1))
+                                                                                             (reg (bit_n op2))
+                                                                                             (imm (bit_n op3))))
+                                                              | _ => None
+                                                              end
+                                                                
+                                              end
+                              | tag_t_i2 ti => match get_first_n_bit next 8 with
+                                               | (op2,next) => match get_first_n_bit next 8 with
+                                                               | (op3,[]) => 
+                                                                 ret (instr_t_i2 (mk_instr_t_i2 ti
+                                                                                                (reg (bit_n op1))
+                                                                                                (imm (bit_n op2))
+                                                                                                (reg (bit_n op3))))
+                                                               | _ => None
+                                                               end
+                                               end
+                              | tag_t_i3 ti => match get_first_n_bit next 8 with
+                                               | (op2,next) => match get_first_n_bit next 8 with
+                                                               | (op3,[]) => 
+                                                                 ret (instr_t_i3 (mk_instr_t_i3 ti
+                                                                                                (imm (bit_n op1))
+                                                                                                (reg (bit_n op2))
+                                                                                                (reg (bit_n op3))))
+                                                               | _ => None
+                                                               end
+                                               end
+                              | tag_t_i4 ti => match get_first_n_bit next 8 with
+                                               | (op2,next) => match get_first_n_bit next 8 with
+                                                               | (op3,[]) => 
+                                                                 ret (instr_t_i4 (mk_instr_t_i4 ti
+                                                                                                (reg (bit_n op1))
+                                                                                                (imm (bit_n op2))
+                                                                                                (imm (bit_n op3))))
+                                                               | _ => None
+                                                               end
+                                                                 
+                                               end
+                              | tag_t_i5 ti => match get_first_n_bit next 8 with
+                                               | (op2,next) => match get_first_n_bit next 8 with
+                                                               | (op3,[]) => 
+                                                                 ret (instr_t_i5 (mk_instr_t_i5 ti
+                                                                                                (imm (bit_n op1))
+                                                                                                (imm (bit_n op2))
+                                                                                                (imm (bit_n op3))))
+                                                               | _ => None
+                                                               end
+                                               end
+                              | tag_t_i6 ti => match get_first_n_bit next 8 with
+                                               | (op2,next) => match get_first_n_bit next 8 with
+                                                               | (op3,[]) => 
+                                                                 ret (instr_t_i6 (mk_instr_t_i6 ti
+                                                                                                (imm (bit_n op1))
+                                                                                                (reg (bit_n op2))
+                                                                                                (imm (bit_n op3))))
+                                                               | _ => None
+                                                               end
+                                               end
+                              | tag_d_i di => match get_first_n_bit next 16 with
+                                              | (op2,[]) => 
+                                                ret (instr_d_i (mk_instr_d_i di
+                                                                             (reg (bit_n op1))
+                                                                             (imm (bit_n op2))))
+                                              | _ => None
+                                              end
+                              | tag_d_i2 di => match get_first_n_bit next 16 with
+                                               | (op2,[]) => 
+                                                 ret (instr_d_n2 (mk_instr_d_i2 di
+                                                                                (imm (bit_n op1))
+                                                                                (reg (bit_n op2))))
+                                               | _ => None
+                                               end
+                              | tag_d_i3 di => match get_first_n_bit next 16 with
+                                               | (op2,[]) => 
+                                                 ret (instr_d_n3 (mk_instr_d_i3 di
+                                                                                (imm (bit_n op1))
+                                                                                (imm (bit_n op2))))
+                                               | _ => None
+                                               end
+                              | tag_d_n dn => match get_first_n_bit next 16 with
+                                              | (op2,[]) => 
+                                                ret (instr_d_n (mk_instr_d_n dn
+                                                                             (reg (bit_n op1))
+                                                                             (reg (bit_n op2))))
+                                              | _ => None
+                                              end
+                              | _ => None
+                              end
                             end
-                          
                           end
   end
   else None.
