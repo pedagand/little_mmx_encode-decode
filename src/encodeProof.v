@@ -576,7 +576,7 @@ Proof.
   apply operand_to_bin_hypothesis_reg in H2.
   rewrite H2.
   apply commut_equal in H3.
-  apply operand_to_bin_double_hypothesis2_d_n in H3.
+  apply operand_to_bin_double_hypothesis_reg in H3.
   rewrite H3.
   assert ({|
        instr_opcode_d_n := instr_opcode_d_n i;
@@ -637,10 +637,10 @@ Proof.
   rewrite H12.
   rewrite ret_rewrite.
   apply commut_equal in H2.
-  apply operand_to_bin_hypothesis1_d_i in H2.
+  apply operand_to_bin_hypothesis_reg in H2.
   rewrite H2.
   apply commut_equal in H3.
-  apply operand_to_bin_double_hypothesis2_d_i in H3.
+  apply operand_to_bin_double_hypothesis_imm in H3.
   rewrite H3.
   assert ({|
        instr_opcode_d_i := instr_opcode_d_i i;
@@ -659,6 +659,194 @@ Proof.
 Qed.
 
 
+Lemma encode_decode_d_i2 : forall (i : instruction_duo_i2) (bi : binary_instruction),
+    encode_d_i2 i = Some bi -> decode bi = Some (instr_d_n2 i).
+Proof.
+    (* first part trying to get lot of information from encode_t_n *)
+  intros.
+  unfold encode_t_n in H.
+  apply bind_rewrite in H.
+  destruct H.
+  destruct H.
+  apply bind_rewrite in H.
+  destruct H.
+  destruct H.
+  apply bind_rewrite in H.
+  destruct H.
+  destruct H.
+  apply bind_rewrite in H.
+  destruct H.
+  destruct H.
+  unfold decode.
+  rewrite ret_rewrite in H.
+  inversion H.
+  (* now going to go further into decode *)
+  assert (length x0 = 8) by (apply commut_equal in H1; apply size_n_bit in H1; auto).
+  assert (get_first_n_bit (x0 ++ x1 ++ x2) 8 = (x0,x1 ++ x2)) by (apply get_first_n_bit_size_3; auto).
+  rewrite H6.
+  apply commut_equal in H0.
+  apply lookup_encdecP in H0.
+  apply commut_equal in H1.
+  assert (bit_n x0 = x) by (apply n_bit_n in H1; exact H1).
+  rewrite H7.
+  rewrite H0.
+  assert (forall (f : tag -> (option instruction)), bind (Some (tag_d_i2 (instr_opcode_d_i2 i))) f = f (tag_d_i2 (instr_opcode_d_i2 i))) by reflexivity.
+  rewrite H8.
+  assert (length x1 = 8) by (apply commut_equal in H2; apply operand_to_bin_size in H2; auto).
+  assert (get_first_n_bit  (x1 ++ x2) 8 = (x1,x2)) by (apply get_first_n_bit_size_tl; auto).
+  rewrite H10.
+  assert (length x2 = 16) by (apply commut_equal in H3; apply operand_to_bin_double_size in H3; auto).
+  assert (get_first_n_bit x2 16 = (x2,[]))by (apply commut_equal in H4; apply get_first_n_bit_size_nil_n; auto).
+  rewrite H12.
+  rewrite ret_rewrite.
+  apply commut_equal in H2.
+  apply operand_to_bin_hypothesis_imm in H2.
+  rewrite H2.
+  apply commut_equal in H3.
+  apply operand_to_bin_double_hypothesis_reg in H3.
+  rewrite H3.
+  assert ({|
+       instr_opcode_d_i2 := instr_opcode_d_i2 i;
+       instr_operande1_d_i2 := instr_operande1_d_i2 i;
+       instr_operande2_d_i2 := instr_operande2_d_i2 i; |} = i).
+  {
+    simpl. destruct i.
+    compute. reflexivity.
+  }
+  rewrite H13.
+  repeat rewrite app_length.
+  rewrite H4.
+  rewrite H9.
+  rewrite H11.
+  reflexivity.
+Qed.
+
+
+
+Lemma encode_decode_d_i3 : forall (i : instruction_duo_i3) (bi : binary_instruction),
+    encode_d_i3 i = Some bi -> decode bi = Some (instr_d_n3 i).
+Proof.
+    (* first part trying to get lot of information from encode_t_n *)
+  intros.
+  unfold encode_t_n in H.
+  apply bind_rewrite in H.
+  destruct H.
+  destruct H.
+  apply bind_rewrite in H.
+  destruct H.
+  destruct H.
+  apply bind_rewrite in H.
+  destruct H.
+  destruct H.
+  apply bind_rewrite in H.
+  destruct H.
+  destruct H.
+  unfold decode.
+  rewrite ret_rewrite in H.
+  inversion H.
+  (* now going to go further into decode *)
+  assert (length x0 = 8) by (apply commut_equal in H1; apply size_n_bit in H1; auto).
+  assert (get_first_n_bit (x0 ++ x1 ++ x2) 8 = (x0,x1 ++ x2)) by (apply get_first_n_bit_size_3; auto).
+  rewrite H6.
+  apply commut_equal in H0.
+  apply lookup_encdecP in H0.
+  apply commut_equal in H1.
+  assert (bit_n x0 = x) by (apply n_bit_n in H1; exact H1).
+  rewrite H7.
+  rewrite H0.
+  assert (forall (f : tag -> (option instruction)), bind (Some (tag_d_i3 (instr_opcode_d_i3 i))) f = f (tag_d_i3 (instr_opcode_d_i3 i))) by reflexivity.
+  rewrite H8.
+  assert (length x1 = 8) by (apply commut_equal in H2; apply operand_to_bin_size in H2; auto).
+  assert (get_first_n_bit  (x1 ++ x2) 8 = (x1,x2)) by (apply get_first_n_bit_size_tl; auto).
+  rewrite H10.
+  assert (length x2 = 16) by (apply commut_equal in H3; apply operand_to_bin_double_size in H3; auto).
+  assert (get_first_n_bit x2 16 = (x2,[]))by (apply commut_equal in H4; apply get_first_n_bit_size_nil_n; auto).
+  rewrite H12.
+  rewrite ret_rewrite.
+  apply commut_equal in H2.
+  apply operand_to_bin_hypothesis_imm in H2.
+  rewrite H2.
+  apply commut_equal in H3.
+  apply operand_to_bin_double_hypothesis_imm in H3.
+  rewrite H3.
+  assert ({|
+       instr_opcode_d_i3 := instr_opcode_d_i3 i;
+       instr_operande1_d_i3 := instr_operande1_d_i3 i;
+       instr_operande2_d_i3 := instr_operande2_d_i3 i; |} = i).
+  {
+    simpl. destruct i.
+    compute. reflexivity.
+  }
+  rewrite H13.
+  repeat rewrite app_length.
+  rewrite H4.
+  rewrite H9.
+  rewrite H11.
+  reflexivity.
+Qed.
+
+
+Lemma encode_decode_u : forall (i : instruction_uno) (bi : binary_instruction),
+    encode_u i = Some bi -> decode bi = Some (instr_u i).
+Proof.
+    (* first part trying to get lot of information from encode_t_n *)
+  intros.
+  unfold encode_t_n in H.
+  apply bind_rewrite in H.
+  destruct H.
+  destruct H.
+  apply bind_rewrite in H.
+  destruct H.
+  destruct H.
+  destruct (instr_operande i) eqn:Hi.
+  apply bind_rewrite in H.
+  destruct H.
+  destruct H.
+  rewrite ret_rewrite in H.
+  inversion H.
+  unfold decode.
+  (* now going to go further into decode *)
+  assert (length x0 = 8) by (apply commut_equal in H1; apply size_n_bit in H1; auto).
+  Search get_first_n_bit.
+  assert (get_first_n_bit (x0 ++ x1) 8 = (x0,x1)) by (apply get_first_n_bit_size_tl; auto).
+  rewrite H5.
+  apply commut_equal in H0.
+  apply lookup_encdecP in H0.
+  apply commut_equal in H1.
+  assert (bit_n x0 = x) by (apply n_bit_n in H1; exact H1).
+  rewrite H6.
+  rewrite H0.
+  assert (forall (f : tag -> (option instruction)), bind (Some (tag_u (instr_opcode_s i))) f = f (tag_u (instr_opcode_s i))) by reflexivity.
+  rewrite H7.
+  assert (length x1 = 24).
+  { apply commut_equal in H2. Search n_bit. apply size_n_bit in H2. auto. }
+  Search (length (_ ++ _)).
+  rewrite app_length.
+  rewrite H8.
+  rewrite H3.
+  simpl.
+    assert (get_first_n_bit  x1 24 = (x1,[])).
+  { Search get_first_n_bit. apply get_first_n_bit_size_nil_n in H8. auto. }
+  rewrite H9.
+  rewrite ret_rewrite.
+  apply commut_equal in H2.
+  assert ({|
+       instr_opcode_s := instr_opcode_s i;
+       instr_operande := instr_operande i; |} = i).
+  {
+    simpl. destruct i.
+    compute. reflexivity.
+  }
+  Search (n_bit).
+  apply n_bit_n in H2.
+  rewrite H2.
+  rewrite <- Hi.
+  rewrite H10.
+  reflexivity.
+Qed.
+
+
+
 
 Lemma encode_decode : forall (i : instruction) (bi : binary_instruction),
     encode i = Some bi -> decode bi = Some i.
@@ -666,7 +854,15 @@ Proof.
   destruct i.
   -apply encode_decode_t_n.
   -apply encode_decode_t_i.
+  -apply encode_decode_t_i2.
+  -apply encode_decode_t_i3.
+  -apply encode_decode_t_i4.
+  -apply encode_decode_t_i5.
+  -apply encode_decode_t_i6.   
   -apply encode_decode_d_n.
   -apply encode_decode_d_i.
+  -apply encode_decode_d_i2.
+  -apply encode_decode_d_i3.
+  -apply encode_decode_u.
 Qed.
   
