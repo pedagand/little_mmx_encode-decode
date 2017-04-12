@@ -233,7 +233,7 @@ Proof.
 
 
 
-Notation "'let!' x ':=' ma 'in' k" := (bind ma k) (at level 30). 
+Notation "'let!' x ':=' ma 'in' k" := (bind ma (fun x => k)) (at level 30). 
 
 
 
@@ -244,11 +244,11 @@ Notation "'let!' x ':=' ma 'in' k" := (bind ma k) (at level 30).
 
 Definition encode_t_n (i : instruction_tern_n) : option binary_instruction :=
   let! k := lookup (tag_t_n (i.(instr_opcode_t_n))) encdec in
-  fun k => let! code := n_bit 8 k in
-           fun code => let! o1 := operand_to_bin (reg_o i.(instr_operande1_t_n)) in 
-                       fun o1 => let! o2 := operand_to_bin (reg_o i.(instr_operande2_t_n)) in
-                                 fun o2 => let! o3 := operand_to_bin (reg_o i.(instr_operande3_t_n)) in
-                                           fun o3 => ret (code ++ o1 ++ o2 ++ o3).
+  let! code := n_bit 8 k in
+  let! o1 := operand_to_bin (reg_o i.(instr_operande1_t_n)) in 
+  let! o2 := operand_to_bin (reg_o i.(instr_operande2_t_n)) in
+  let! o3 := operand_to_bin (reg_o i.(instr_operande3_t_n)) in
+  ret (code ++ o1 ++ o2 ++ o3).
 
 Definition encode_t_i (i : instruction_tern_i) : option binary_instruction :=
   let! k := lookup (tag_t_i (i.(instr_opcode_t_i))) encdec in

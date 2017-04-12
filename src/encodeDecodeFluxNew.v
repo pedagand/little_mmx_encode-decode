@@ -492,12 +492,27 @@ Proof.
   apply Nat.lt_0_succ.
 Qed.
 
-Lemma div_sub : forall (n m k : nat), n <> 0 -> n / m = S k -> (n - m) / m = k.
+(* XXX: clean up *)
+Lemma div_sub : forall (n m k : nat), m <> 0 -> n / m = S k -> (n - m) / m = k.
 Proof.
-  Admitted.
-  
-    
-   
+intros.
+assert (n = m * (S k) + n mod m).
+rewrite <- H0.
+apply Nat.div_mod; auto.
+rewrite H1.
+rewrite Nat.mul_succ_r.
+replace (m * k + m + n mod m - m) with (m * k + n mod m).
+rewrite Nat.mul_comm.
+rewrite Nat.div_add_l; auto.
+rewrite Nat.div_small.
+now rewrite plus_n_O.
+apply Nat.mod_upper_bound; auto.
+
+replace (m * k + m + n mod m - m) with (m * k + (m + n mod m - m)).
+now rewrite -> Nat.add_cancel_l, minus_plus.
+rewrite Nat.add_sub_assoc, plus_assoc. reflexivity.
+apply le_plus_l.
+Qed.
 
 Lemma diff_zero : forall (n : nat), 32 <= n -> n <> 0.
 Proof.
