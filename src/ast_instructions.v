@@ -2,7 +2,7 @@ Require Import List.
  
 (* tag definition *)
 Inductive arithMode :=
-  NORMAL | UNSIGNED | FLOAT.
+  SIGNED | UNSIGNED | FLOAT.
 
 Inductive tag_ter :=
 | ADD : arithMode -> tag_ter
