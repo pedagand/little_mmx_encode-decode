@@ -481,7 +481,7 @@ Proof.
     
    
    
-  
+    
   intros.  
   unfold concat_listes_32 in H0.
   destruct ll eqn:HL1.
