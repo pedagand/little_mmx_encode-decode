@@ -9,13 +9,16 @@ Inductive tag_ter :=
 | SUB : arithMode -> tag_ter
 | MUL : arithMode -> tag_ter
 | DIV : arithMode -> tag_ter
+(* XXX: Why do you need this? *)
 | BIDON : tag_ter.
 
 Inductive tag_duo :=  
 | BZ : tag_duo
+(* XXX: Why do you need this? *)
 | BIDON_DUO : tag_duo.
 
 Inductive tag_uno :=
+(* XXX: Why do you need this? *)
 | BIDON_UNO2
 | BIDON_UNO.
 
