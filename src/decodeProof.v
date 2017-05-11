@@ -276,9 +276,27 @@ Qed.
   
 
 Lemma decode_encode : forall (bi : binary_instruction) (i : instruction),
-    length bi = 32 -> decode bi = Some i -> encode i = Some bi.
+    decode bi = Some i -> encode i = Some bi.
 Proof.
-  intros.  
+  intro.
+  intro.
+  assert (prop : decode bi = Some i -> length bi = 32).
+  {
+    intros.
+    unfold decode in H.
+    destruct (length bi =? 32) eqn:H1.
+    Search (_ =? _ = true).
+    apply beq_nat_true in H1.
+    rewrite H1.
+    reflexivity.
+    discriminate.
+  }
+  intro H0.
+  assert (H : length bi = 32).
+  {
+    apply prop in H0.
+    auto.
+  } 
   unfold decode in H0.
   (* c'est quoi la façon de détruire (let (li, next) := get_first_n_bit bi 8 in mais en laissant en hypothèse (li, next) = get_first_n_bit bi 8 in *)
   destruct (get_first_n_bit bi 8) eqn:Hl1.
